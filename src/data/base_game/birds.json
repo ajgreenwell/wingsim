@@ -1,0 +1,7140 @@
+[
+  {
+    "id": "acorn_woodpecker",
+    "name": "Acorn Woodpecker",
+    "scientificName": "Melanerpes formicivorus",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromFeederWithCache",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "count": 1
+      },
+      "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird."
+    },
+    "victoryPoints": 5,
+    "nestType": "CAVITY",
+    "eggCapacity": 4,
+    "foodCost": {
+      "SEED": 3
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 46,
+    "bonusCards": [
+      "bird_feeder",
+      "forester",
+      "nest_box_builder"
+    ],
+    "flavorText": "In a single dead tree, these birds may drill as many as 50,000 holes for storing acorns.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "american_avocet",
+    "name": "American Avocet",
+    "scientificName": "Recurvirostra americana",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "whenOpponentLaysEggsLayEggOnNestType",
+      "trigger": "ONCE_BETWEEN_TURNS",
+      "params": {
+        "nestType": "GROUND",
+        "count": 1
+      },
+      "text": "When another player takes the \"lay eggs\" action, lay 1 [egg] on another bird with a [ground] nest."
+    },
+    "victoryPoints": 6,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 2,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 79,
+    "bonusCards": [
+      "cartographer",
+      "bird_feeder",
+      "enclosure_builder",
+      "large_bird_specialist",
+      "wetland_scientist"
+    ],
+    "flavorText": "American avocets build their own nests, but they also parasitize other birds' nests.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "american_bittern",
+    "name": "American Bittern",
+    "scientificName": "Botaurus lentiginosus",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "playersWithFewestInHabitatDrawCard",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "habitat": "WETLAND",
+        "drawCount": 1
+      },
+      "text": "Player(s) with the fewest birds in their [wetland] draw 1 [card]."
+    },
+    "victoryPoints": 7,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FISH": 1,
+      "RODENT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 107,
+    "bonusCards": [
+      "cartographer",
+      "fishery_manager",
+      "large_bird_specialist",
+      "platform_builder",
+      "rodentologist",
+      "wetland_scientist"
+    ],
+    "flavorText": "Bitterns hide in reeds and cattails, where they are well camouflaged.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "american_coot",
+    "name": "American Coot",
+    "scientificName": "Fulica americana",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "tuckAndDraw",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 1,
+        "tuckCount": 1
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card]."
+    },
+    "victoryPoints": 3,
+    "nestType": "PLATFORM",
+    "eggCapacity": 5,
+    "foodCost": {
+      "SEED": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 61,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "bird_counter",
+      "bird_feeder",
+      "omnivore_expert",
+      "platform_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "These omnivorous birds eat a lot of algae, but also seeds, fish, insects, and mollusks.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "american_crow",
+    "name": "American Crow",
+    "scientificName": "Corvus brachyrhynchos",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "discardEggToGainFood",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "WILD",
+        "foodCount": 1,
+        "eggCount": 1
+      },
+      "text": "Discard 1 [egg] from any of your other birds to gain 1 [wild] from the supply."
+    },
+    "victoryPoints": 4,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 99,
+    "bonusCards": [
+      "cartographer",
+      "large_bird_specialist",
+      "omnivore_expert",
+      "platform_builder"
+    ],
+    "flavorText": "These intelligent birds steal eggs and food from other birds, and cache food for later.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "american_goldfinch",
+    "name": "American Goldfinch",
+    "scientificName": "Spinus tristis",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromSupply",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "foodType": "SEED",
+        "count": 3
+      },
+      "text": "Gain 3 [seed] from the supply."
+    },
+    "victoryPoints": 3,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "SEED": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 23,
+    "bonusCards": [
+      "cartographer",
+      "photographer",
+      "backyard_birder",
+      "bird_feeder",
+      "passerine_specialist",
+      "prairie_manager",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Goldfinches breed late, after the milkweek and thistle have gone to seed.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "american_kestrel",
+    "name": "American Kestrel",
+    "scientificName": "Falco sparverius",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "rollDiceAndCacheIfMatch",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "RODENT",
+        "count": 1
+      },
+      "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird."
+    },
+    "victoryPoints": 5,
+    "nestType": "CAVITY",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "RODENT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 56,
+    "bonusCards": [
+      "cartographer",
+      "falconer",
+      "nest_box_builder",
+      "prairie_manager",
+      "rodentologist"
+    ],
+    "flavorText": "Kestrels track rodents by their urine and will cache surplus kills for later.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "american_oystercatcher",
+    "name": "American Oystercatcher",
+    "scientificName": "Haematopus palliatus",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawAndDistributeCards",
+      "trigger": "WHEN_PLAYED",
+      "params": {},
+      "text": "Draw [card] equal to the number of players +1. Starting with you and proceeding clockwise, each player selects 1 of those cards and places it in their hand. You keep the extra card."
+    },
+    "victoryPoints": 5,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 81,
+    "bonusCards": [
+      "cartographer",
+      "enclosure_builder",
+      "food_web_expert",
+      "large_bird_specialist",
+      "wetland_scientist"
+    ],
+    "flavorText": "These birds feed not just on oysters and shellfish but also other invertebrates.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "american_redstart",
+    "name": "American Redstart",
+    "scientificName": "Setophaga ruticilla",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromFeeder",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "WILD",
+        "count": 1
+      },
+      "text": "Gain 1 [die] from the birdfeeder."
+    },
+    "victoryPoints": 4,
+    "nestType": "BOWL",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 20,
+    "bonusCards": [
+      "cartographer",
+      "photographer",
+      "forester",
+      "passerine_specialist",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Redstarts get their name from the Old English word \"steart,\" meaning tail.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "american_robin",
+    "name": "American Robin",
+    "scientificName": "Turdus migratorius",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "tuckAndDraw",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 1,
+        "tuckCount": 1
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card]."
+    },
+    "victoryPoints": 1,
+    "nestType": "BOWL",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 43,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "bird_counter",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Robins have been known to roost in groups of a hundred thousand or more.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "american_white_pelican",
+    "name": "American White Pelican",
+    "scientificName": "Pelecanus erythrorhynchos",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "discardFoodToTuckFromDeck",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "FISH",
+        "tuckCount": 1
+      },
+      "text": "Discard 1 [fish] to tuck 2 [card] from the deck behind this bird."
+    },
+    "victoryPoints": 5,
+    "nestType": "GROUND",
+    "eggCapacity": 1,
+    "foodCost": {
+      "FISH": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 274,
+    "bonusCards": [
+      "cartographer",
+      "photographer",
+      "bird_counter",
+      "enclosure_builder",
+      "fishery_manager",
+      "large_bird_specialist",
+      "wetland_scientist"
+    ],
+    "flavorText": "Pelicans work together to herd fish and then scoop them up.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "american_woodcock",
+    "name": "American Woodcock",
+    "scientificName": "Scolopax minor",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND"
+    ],
+    "power": null,
+    "victoryPoints": 9,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 2,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 46,
+    "bonusCards": [
+      "cartographer",
+      "bird_feeder",
+      "enclosure_builder"
+    ],
+    "flavorText": "The woodcock's amazing mating display involves repeated dives from 90 meters.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "anhinga",
+    "name": "Anhinga",
+    "scientificName": "Anhinga anhinga",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "rollDiceAndCacheIfMatch",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "FISH",
+        "count": 1
+      },
+      "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird."
+    },
+    "victoryPoints": 6,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "FISH": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 114,
+    "bonusCards": [
+      "falconer",
+      "fishery_manager",
+      "large_bird_specialist",
+      "platform_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "This bird is called \"snakebird\"---it swims with only head and neck above water.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "annas_hummingbird",
+    "name": "Anna's Hummingbird",
+    "scientificName": "Calypte anna",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "eachPlayerGainsFoodFromFeeder",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1
+      },
+      "text": "Each player gains 1 [die] from the birdfeeder, starting with the player of your choice."
+    },
+    "victoryPoints": 4,
+    "nestType": "BOWL",
+    "eggCapacity": 2,
+    "foodCost": {
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 13,
+    "bonusCards": [
+      "historian",
+      "omnivore_expert",
+      "passerine_specialist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "These birds' impressive mating displays involve diving from over 30 meters in the air.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "ash_throated_flycatcher",
+    "name": "Ash-Throated Flycatcher",
+    "scientificName": "Myiarchus cinerascens",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "layEggOnBirdsWithNestType",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "nestType": "CAVITY",
+        "count": 1
+      },
+      "text": "Lay 1 [egg] on each of your birds with a [cavity] nest."
+    },
+    "victoryPoints": 4,
+    "nestType": "CAVITY",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 2,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 30,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "nest_box_builder",
+      "passerine_specialist",
+      "prairie_manager",
+      "viticulturalist"
+    ],
+    "flavorText": "These birds are adapted to dry places: they get all their water from their food.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "atlantic_puffin",
+    "name": "Atlantic Puffin",
+    "scientificName": "Fratercula arctica",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawBonusCardsAndKeep",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "drawCount": 2,
+        "keepCount": 1
+      },
+      "text": "Draw 2 new bonus cards and keep 1."
+    },
+    "victoryPoints": 8,
+    "nestType": "WILD",
+    "eggCapacity": 1,
+    "foodCost": {
+      "FISH": 3
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 53,
+    "bonusCards": [
+      "cartographer",
+      "enclosure_builder",
+      "fishery_manager",
+      "nest_box_builder",
+      "platform_builder",
+      "wetland_scientist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Puffins' breeding areas are threatened by climate change.",
+    "countries": [
+      "North America",
+      "Europe",
+      "Asia"
+    ],
+    "categorization": "BONUS_CARD"
+  },
+  {
+    "id": "bairds_sparrow",
+    "name": "Baird's Sparrow",
+    "scientificName": "Ammodramus bairdii",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "layEggsOnBird",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1,
+        "eggTarget": "ANY_BIRD"
+      },
+      "text": "Lay 1 [egg] on any bird."
+    },
+    "victoryPoints": 3,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 23,
+    "bonusCards": [
+      "historian",
+      "backyard_birder",
+      "bird_feeder",
+      "enclosure_builder",
+      "passerine_specialist",
+      "prairie_manager"
+    ],
+    "flavorText": "Spencer Fullerton Baird was the first curator of the Smithsonian.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "bald_eagle",
+    "name": "Bald Eagle",
+    "scientificName": "Haliaeetus leucocephalus",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "gainAllFoodTypeFromFeeder",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "foodType": "FISH"
+      },
+      "text": "Gain all [fish] that are in the birdfeeder."
+    },
+    "victoryPoints": 9,
+    "nestType": "PLATFORM",
+    "eggCapacity": 1,
+    "foodCost": {
+      "FISH": 2,
+      "RODENT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 203,
+    "bonusCards": [
+      "fishery_manager",
+      "large_bird_specialist",
+      "platform_builder",
+      "rodentologist",
+      "wetland_scientist"
+    ],
+    "flavorText": "Bald eagles steal fish. Benjamin Franklin thought this was a bad choice for the US national bird.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "baltimore_oriole",
+    "name": "Baltimore Oriole",
+    "scientificName": "Icterus galbula",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "allPlayersGainFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "FRUIT",
+        "count": 1
+      },
+      "text": "All players gain 1 [fruit] from the supply."
+    },
+    "victoryPoints": 9,
+    "nestType": "WILD",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 30,
+    "bonusCards": [
+      "cartographer",
+      "enclosure_builder",
+      "forester",
+      "nest_box_builder",
+      "passerine_specialist",
+      "platform_builder",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Orioles weave pouch nests that hang from a tree nest.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "barn_owl",
+    "name": "Barn Owl",
+    "scientificName": "Tyto alba",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "rollDiceAndCacheIfMatch",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "RODENT",
+        "count": 1
+      },
+      "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird."
+    },
+    "victoryPoints": 5,
+    "nestType": "CAVITY",
+    "eggCapacity": 4,
+    "foodCost": {
+      "RODENT": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 107,
+    "bonusCards": [
+      "falconer",
+      "large_bird_specialist",
+      "nest_box_builder",
+      "rodentologist"
+    ],
+    "flavorText": "Barn owls use their excellent hearing to catch prey in the dark and will cache surplus for later.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America",
+      "Europe",
+      "Asia",
+      "Africa",
+      "Oceania"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "barn_swallow",
+    "name": "Barn Swallow",
+    "scientificName": "Hirundo rustica",
+    "habitats": [
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "tuckAndDraw",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 1,
+        "tuckCount": 1
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card]."
+    },
+    "victoryPoints": 1,
+    "nestType": "WILD",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 38,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_counter",
+      "enclosure_builder",
+      "food_web_expert",
+      "nest_box_builder",
+      "platform_builder",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Barn swallows once nested in caves but now favor human-made structures.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America",
+      "Europe",
+      "Asia",
+      "Africa",
+      "Oceania"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "barred_owl",
+    "name": "Barred Owl",
+    "scientificName": "Strix varia",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "lookAtCardAndTuckIfWingspanUnder",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "wingspanThreshold": 75
+      },
+      "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it."
+    },
+    "victoryPoints": 3,
+    "nestType": "CAVITY",
+    "eggCapacity": 2,
+    "foodCost": {
+      "RODENT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 107,
+    "bonusCards": [
+      "backyard_birder",
+      "falconer",
+      "forester",
+      "large_bird_specialist",
+      "nest_box_builder",
+      "rodentologist"
+    ],
+    "flavorText": "The barred owl's haunting call sounds like \"Who cooks for you?\"",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "barrows_goldeneye",
+    "name": "Barrow's Goldeneye",
+    "scientificName": "Bucephala islandica",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "whenOpponentLaysEggsLayEggOnNestType",
+      "trigger": "ONCE_BETWEEN_TURNS",
+      "params": {
+        "nestType": "CAVITY",
+        "count": 1
+      },
+      "text": "When another player takes the \"lay eggs\" action, lay 1 [egg] on another bird with a [cavity] nest."
+    },
+    "victoryPoints": 5,
+    "nestType": "CAVITY",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1,
+      "FISH": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 71,
+    "bonusCards": [
+      "anatomist",
+      "historian",
+      "photographer",
+      "bird_feeder",
+      "fishery_manager",
+      "large_bird_specialist",
+      "nest_box_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "These ducks will lay their eggs in the nest of any cavity-nesting duck.",
+    "countries": [
+      "North America",
+      "Europe"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "bells_vireo",
+    "name": "Bell's Vireo",
+    "scientificName": "Vireo bellii",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "drawBonusCardsAndKeep",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "drawCount": 2,
+        "keepCount": 1
+      },
+      "text": "Draw 2 new bonus cards and keep 1."
+    },
+    "victoryPoints": 4,
+    "nestType": "WILD",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 18,
+    "bonusCards": [
+      "historian",
+      "enclosure_builder",
+      "food_web_expert",
+      "nest_box_builder",
+      "passerine_specialist",
+      "platform_builder",
+      "wildlife_gardener"
+    ],
+    "flavorText": "John Graham Bell taught taxidermy to future US President Theodore Roosevelt.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "BONUS_CARD"
+  },
+  {
+    "id": "belted_kingfisher",
+    "name": "Belted Kingfisher",
+    "scientificName": "Megaceryle alcyon",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "whenOpponentPlaysBirdInHabitatGainFood",
+      "trigger": "ONCE_BETWEEN_TURNS",
+      "params": {
+        "foodType": "FISH",
+        "habitat": "WETLAND",
+        "count": 1
+      },
+      "text": "When another player plays a bird in their [wetland], gain 1 [fish] from the supply."
+    },
+    "victoryPoints": 4,
+    "nestType": "WILD",
+    "eggCapacity": 4,
+    "foodCost": {
+      "FISH": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 53,
+    "bonusCards": [
+      "enclosure_builder",
+      "fishery_manager",
+      "nest_box_builder",
+      "omnivore_expert",
+      "platform_builder",
+      "wetland_scientist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "A kingfisher burrow can go up to 2 meters into a riverbank and slopes to shed water.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "bewicks_wren",
+    "name": "Bewick's Wren",
+    "scientificName": "Thryomanes bewickii",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "moveToAnotherHabitatIfRightmost",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {},
+      "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat."
+    },
+    "victoryPoints": 4,
+    "nestType": "CAVITY",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 2,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 18,
+    "bonusCards": [
+      "historian",
+      "bird_feeder",
+      "nest_box_builder",
+      "passerine_specialist"
+    ],
+    "flavorText": "These wrens have largely disappeared in the eastern part of their range due to nest predation.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "black_skimmer",
+    "name": "Black Skimmer",
+    "scientificName": "Rynchops niger",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "rollDiceAndCacheIfMatch",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "FISH",
+        "count": 1
+      },
+      "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird."
+    },
+    "victoryPoints": 6,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "FISH": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 112,
+    "bonusCards": [
+      "photographer",
+      "enclosure_builder",
+      "falconer",
+      "fishery_manager",
+      "large_bird_specialist",
+      "wetland_scientist"
+    ],
+    "flavorText": "Skimmers plow the water with their beaks, snapping shut when they hit a fish.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "black_tern",
+    "name": "Black Tern",
+    "scientificName": "Chlidonias niger",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawCardsWithDelayedDiscard",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 1,
+        "discardCount": 1
+      },
+      "text": "Draw 1 [card]. If you do, discard 1 [card] from your hand at the end of your turn."
+    },
+    "victoryPoints": 4,
+    "nestType": "WILD",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FISH": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 61,
+    "bonusCards": [
+      "photographer",
+      "enclosure_builder",
+      "fishery_manager",
+      "nest_box_builder",
+      "platform_builder",
+      "wetland_scientist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "These terns build floating nests out of marsh plants.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America",
+      "Europe",
+      "Asia",
+      "Africa"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "black_vulture",
+    "name": "Black Vulture",
+    "scientificName": "Coragyps atratus",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "whenOpponentPredatorSucceedsGainFood",
+      "trigger": "ONCE_BETWEEN_TURNS",
+      "params": {
+        "count": 1
+      },
+      "text": "When another player's [predator] succeeds, gain 1 [die] from the birdfeeder."
+    },
+    "victoryPoints": 2,
+    "nestType": "CAVITY",
+    "eggCapacity": 1,
+    "foodCost": {},
+    "foodCostMode": "NONE",
+    "wingspanCentimeters": 150,
+    "bonusCards": [
+      "photographer",
+      "backyard_birder",
+      "forester",
+      "large_bird_specialist",
+      "nest_box_builder"
+    ],
+    "flavorText": "Turkey vultures have a better sense of smell, so black vultures follow them to food.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "black_bellied_whistling_duck",
+    "name": "Black-Bellied Whistling-Duck",
+    "scientificName": "Dendrocygna autumnalis",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "discardFoodToTuckFromDeck",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "tuckCount": 1
+      },
+      "text": "Discard 1 [seed] to tuck 2 [card] from the deck behind this bird."
+    },
+    "victoryPoints": 2,
+    "nestType": "CAVITY",
+    "eggCapacity": 5,
+    "foodCost": {
+      "SEED": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 76,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "bird_counter",
+      "bird_feeder",
+      "large_bird_specialist",
+      "nest_box_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "These ducks really do whistle.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "black_billed_magpie",
+    "name": "Black-Billed Magpie",
+    "scientificName": "Pica hudsonia",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "whenOpponentPredatorSucceedsGainFood",
+      "trigger": "ONCE_BETWEEN_TURNS",
+      "params": {
+        "count": 1
+      },
+      "text": "When another player's [predator] succeeds, gain 1 [die] from the birdfeeder."
+    },
+    "victoryPoints": 3,
+    "nestType": "WILD",
+    "eggCapacity": 3,
+    "foodCost": {
+      "WILD": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 64,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "enclosure_builder",
+      "nest_box_builder",
+      "omnivore_expert",
+      "platform_builder",
+      "prairie_manager",
+      "wildlife_gardener"
+    ],
+    "flavorText": "These omnivores steal eggs and eat carrion along with a diversity of other foods.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "black_chinned_hummingbird",
+    "name": "Black-Chinned Hummingbird",
+    "scientificName": "Archilochus alexandri",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "allPlayersGainFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "FRUIT",
+        "count": 1
+      },
+      "text": "All players gain 1 [fruit] from the supply."
+    },
+    "victoryPoints": 4,
+    "nestType": "BOWL",
+    "eggCapacity": 2,
+    "foodCost": {
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 8,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "omnivore_expert",
+      "passerine_specialist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "To display, males of this species will fly up 30 m then dive, reaching speeds near 100 kilometers per hour.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "black_crowned_night_heron",
+    "name": "Black-Crowned Night-Heron",
+    "scientificName": "Nycticorax nycticorax",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "discardEggToGainFood",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "WILD",
+        "foodCount": 1,
+        "eggCount": 1
+      },
+      "text": "Discard 1 [egg] from any of your other birds to gain 1 [wild] from the supply."
+    },
+    "victoryPoints": 9,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FISH": 1,
+      "RODENT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 112,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "fishery_manager",
+      "large_bird_specialist",
+      "platform_builder",
+      "rodentologist",
+      "wetland_scientist"
+    ],
+    "flavorText": "Night herons eat carrion and eggs in addition to fish, rodents, and invertebrates.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America",
+      "Europe",
+      "Asia",
+      "Africa",
+      "Oceania"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "black_necked_stilt",
+    "name": "Black-Necked Stilt",
+    "scientificName": "Himantopus mexicanus",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawCards",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "count": 2
+      },
+      "text": "Draw 2 [card]."
+    },
+    "victoryPoints": 4,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 74,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "enclosure_builder",
+      "food_web_expert",
+      "large_bird_specialist",
+      "wetland_scientist"
+    ],
+    "flavorText": "When not breeding, stilts form closely packed groups and will mob predators.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "blue_grosbeak",
+    "name": "Blue Grosbeak",
+    "scientificName": "Passerina caerulea",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "moveToAnotherHabitatIfRightmost",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {},
+      "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat."
+    },
+    "victoryPoints": 4,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 28,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "bird_feeder",
+      "passerine_specialist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Grosbeaks especially like tangled vines and shrubby areas on forest edges.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "blue_jay",
+    "name": "Blue Jay",
+    "scientificName": "Cyanocitta cristata",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromFeederWithCache",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "count": 1
+      },
+      "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird."
+    },
+    "victoryPoints": 3,
+    "nestType": "BOWL",
+    "eggCapacity": 2,
+    "foodCost": {
+      "SEED": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 41,
+    "bonusCards": [
+      "photographer",
+      "backyard_birder",
+      "bird_feeder",
+      "forester",
+      "omnivore_expert",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Blue jays can carry up to 5 acorns at a time and will store hundreds for winter.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "blue_gray_gnatcatcher",
+    "name": "Blue-Gray Gnatcatcher",
+    "scientificName": "Polioptila caerulea",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "INVERTEBRATE",
+        "count": 1
+      },
+      "text": "Gain 1 [invertebrate] from the supply."
+    },
+    "victoryPoints": 1,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 15,
+    "bonusCards": [
+      "photographer",
+      "backyard_birder",
+      "food_web_expert",
+      "forester",
+      "passerine_specialist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Gnatcatchers' breeding range is steadily shifting north with climate change.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "blue_winged_warbler",
+    "name": "Blue-Winged Warbler",
+    "scientificName": "Vermivora cyanoptera",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND"
+    ],
+    "power": null,
+    "victoryPoints": 8,
+    "nestType": "BOWL",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 20,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "food_web_expert",
+      "passerine_specialist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "This warbler especially likes to nest on the edges between forest and fields.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "bobolink",
+    "name": "Bobolink",
+    "scientificName": "Dolichonyx oryzivorus",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "layEggOnBirdsWithNestType",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "nestType": "GROUND",
+        "count": 1
+      },
+      "text": "Lay 1 [egg] on each of your birds with a [ground] nest."
+    },
+    "victoryPoints": 4,
+    "nestType": "GROUND",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 30,
+    "bonusCards": [
+      "bird_feeder",
+      "enclosure_builder",
+      "passerine_specialist",
+      "prairie_manager"
+    ],
+    "flavorText": "Emily Dickinson wrote poems about these birds as rowdy choristers in her church of nature.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "brant",
+    "name": "Brant",
+    "scientificName": "Branta bernicla",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawFaceUpCardsFromTray",
+      "trigger": "WHEN_PLAYED",
+      "params": {},
+      "text": "Draw the 3 face-up [card] in the bird tray."
+    },
+    "victoryPoints": 3,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "SEED": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 114,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_feeder",
+      "enclosure_builder",
+      "large_bird_specialist",
+      "omnivore_expert",
+      "wetland_scientist"
+    ],
+    "flavorText": "Brants can migrate the 5300 kilometers from Alaska to Mexico in 54 hours.",
+    "countries": [
+      "North America",
+      "Europe",
+      "Asia"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "brewers_blackbird",
+    "name": "Brewer's Blackbird",
+    "scientificName": "Euphagus cyanocephalus",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "tuckFromHandAndLay",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "tuckCount": 1,
+        "eggCount": 1,
+        "eggTarget": "THIS_BIRD"
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird."
+    },
+    "victoryPoints": 3,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "SEED": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 41,
+    "bonusCards": [
+      "historian",
+      "photographer",
+      "backyard_birder",
+      "bird_counter",
+      "bird_feeder",
+      "omnivore_expert",
+      "prairie_manager",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Brewer was a prominent 19th-century ornithologist and oologist.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "broad_winged_hawk",
+    "name": "Broad-Winged Hawk",
+    "scientificName": "Buteo platypterus",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "rollDiceAndCacheIfMatch",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "RODENT",
+        "count": 1
+      },
+      "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird."
+    },
+    "victoryPoints": 4,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "RODENT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 85,
+    "bonusCards": [
+      "anatomist",
+      "falconer",
+      "forester",
+      "large_bird_specialist",
+      "platform_builder",
+      "rodentologist"
+    ],
+    "flavorText": "This hawk is seen more during migration than when it's in the forest interior.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "bronzed_cowbird",
+    "name": "Bronzed Cowbird",
+    "scientificName": "Molothrus aeneus",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "whenOpponentLaysEggsLayEggOnNestType",
+      "trigger": "ONCE_BETWEEN_TURNS",
+      "params": {
+        "nestType": "BOWL",
+        "count": 1
+      },
+      "text": "When another player takes the \"lay eggs\" action, lay 1 [egg] on a bird with a [bowl] nest."
+    },
+    "victoryPoints": 5,
+    "nestType": null,
+    "eggCapacity": 0,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 36,
+    "bonusCards": [
+      "photographer",
+      "bird_feeder",
+      "prairie_manager"
+    ],
+    "flavorText": "Cowbirds lay eggs in other birds' nests and often break or push out the host bird's eggs.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "brown_pelican",
+    "name": "Brown Pelican",
+    "scientificName": "Pelecanus occidentalis",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromSupply",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "foodType": "FISH",
+        "count": 3
+      },
+      "text": "Gain 3 [fish] from the supply."
+    },
+    "victoryPoints": 4,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "FISH": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 201,
+    "bonusCards": [
+      "photographer",
+      "fishery_manager",
+      "large_bird_specialist",
+      "platform_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "Seriously endangered in the 1970s, brown pelicans are thriving after the US and Canada banned DDT.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "brown_headed_cowbird",
+    "name": "Brown-Headed Cowbird",
+    "scientificName": "Molothrus ater",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "whenOpponentLaysEggsLayEggOnNestType",
+      "trigger": "ONCE_BETWEEN_TURNS",
+      "params": {
+        "nestType": "BOWL",
+        "count": 1
+      },
+      "text": "When another player takes the \"lay eggs\" action, lay 1 [egg] on a bird with a [bowl] nest."
+    },
+    "victoryPoints": 3,
+    "nestType": null,
+    "eggCapacity": 0,
+    "foodCost": {
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 30,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "bird_feeder",
+      "passerine_specialist",
+      "prairie_manager"
+    ],
+    "flavorText": "Cowbirds do not make nests; they lay their eggs in other birds' nests.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "burrowing_owl",
+    "name": "Burrowing Owl",
+    "scientificName": "Athene cunicularia",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "rollDiceAndCacheIfMatch",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "RODENT",
+        "count": 1
+      },
+      "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird."
+    },
+    "victoryPoints": 5,
+    "nestType": "WILD",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "RODENT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 53,
+    "bonusCards": [
+      "enclosure_builder",
+      "falconer",
+      "nest_box_builder",
+      "platform_builder",
+      "prairie_manager",
+      "rodentologist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "These owls often use old prairie dog burrows for their underground nests.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "bushtit",
+    "name": "Bushtit",
+    "scientificName": "Psaltriparus minimus",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "tuckFromHandAndLay",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "tuckCount": 1,
+        "eggCount": 1,
+        "eggTarget": "THIS_BIRD"
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird."
+    },
+    "victoryPoints": 2,
+    "nestType": "WILD",
+    "eggCapacity": 5,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 15,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_counter",
+      "bird_feeder",
+      "enclosure_builder",
+      "nest_box_builder",
+      "passerine_specialist",
+      "platform_builder",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Bushtits live in flocks, and single adults will help couples raise their young.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "california_condor",
+    "name": "California Condor",
+    "scientificName": "Gymnogyps californianus",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawBonusCardsAndKeep",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "drawCount": 2,
+        "keepCount": 1
+      },
+      "text": "Draw 2 new bonus cards and keep 1."
+    },
+    "victoryPoints": 1,
+    "nestType": "GROUND",
+    "eggCapacity": 1,
+    "foodCost": {},
+    "foodCostMode": "NONE",
+    "wingspanCentimeters": 277,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "enclosure_builder",
+      "large_bird_specialist"
+    ],
+    "flavorText": "There were just 22 of these scavengers alive in the 1980s, but now there are over 500.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": "BONUS_CARD"
+  },
+  {
+    "id": "california_quail",
+    "name": "California Quail",
+    "scientificName": "Callipepla californica",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "layEggsOnBird",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1,
+        "eggTarget": "THIS_BIRD"
+      },
+      "text": "Lay 1 [egg] on this bird."
+    },
+    "victoryPoints": 3,
+    "nestType": "GROUND",
+    "eggCapacity": 6,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 36,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "bird_feeder",
+      "enclosure_builder"
+    ],
+    "flavorText": "California quail nests have been reported with as many as 28 eggs.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "canada_goose",
+    "name": "Canada Goose",
+    "scientificName": "Branta canadensis",
+    "habitats": [
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "discardFoodToTuckFromDeck",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "tuckCount": 1
+      },
+      "text": "Discard 1 [seed] to tuck 2 [card] from the deck behind this bird."
+    },
+    "victoryPoints": 3,
+    "nestType": "GROUND",
+    "eggCapacity": 3,
+    "foodCost": {
+      "SEED": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 132,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "bird_counter",
+      "bird_feeder",
+      "enclosure_builder",
+      "large_bird_specialist"
+    ],
+    "flavorText": "The oldest known Canada Goose was at least 33 years old.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "canvasback",
+    "name": "Canvasback",
+    "scientificName": "Aythya valisineria",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "allPlayersDrawCardsFromDeck",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1
+      },
+      "text": "All players draw 1 [card] from the deck."
+    },
+    "victoryPoints": 4,
+    "nestType": "WILD",
+    "eggCapacity": 4,
+    "foodCost": {
+      "SEED": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 82,
+    "bonusCards": [
+      "anatomist",
+      "bird_feeder",
+      "enclosure_builder",
+      "large_bird_specialist",
+      "nest_box_builder",
+      "omnivore_expert",
+      "platform_builder",
+      "wetland_scientist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "The fastest recorded canvasback was flying 116 kilometers per hour.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "carolina_chickadee",
+    "name": "Carolina Chickadee",
+    "scientificName": "Poecile carolinensis",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "cacheFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "count": 1
+      },
+      "text": "Cache 1 [seed] from the supply on this bird."
+    },
+    "victoryPoints": 2,
+    "nestType": "CAVITY",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 20,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "bird_feeder",
+      "forester",
+      "nest_box_builder",
+      "passerine_specialist"
+    ],
+    "flavorText": "Chickadees hide seeds and can remember thousands of hiding places.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "carolina_wren",
+    "name": "Carolina Wren",
+    "scientificName": "Thryothorus ludovicianus",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "drawCards",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "count": 2
+      },
+      "text": "Draw 2 [card]."
+    },
+    "victoryPoints": 1,
+    "nestType": "CAVITY",
+    "eggCapacity": 5,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 20,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "forester",
+      "nest_box_builder",
+      "passerine_specialist",
+      "viticulturalist"
+    ],
+    "flavorText": "A single male Carolina Wren can sing nearly 3,000 times in a single day.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "cassins_finch",
+    "name": "Cassin's Finch",
+    "scientificName": "Haemorhous cassinii",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "drawBonusCardsAndKeep",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "drawCount": 2,
+        "keepCount": 1
+      },
+      "text": "Draw 2 new bonus cards and keep 1."
+    },
+    "victoryPoints": 4,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "SEED": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 30,
+    "bonusCards": [
+      "historian",
+      "bird_feeder",
+      "forester",
+      "passerine_specialist",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Fifteen birds are named after ornithologist John Cassin, including 2 in this game.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "BONUS_CARD"
+  },
+  {
+    "id": "cassins_sparrow",
+    "name": "Cassin's Sparrow",
+    "scientificName": "Peucaea cassinii",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "layEggsOnBird",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1,
+        "eggTarget": "ANY_BIRD"
+      },
+      "text": "Lay 1 [egg] on any bird."
+    },
+    "victoryPoints": 3,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 20,
+    "bonusCards": [
+      "historian",
+      "backyard_birder",
+      "bird_feeder",
+      "enclosure_builder",
+      "passerine_specialist",
+      "prairie_manager"
+    ],
+    "flavorText": "Ornithologist Josh Cassin died from years of handling arsenic-preserved birds.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "cedar_waxwing",
+    "name": "Cedar Waxwing",
+    "scientificName": "Bombycilla cedrorum",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "tuckAndGainFood",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "FRUIT",
+        "tuckCount": 1,
+        "foodCount": 1
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [fruit] from the supply."
+    },
+    "victoryPoints": 3,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "FRUIT": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 25,
+    "bonusCards": [
+      "anatomist",
+      "backyard_birder",
+      "bird_counter",
+      "passerine_specialist",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "These birds secrete red wax on the tips of their wing feathers.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "cerulean_warbler",
+    "name": "Cerulean Warbler",
+    "scientificName": "Setophaga cerulea",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "drawBonusCardsAndKeep",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "drawCount": 2,
+        "keepCount": 1
+      },
+      "text": "Draw 2 new bonus cards and keep 1."
+    },
+    "victoryPoints": 4,
+    "nestType": "BOWL",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 20,
+    "bonusCards": [
+      "photographer",
+      "bird_feeder",
+      "forester",
+      "passerine_specialist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Between 1966 and 2015, this species lost 74% of its population.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "BONUS_CARD"
+  },
+  {
+    "id": "chestnut_collared_longspur",
+    "name": "Chestnut-Collared Longspur",
+    "scientificName": "Calcarius ornatus",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "drawBonusCardsAndKeep",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "drawCount": 2,
+        "keepCount": 1
+      },
+      "text": "Draw 2 new bonus cards and keep 1."
+    },
+    "victoryPoints": 5,
+    "nestType": "GROUND",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 25,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "bird_feeder",
+      "enclosure_builder",
+      "passerine_specialist",
+      "prairie_manager"
+    ],
+    "flavorText": "This bird's population dropped by 82% between 1966 and 2015.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "BONUS_CARD"
+  },
+  {
+    "id": "chihuahuan_raven",
+    "name": "Chihuahuan Raven",
+    "scientificName": "Corvus cryptoleucus",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "discardEggToGainFood",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "WILD",
+        "foodCount": 2,
+        "eggCount": 1
+      },
+      "text": "Discard 1 [egg] from any of your other birds to gain 2 [wild] from the supply."
+    },
+    "victoryPoints": 4,
+    "nestType": "PLATFORM",
+    "eggCapacity": 3,
+    "foodCost": {
+      "RODENT": 1,
+      "WILD": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 112,
+    "bonusCards": [
+      "cartographer",
+      "large_bird_specialist",
+      "omnivore_expert",
+      "platform_builder",
+      "prairie_manager",
+      "rodentologist"
+    ],
+    "flavorText": "This bird is native to the Chihuahuan Desert of the southwest US and northern Mexico.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "chimney_swift",
+    "name": "Chimney Swift",
+    "scientificName": "Chaetura pelagica",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "moveToAnotherHabitatIfRightmost",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {},
+      "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat."
+    },
+    "victoryPoints": 3,
+    "nestType": "WILD",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 36,
+    "bonusCards": [
+      "backyard_birder",
+      "enclosure_builder",
+      "food_web_expert",
+      "nest_box_builder",
+      "platform_builder",
+      "wildlife_gardener"
+    ],
+    "flavorText": "These birds have adapted to nest in chimneys instead of hollow trees.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "chipping_sparrow",
+    "name": "Chipping Sparrow",
+    "scientificName": "Spizella passerina",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "layEggsOnBird",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1,
+        "eggTarget": "ANY_BIRD"
+      },
+      "text": "Lay 1 [egg] on any bird."
+    },
+    "victoryPoints": 1,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 23,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_feeder",
+      "passerine_specialist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "These sparrows generally feed on open ground, but near trees.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "clarks_grebe",
+    "name": "Clark's Grebe",
+    "scientificName": "Aechmophorus clarkii",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawCardsWithDelayedDiscard",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 1,
+        "discardCount": 1
+      },
+      "text": "Draw 1 [card]. If you do, discard 1 [card] from your hand at the end of your turn."
+    },
+    "victoryPoints": 5,
+    "nestType": "WILD",
+    "eggCapacity": 2,
+    "foodCost": {
+      "FISH": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 61,
+    "bonusCards": [
+      "historian",
+      "enclosure_builder",
+      "fishery_manager",
+      "nest_box_builder",
+      "platform_builder",
+      "wetland_scientist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Clark was a 19th-century surveyor who collected specimens for the Smithsonian.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "clarks_nutcracker",
+    "name": "Clark's Nutcracker",
+    "scientificName": "Nucifraga columbiana",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromFeederWithCache",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "count": 1
+      },
+      "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird."
+    },
+    "victoryPoints": 5,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "SEED": 2,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 61,
+    "bonusCards": [
+      "historian",
+      "bird_feeder",
+      "forester",
+      "omnivore_expert",
+      "platform_builder"
+    ],
+    "flavorText": "These birds are omnivorous but cache thousands of pine seeds for the winter.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "common_grackle",
+    "name": "Common Grackle",
+    "scientificName": "Quiscalus quiscula",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "tuckFromHandAndLay",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "tuckCount": 1,
+        "eggCount": 1,
+        "eggTarget": "THIS_BIRD"
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird."
+    },
+    "victoryPoints": 3,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "SEED": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 43,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_counter",
+      "bird_feeder",
+      "omnivore_expert",
+      "wildlife_gardener"
+    ],
+    "flavorText": "In winter, grackles roost in large flocks that can include millions of individuals.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "common_loon",
+    "name": "Common Loon",
+    "scientificName": "Gavia immer",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "playersWithFewestInHabitatDrawCard",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "habitat": "WETLAND",
+        "drawCount": 1
+      },
+      "text": "Player(s) with the fewest birds in their [wetland] draw 1 [card]."
+    },
+    "victoryPoints": 6,
+    "nestType": "GROUND",
+    "eggCapacity": 1,
+    "foodCost": {
+      "FISH": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 117,
+    "bonusCards": [
+      "enclosure_builder",
+      "fishery_manager",
+      "large_bird_specialist",
+      "omnivore_expert",
+      "wetland_scientist"
+    ],
+    "flavorText": "Loon chicks spend the majority of their first week of life riding on a parent's back.",
+    "countries": [
+      "North America",
+      "Europe"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "common_merganser",
+    "name": "Common Merganser",
+    "scientificName": "Mergus merganser",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "rollDiceAndCacheIfMatch",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "FISH",
+        "count": 1
+      },
+      "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird."
+    },
+    "victoryPoints": 5,
+    "nestType": "CAVITY",
+    "eggCapacity": 4,
+    "foodCost": {
+      "FISH": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 86,
+    "bonusCards": [
+      "falconer",
+      "fishery_manager",
+      "large_bird_specialist",
+      "nest_box_builder",
+      "omnivore_expert",
+      "wetland_scientist"
+    ],
+    "flavorText": "Adult males can eat fish more than a foot long.",
+    "countries": [
+      "North America",
+      "Europe",
+      "Asia"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "common_nighthawk",
+    "name": "Common Nighthawk",
+    "scientificName": "Chordeiles minor",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "moveToAnotherHabitatIfRightmost",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {},
+      "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat."
+    },
+    "victoryPoints": 3,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 56,
+    "bonusCards": [
+      "backyard_birder",
+      "enclosure_builder",
+      "food_web_expert"
+    ],
+    "flavorText": "Nighthawks are crepuscular, hunting flying insects at dawn and dusk.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "common_raven",
+    "name": "Common Raven",
+    "scientificName": "Corvus corax",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "discardEggToGainFood",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "WILD",
+        "foodCount": 2,
+        "eggCount": 1
+      },
+      "text": "Discard 1 [egg] from any of your other birds to gain 2 [wild] from the supply."
+    },
+    "victoryPoints": 5,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "RODENT": 1,
+      "WILD": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 135,
+    "bonusCards": [
+      "large_bird_specialist",
+      "omnivore_expert",
+      "platform_builder",
+      "rodentologist"
+    ],
+    "flavorText": "Ravens are omnivores whose diet includes insects, rodents, eggs, birds, and carrion.",
+    "countries": [
+      "North America",
+      "Central America",
+      "Europe",
+      "Asia",
+      "Africa"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "common_yellowthroat",
+    "name": "Common Yellowthroat",
+    "scientificName": "Geothlypis trichas",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawCardsWithDelayedDiscard",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 2,
+        "discardCount": 1
+      },
+      "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn."
+    },
+    "victoryPoints": 1,
+    "nestType": "BOWL",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 18,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "food_web_expert",
+      "passerine_specialist",
+      "wetland_scientist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "This was one of the first American birds to be cataloged by Linnaeus, in 1766.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "coopers_hawk",
+    "name": "Cooper's Hawk",
+    "scientificName": "Accipiter cooperii",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "lookAtCardAndTuckIfWingspanUnder",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "wingspanThreshold": 75
+      },
+      "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it."
+    },
+    "victoryPoints": 3,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "RODENT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 79,
+    "bonusCards": [
+      "historian",
+      "backyard_birder",
+      "falconer",
+      "forester",
+      "large_bird_specialist",
+      "platform_builder",
+      "rodentologist"
+    ],
+    "flavorText": "Cooper's hawks hunt forest birds and mammals with great stealth.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "dark_eyed_junco",
+    "name": "Dark-Eyed Junco",
+    "scientificName": "Junco hyemalis",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "tuckAndGainFood",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "tuckCount": 1,
+        "foodCount": 1
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [seed] from the supply."
+    },
+    "victoryPoints": 3,
+    "nestType": "GROUND",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 23,
+    "bonusCards": [
+      "anatomist",
+      "backyard_birder",
+      "bird_counter",
+      "bird_feeder",
+      "enclosure_builder",
+      "passerine_specialist"
+    ],
+    "flavorText": "Juncos summer in the cool woods but will use more open habitats in the winter.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "dickcissel",
+    "name": "Dickcissel",
+    "scientificName": "Spiza americana",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "tuckFromHandAndLay",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "tuckCount": 1,
+        "eggCount": 1,
+        "eggTarget": "THIS_BIRD"
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird."
+    },
+    "victoryPoints": 4,
+    "nestType": "GROUND",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 25,
+    "bonusCards": [
+      "bird_counter",
+      "bird_feeder",
+      "enclosure_builder",
+      "passerine_specialist",
+      "prairie_manager"
+    ],
+    "flavorText": "This bird used to live in the eastern US, but its range has shrunk due to habitat loss.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "double_crested_cormorant",
+    "name": "Double-Crested Cormorant",
+    "scientificName": "Phalacrocorax auritus",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "discardFoodToTuckFromDeck",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "FISH",
+        "tuckCount": 1
+      },
+      "text": "Discard 1 [fish] to tuck 2 [card] from the deck behind this bird."
+    },
+    "victoryPoints": 3,
+    "nestType": "PLATFORM",
+    "eggCapacity": 3,
+    "foodCost": {
+      "FISH": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 132,
+    "bonusCards": [
+      "anatomist",
+      "backyard_birder",
+      "bird_counter",
+      "fishery_manager",
+      "large_bird_specialist",
+      "omnivore_expert",
+      "platform_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "Cormorant colonies can be so dense that their guano kills the trees.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "downy_woodpecker",
+    "name": "Downy Woodpecker",
+    "scientificName": "Picoides pubescens",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "playAdditionalBirdInHabitat",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "habitat": "FOREST"
+      },
+      "text": "Play an additional bird in your [forest]. Pay its normal cost."
+    },
+    "victoryPoints": 3,
+    "nestType": "CAVITY",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 30,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_feeder",
+      "forester",
+      "nest_box_builder",
+      "passerine_specialist",
+      "viticulturalist"
+    ],
+    "flavorText": "This little woodpecker frequently joins mixed flocks.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "eastern_bluebird",
+    "name": "Eastern Bluebird",
+    "scientificName": "Sialia sialis",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "playAdditionalBirdInHabitat",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "habitat": "GRASSLAND"
+      },
+      "text": "Play an additional bird in your [grassland]. Pay its normal cost."
+    },
+    "victoryPoints": 4,
+    "nestType": "CAVITY",
+    "eggCapacity": 5,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 33,
+    "bonusCards": [
+      "cartographer",
+      "photographer",
+      "nest_box_builder",
+      "prairie_manager",
+      "viticulturalist"
+    ],
+    "flavorText": "Bluebirds struggle to breed when there is a lack of tree cavities. Nest boxed help.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "eastern_kingbird",
+    "name": "Eastern Kingbird",
+    "scientificName": "Tyrannus tyrannus",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "whenOpponentPlaysBirdInHabitatGainFood",
+      "trigger": "ONCE_BETWEEN_TURNS",
+      "params": {
+        "foodType": "INVERTEBRATE",
+        "habitat": "FOREST",
+        "count": 1
+      },
+      "text": "When another player plays a bird in their [forest], gain 1 [invertebrate] from the supply."
+    },
+    "victoryPoints": 2,
+    "nestType": "BOWL",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 38,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "The kingbird displays its orange crown while defending its territory.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "eastern_phoebe",
+    "name": "Eastern Phoebe",
+    "scientificName": "Sayornis phoebe",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "allPlayersGainFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "INVERTEBRATE",
+        "count": 1
+      },
+      "text": "All players gain 1 [invertebrate] from the supply."
+    },
+    "victoryPoints": 3,
+    "nestType": "WILD",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 28,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "enclosure_builder",
+      "nest_box_builder",
+      "passerine_specialist",
+      "platform_builder",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Phoebes use mud to attach nests to riverbanks, rocky outcrops, or human structures.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "eastern_screech_owl",
+    "name": "Eastern Screech-Owl",
+    "scientificName": "Megascops asio",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "rollDiceAndCacheIfMatch",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "RODENT",
+        "count": 1
+      },
+      "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird."
+    },
+    "victoryPoints": 4,
+    "nestType": "CAVITY",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "RODENT": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 51,
+    "bonusCards": [
+      "cartographer",
+      "falconer",
+      "forester",
+      "nest_box_builder",
+      "rodentologist"
+    ],
+    "flavorText": "These owls live near humans, but because they're small and nocturnal, they're rarely seen.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "ferruginous_hawk",
+    "name": "Ferruginous Hawk",
+    "scientificName": "Buteo regalis",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "rollDiceAndCacheIfMatch",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "RODENT",
+        "count": 1
+      },
+      "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird."
+    },
+    "victoryPoints": 6,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "RODENT": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 142,
+    "bonusCards": [
+      "photographer",
+      "falconer",
+      "large_bird_specialist",
+      "platform_builder",
+      "prairie_manager",
+      "rodentologist"
+    ],
+    "flavorText": "These rust-colored birds sometimes hunt in groups in prairie dog towns.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "fish_crow",
+    "name": "Fish Crow",
+    "scientificName": "Corvus ossifragus",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "discardEggToGainFood",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "WILD",
+        "foodCount": 1,
+        "eggCount": 1
+      },
+      "text": "Discard 1 [egg] from any of your other birds to gain 1 [wild] from the supply."
+    },
+    "victoryPoints": 6,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "FISH": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 91,
+    "bonusCards": [
+      "fishery_manager",
+      "large_bird_specialist",
+      "omnivore_expert",
+      "platform_builder"
+    ],
+    "flavorText": "These birds may eat more fish than other crows, but they're actually omnivores.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "forsters_tern",
+    "name": "Forster's Tern",
+    "scientificName": "Sterna forsteri",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawCardsWithDelayedDiscard",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 1,
+        "discardCount": 1
+      },
+      "text": "Draw 1 [card]. If you do, discard 1 [card] from your hand at the end of your turn."
+    },
+    "victoryPoints": 4,
+    "nestType": "WILD",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FISH": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 79,
+    "bonusCards": [
+      "historian",
+      "enclosure_builder",
+      "fishery_manager",
+      "large_bird_specialist",
+      "nest_box_builder",
+      "platform_builder",
+      "wetland_scientist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "These birds nest on the ground, on rafts of floating vegetation, or on muskrat lodges.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "franklins_gull",
+    "name": "Franklin's Gull",
+    "scientificName": "Leucophaeus pipixcan",
+    "habitats": [
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "discardEggToDrawCards",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 1,
+        "eggCount": 1
+      },
+      "text": "Discard 1 [egg] to draw 2 [card]."
+    },
+    "victoryPoints": 3,
+    "nestType": "WILD",
+    "eggCapacity": 2,
+    "foodCost": {
+      "FISH": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 91,
+    "bonusCards": [
+      "historian",
+      "backyard_birder",
+      "enclosure_builder",
+      "fishery_manager",
+      "large_bird_specialist",
+      "nest_box_builder",
+      "omnivore_expert",
+      "platform_builder",
+      "wildlife_gardener"
+    ],
+    "flavorText": "These gulls make floating nests of plant material on prairie marshes.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "golden_eagle",
+    "name": "Golden Eagle",
+    "scientificName": "Aquila chrysaetos",
+    "habitats": [
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "lookAtCardAndTuckIfWingspanUnder",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "wingspanThreshold": 100
+      },
+      "text": "Look at a [card] from the deck. If less than 100cm, tuck it behind this bird. If not, discard it."
+    },
+    "victoryPoints": 8,
+    "nestType": "PLATFORM",
+    "eggCapacity": 1,
+    "foodCost": {
+      "RODENT": 3
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 201,
+    "bonusCards": [
+      "photographer",
+      "falconer",
+      "large_bird_specialist",
+      "platform_builder",
+      "rodentologist"
+    ],
+    "flavorText": "Golden eagles mostly eat rabbit-sized prey but can go after livestock and birds.",
+    "countries": [
+      "North America",
+      "Central America",
+      "Europe",
+      "Asia",
+      "Africa"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "grasshopper_sparrow",
+    "name": "Grasshopper Sparrow",
+    "scientificName": "Ammodramus savannarum",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "layEggsOnBird",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1,
+        "eggTarget": "ANY_BIRD"
+      },
+      "text": "Lay 1 [egg] on any bird."
+    },
+    "victoryPoints": 2,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 20,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_feeder",
+      "enclosure_builder",
+      "passerine_specialist",
+      "prairie_manager"
+    ],
+    "flavorText": "The song of these sparrows is often mistaken for grasshoppers.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "gray_catbird",
+    "name": "Gray Catbird",
+    "scientificName": "Dumetella carolinensis",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "repeatBrownPowerInHabitat",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {},
+      "text": "Repeat a brown power on another bird in this habitat."
+    },
+    "victoryPoints": 5,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 28,
+    "bonusCards": [
+      "photographer",
+      "passerine_specialist",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Catbirds mimic other birds, and they also have a call that sounds like a cat meowing.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "great_blue_heron",
+    "name": "Great Blue Heron",
+    "scientificName": "Ardea herodias",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "playAdditionalBirdInHabitat",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "habitat": "WETLAND"
+      },
+      "text": "Play an additional bird in your [wetland]. Pay its normal cost."
+    },
+    "victoryPoints": 5,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FISH": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 183,
+    "bonusCards": [
+      "photographer",
+      "fishery_manager",
+      "large_bird_specialist",
+      "platform_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "Great blue herons form rookeries with egrets, cormorants, and other herons.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "great_crested_flycatcher",
+    "name": "Great Crested Flycatcher",
+    "scientificName": "Myiarchus crinitus",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromFeederIfAvailable",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "INVERTEBRATE",
+        "foodTypes": [
+          "INVERTEBRATE"
+        ],
+        "count": 1
+      },
+      "text": "Gain 1 [invertebrate] from the birdfeeder, if available."
+    },
+    "victoryPoints": 5,
+    "nestType": "CAVITY",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 33,
+    "bonusCards": [
+      "anatomist",
+      "forester",
+      "nest_box_builder",
+      "viticulturalist"
+    ],
+    "flavorText": "These birds avoid competition by focusing on insects high up in trees.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "great_egret",
+    "name": "Great Egret",
+    "scientificName": "Ardea alba",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "playAdditionalBirdInHabitat",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "habitat": "WETLAND"
+      },
+      "text": "Play an additional bird in your [wetland]. Pay its normal cost."
+    },
+    "victoryPoints": 7,
+    "nestType": "PLATFORM",
+    "eggCapacity": 3,
+    "foodCost": {
+      "FISH": 2,
+      "RODENT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 130,
+    "bonusCards": [
+      "fishery_manager",
+      "large_bird_specialist",
+      "platform_builder",
+      "rodentologist",
+      "wetland_scientist"
+    ],
+    "flavorText": "Smaller birds will sometimes follow after great egrets as they stir up prey.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America",
+      "Europe",
+      "Asia",
+      "Africa",
+      "Oceania"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "great_horned_owl",
+    "name": "Great Horned Owl",
+    "scientificName": "Bubo virginianus",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "lookAtCardAndTuckIfWingspanUnder",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "wingspanThreshold": 100
+      },
+      "text": "Look at a [card] from the deck. If less than 100cm, tuck it behind this bird. If not, discard it."
+    },
+    "victoryPoints": 8,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "RODENT": 3
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 112,
+    "bonusCards": [
+      "falconer",
+      "forester",
+      "large_bird_specialist",
+      "platform_builder",
+      "rodentologist"
+    ],
+    "flavorText": "These strong owls can kill large prey including skunks, cats, and dogs.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "greater_prairie_chicken",
+    "name": "Greater Prairie-Chicken",
+    "scientificName": "Tympanuchus cupido",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "drawBonusCardsAndKeep",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "drawCount": 2,
+        "keepCount": 1
+      },
+      "text": "Draw 2 new bonus cards and keep 1."
+    },
+    "victoryPoints": 5,
+    "nestType": "GROUND",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 71,
+    "bonusCards": [
+      "cartographer",
+      "bird_feeder",
+      "enclosure_builder",
+      "large_bird_specialist",
+      "prairie_manager"
+    ],
+    "flavorText": "One subspecies of this bird went extinct in 1932, and a Texas form is endangered.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": "BONUS_CARD"
+  },
+  {
+    "id": "greater_roadrunner",
+    "name": "Greater Roadrunner",
+    "scientificName": "Geococcyx californianus",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "lookAtCardAndTuckIfWingspanUnder",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "wingspanThreshold": 50
+      },
+      "text": "Look at a [card] from the deck. If less than 50cm, tuck it behind this bird. If not, discard it."
+    },
+    "victoryPoints": 7,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "RODENT": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 56,
+    "bonusCards": [
+      "falconer",
+      "omnivore_expert",
+      "platform_builder",
+      "prairie_manager",
+      "rodentologist"
+    ],
+    "flavorText": "Roadrunners rarely fly, but will jump up to snatch prey out of the air.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "green_heron",
+    "name": "Green Heron",
+    "scientificName": "Butorides virescens",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "tradeFoodType",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1,
+        "fromType": "WILD",
+        "toType": "ANY"
+      },
+      "text": "Trade 1 [wild] for any other type from the supply."
+    },
+    "victoryPoints": 4,
+    "nestType": "PLATFORM",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FISH": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 66,
+    "bonusCards": [
+      "photographer",
+      "fishery_manager",
+      "large_bird_specialist",
+      "platform_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "Green herons drop insects and other objects onto the water to attract fish.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "hermit_thrush",
+    "name": "Hermit Thrush",
+    "scientificName": "Catharus guttatus",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "playersWithFewestInHabitatGainFood",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "habitat": "FOREST",
+        "foodCount": 1
+      },
+      "text": "Player(s) with the fewest birds in their [forest] gain 1 [die] from birdfeeder."
+    },
+    "victoryPoints": 7,
+    "nestType": "WILD",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 30,
+    "bonusCards": [
+      "enclosure_builder",
+      "forester",
+      "nest_box_builder",
+      "passerine_specialist",
+      "platform_builder",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Hermit thrushes tend to nest on the ground in the western US and in trees in the East.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "hooded_merganser",
+    "name": "Hooded Merganser",
+    "scientificName": "Lophodytes cucullatus",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "repeatPredatorPowerInHabitat",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {},
+      "text": "Repeat 1 [predator] power in this habitat."
+    },
+    "victoryPoints": 5,
+    "nestType": "CAVITY",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FISH": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 61,
+    "bonusCards": [
+      "fishery_manager",
+      "nest_box_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "Merganser chicks jump from their cavity nest to the ground when they're just 1 day old.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "hooded_warbler",
+    "name": "Hooded Warbler",
+    "scientificName": "Setophaga citrina",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": null,
+    "victoryPoints": 7,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 18,
+    "bonusCards": [
+      "food_web_expert",
+      "forester",
+      "passerine_specialist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "This bird spends its time in the understory and nests within a meter of the ground.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "horned_lark",
+    "name": "Horned Lark",
+    "scientificName": "Eremophila alpestris",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "whenOpponentPlaysBirdInHabitatTuckCard",
+      "trigger": "ONCE_BETWEEN_TURNS",
+      "params": {
+        "habitat": "GRASSLAND",
+        "count": 1
+      },
+      "text": "When another player plays a bird in their [grassland], tuck 1 [card] from your hand behind this bird."
+    },
+    "victoryPoints": 5,
+    "nestType": "GROUND",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 30,
+    "bonusCards": [
+      "bird_counter",
+      "bird_feeder",
+      "enclosure_builder",
+      "passerine_specialist",
+      "prairie_manager"
+    ],
+    "flavorText": "Horned larks form large nomadic flocks, mixing with birds of other species.",
+    "countries": [
+      "North America",
+      "Central America",
+      "Europe",
+      "Asia"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "house_finch",
+    "name": "House Finch",
+    "scientificName": "Haemorhous mexicanus",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "tuckAndDraw",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 1,
+        "tuckCount": 1
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card]."
+    },
+    "victoryPoints": 3,
+    "nestType": "BOWL",
+    "eggCapacity": 6,
+    "foodCost": {
+      "SEED": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 25,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_counter",
+      "bird_feeder",
+      "passerine_specialist",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "These finches are rarely alone and can flock in the hundreds.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "house_wren",
+    "name": "House Wren",
+    "scientificName": "Troglodytes aedon",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "playAdditionalBirdInThisHabitat",
+      "trigger": "WHEN_PLAYED",
+      "params": {},
+      "text": "Play an additional bird in this bird's habitat. Pay its normal cost."
+    },
+    "victoryPoints": 1,
+    "nestType": "CAVITY",
+    "eggCapacity": 5,
+    "foodCost": {
+      "INVERTEBRATE": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 15,
+    "bonusCards": [
+      "backyard_birder",
+      "food_web_expert",
+      "nest_box_builder",
+      "passerine_specialist"
+    ],
+    "flavorText": "House wrens will remove the eggs of other birds and take over their nests.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "inca_dove",
+    "name": "Inca Dove",
+    "scientificName": "Columbina inca",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "layEggOnBirdsWithNestType",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "nestType": "PLATFORM",
+        "count": 1
+      },
+      "text": "Lay 1 [egg] on each of your birds with a [platform] nest."
+    },
+    "victoryPoints": 2,
+    "nestType": "PLATFORM",
+    "eggCapacity": 4,
+    "foodCost": {
+      "SEED": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 28,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "bird_feeder",
+      "passerine_specialist",
+      "platform_builder",
+      "prairie_manager"
+    ],
+    "flavorText": "This bird likes human settlements and is expanding its range north.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "indigo_bunting",
+    "name": "Indigo Bunting",
+    "scientificName": "Passerina cyanea",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromFeederIfAvailable",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "INVERTEBRATE",
+        "foodTypes": [
+          "INVERTEBRATE",
+          "FRUIT"
+        ],
+        "count": 1
+      },
+      "text": "Gain 1 [invertebrate] or [fruit] from the birdfeeder, if available."
+    },
+    "victoryPoints": 5,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 20,
+    "bonusCards": [
+      "photographer",
+      "bird_feeder",
+      "passerine_specialist",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Indigo buntings are almost always found on forest edges.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "juniper_titmouse",
+    "name": "Juniper Titmouse",
+    "scientificName": "Baeolophus ridgwayi",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "cacheFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "count": 1
+      },
+      "text": "Cache 1 [seed] from the supply on this bird."
+    },
+    "victoryPoints": 4,
+    "nestType": "CAVITY",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 23,
+    "bonusCards": [
+      "bird_feeder",
+      "forester",
+      "nest_box_builder",
+      "passerine_specialist"
+    ],
+    "flavorText": "These little birds make it through winter by storing seeds.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "killdeer",
+    "name": "Killdeer",
+    "scientificName": "Charadrius vociferus",
+    "habitats": [
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "discardEggToDrawCards",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 1,
+        "eggCount": 1
+      },
+      "text": "Discard 1 [egg] to draw 2 [card]."
+    },
+    "victoryPoints": 1,
+    "nestType": "GROUND",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 46,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_feeder",
+      "enclosure_builder"
+    ],
+    "flavorText": "Killdeers will fake a broken wing to lure predators from their nests.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "king_rail",
+    "name": "King Rail",
+    "scientificName": "Rallus elegans",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawBonusCardsAndKeep",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "drawCount": 2,
+        "keepCount": 1
+      },
+      "text": "Draw 2 new bonus cards and keep 1."
+    },
+    "victoryPoints": 4,
+    "nestType": "PLATFORM",
+    "eggCapacity": 6,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FISH": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 51,
+    "bonusCards": [
+      "fishery_manager",
+      "omnivore_expert",
+      "platform_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "King rails declined 90% from 1966 to 2015, due to habitat loss and pesticide runoff.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "BONUS_CARD"
+  },
+  {
+    "id": "lazuli_bunting",
+    "name": "Lazuli Bunting",
+    "scientificName": "Passerina amoena",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "allPlayersLayEggOnNestType",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "nestType": "BOWL",
+        "allPlayersCount": 1,
+        "bonusCount": 1
+      },
+      "text": "All players lay 1 [egg] on any 1 [bowl] bird. You may lay 1 [egg] on 1 additional [bowl] bird."
+    },
+    "victoryPoints": 4,
+    "nestType": "BOWL",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 23,
+    "bonusCards": [
+      "photographer",
+      "bird_feeder",
+      "passerine_specialist",
+      "prairie_manager",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "The Latin name amoena means \"beautiful\" or \"charming\".",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "lincolns_sparrow",
+    "name": "Lincoln's Sparrow",
+    "scientificName": "Melospiza lincolnii",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "moveToAnotherHabitatIfRightmost",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {},
+      "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat."
+    },
+    "victoryPoints": 3,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 20,
+    "bonusCards": [
+      "historian",
+      "backyard_birder",
+      "bird_feeder",
+      "enclosure_builder",
+      "passerine_specialist"
+    ],
+    "flavorText": "Thomas Lincoln collected this sparrow in Canada with John James Audubon.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "loggerhead_shrike",
+    "name": "Loggerhead Shrike",
+    "scientificName": "Lanius ludovicianus",
+    "habitats": [
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "whenOpponentGainsFoodCacheIfMatch",
+      "trigger": "ONCE_BETWEEN_TURNS",
+      "params": {
+        "foodType": "RODENT",
+        "count": 1
+      },
+      "text": "When another player takes the \"gain food\" action, if they gain any number of [rodent], cache 1 [rodent] from the supply on this bird."
+    },
+    "victoryPoints": 3,
+    "nestType": "BOWL",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "RODENT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 30,
+    "bonusCards": [
+      "anatomist",
+      "backyard_birder",
+      "passerine_specialist",
+      "rodentologist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Shrikes impale their prey on thorse or barbed wire and may save them for later.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "mallard",
+    "name": "Mallard",
+    "scientificName": "Anas platyrhynchos",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawCards",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1
+      },
+      "text": "Draw 1 [card]."
+    },
+    "victoryPoints": 0,
+    "nestType": "GROUND",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 89,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_feeder",
+      "enclosure_builder",
+      "large_bird_specialist",
+      "wetland_scientist"
+    ],
+    "flavorText": "Mallards are among the most abundant ducks in the world.",
+    "countries": [
+      "North America",
+      "Central America",
+      "Europe",
+      "Asia",
+      "Africa"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "mississippi_kite",
+    "name": "Mississippi Kite",
+    "scientificName": "Ictinia mississippiensis",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "rollDiceAndCacheIfMatch",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "RODENT",
+        "count": 1
+      },
+      "text": "Roll all dice not in birdfeeder. If any are [rodent], cache 1 [rodent] from the supply on this bird."
+    },
+    "victoryPoints": 4,
+    "nestType": "PLATFORM",
+    "eggCapacity": 1,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "RODENT": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 79,
+    "bonusCards": [
+      "cartographer",
+      "falconer",
+      "large_bird_specialist",
+      "platform_builder",
+      "rodentologist"
+    ],
+    "flavorText": "These birds mostly eat large insects, but they'll also eat rodents, bats, and birds.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "mountain_bluebird",
+    "name": "Mountain Bluebird",
+    "scientificName": "Sialia currucoides",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "playAdditionalBirdInHabitat",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "habitat": "GRASSLAND"
+      },
+      "text": "Play an additional bird in your [grassland]. Pay its normal cost."
+    },
+    "victoryPoints": 4,
+    "nestType": "CAVITY",
+    "eggCapacity": 5,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 36,
+    "bonusCards": [
+      "cartographer",
+      "photographer",
+      "nest_box_builder",
+      "prairie_manager",
+      "viticulturalist"
+    ],
+    "flavorText": "These birds can be found from prairies up to alpine zones above treeline.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "mountain_chickadee",
+    "name": "Mountain Chickadee",
+    "scientificName": "Poecile gambeli",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "cacheFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "count": 1
+      },
+      "text": "Cache 1 [seed] from the supply on this bird."
+    },
+    "victoryPoints": 2,
+    "nestType": "CAVITY",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 23,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "bird_feeder",
+      "forester",
+      "nest_box_builder",
+      "passerine_specialist"
+    ],
+    "flavorText": "Mountain chickadees are generally found in the conifer forests of the American West.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "mourning_dove",
+    "name": "Mourning Dove",
+    "scientificName": "Zenaida macroura",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "layEggsOnBird",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1,
+        "eggTarget": "THIS_BIRD"
+      },
+      "text": "Lay 1 [egg] on this bird."
+    },
+    "victoryPoints": 0,
+    "nestType": "PLATFORM",
+    "eggCapacity": 5,
+    "foodCost": {
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 46,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_feeder",
+      "platform_builder"
+    ],
+    "flavorText": "One pair of doves may raise 5 or 6 small broods in a year.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "northern_bobwhite",
+    "name": "Northern Bobwhite",
+    "scientificName": "Colinus virginianus",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "layEggsOnBird",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1,
+        "eggTarget": "THIS_BIRD"
+      },
+      "text": "Lay 1 [egg] on this bird."
+    },
+    "victoryPoints": 5,
+    "nestType": "GROUND",
+    "eggCapacity": 6,
+    "foodCost": {
+      "SEED": 3
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 33,
+    "bonusCards": [
+      "cartographer",
+      "photographer",
+      "bird_feeder",
+      "enclosure_builder",
+      "prairie_manager"
+    ],
+    "flavorText": "Bobwhites are prolific breeders, but their numbers are in decline.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "northern_cardinal",
+    "name": "Northern Cardinal",
+    "scientificName": "Cardinalis cardinalis",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "FRUIT",
+        "count": 1
+      },
+      "text": "Gain 1 [fruit] from the supply."
+    },
+    "victoryPoints": 3,
+    "nestType": "BOWL",
+    "eggCapacity": 5,
+    "foodCost": {
+      "SEED": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 30,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "bird_feeder",
+      "forester",
+      "passerine_specialist",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "In most North American species, only males sing, but female cardinals break this rule.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "northern_flicker",
+    "name": "Northern Flicker",
+    "scientificName": "Colaptes auratus",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "gainAllFoodTypeFromFeeder",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "foodType": "INVERTEBRATE"
+      },
+      "text": "Gain all [invertebrate] that are in the birdfeeder."
+    },
+    "victoryPoints": 2,
+    "nestType": "CAVITY",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 51,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "bird_feeder",
+      "nest_box_builder",
+      "viticulturalist"
+    ],
+    "flavorText": "These woodpeckers seek out ground-dwelling insects rather than pecking wood.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "northern_harrier",
+    "name": "Northern Harrier",
+    "scientificName": "Circus hudsonius",
+    "habitats": [
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "lookAtCardAndTuckIfWingspanUnder",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "wingspanThreshold": 75
+      },
+      "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it."
+    },
+    "victoryPoints": 3,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "RODENT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 109,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "falconer",
+      "large_bird_specialist",
+      "platform_builder",
+      "rodentologist"
+    ],
+    "flavorText": "Northern harriers fly low over marshes and grasslands seeking prey.",
+    "countries": [
+      "North America",
+      "Central America",
+      "Europe",
+      "Asia",
+      "Africa"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "northern_mockingbird",
+    "name": "Northern Mockingbird",
+    "scientificName": "Mimus polyglottos",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "repeatBrownPowerInHabitat",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {},
+      "text": "Repeat a brown power on another bird in this habitat."
+    },
+    "victoryPoints": 2,
+    "nestType": "BOWL",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 36,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "A male mockingbird may learn around 200 songs throughout its life.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "northern_shoveler",
+    "name": "Northern Shoveler",
+    "scientificName": "Spatula clypeata",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "allPlayersDrawCardsFromDeck",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1
+      },
+      "text": "All players draw 1 [card] from the deck."
+    },
+    "victoryPoints": 7,
+    "nestType": "GROUND",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 76,
+    "bonusCards": [
+      "cartographer",
+      "bird_feeder",
+      "enclosure_builder",
+      "large_bird_specialist",
+      "wetland_scientist"
+    ],
+    "flavorText": "The shoveler's large bill strains invertebrates from the water.",
+    "countries": [
+      "North America",
+      "Central America",
+      "Europe",
+      "Asia",
+      "Africa"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "osprey",
+    "name": "Osprey",
+    "scientificName": "Pandion haliaetus",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "allPlayersGainFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "FISH",
+        "count": 1
+      },
+      "text": "All players gain 1 [fish] from the supply."
+    },
+    "victoryPoints": 5,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "FISH": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 160,
+    "bonusCards": [
+      "fishery_manager",
+      "large_bird_specialist",
+      "platform_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "Ospreys are excellent hunters, catching a fish in at least 1 out of every 4 dives.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America",
+      "Europe",
+      "Asia",
+      "Africa",
+      "Oceania"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "painted_bunting",
+    "name": "Painted Bunting",
+    "scientificName": "Passerina ciris",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "drawBonusCardsAndKeep",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "drawCount": 2,
+        "keepCount": 1
+      },
+      "text": "Draw 2 new bonus cards and keep 1."
+    },
+    "victoryPoints": 5,
+    "nestType": "BOWL",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 23,
+    "bonusCards": [
+      "bird_feeder",
+      "passerine_specialist",
+      "prairie_manager",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Poachers sell these birds as pets, making it harder for wild populations to thrive.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "BONUS_CARD"
+  },
+  {
+    "id": "painted_whitestart",
+    "name": "Painted Whitestart",
+    "scientificName": "Myioborus pictus",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "INVERTEBRATE",
+        "count": 1
+      },
+      "text": "Gain 1 [invertebrate] from the supply."
+    },
+    "victoryPoints": 1,
+    "nestType": "GROUND",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 22,
+    "bonusCards": [
+      "photographer",
+      "backyard_birder",
+      "enclosure_builder",
+      "food_web_expert",
+      "forester",
+      "passerine_specialist"
+    ],
+    "flavorText": "When they forage, whitestarts will flick their wings or tails to flush insects.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "peregrine_falcon",
+    "name": "Peregrine Falcon",
+    "scientificName": "Falco peregrinus",
+    "habitats": [
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "lookAtCardAndTuckIfWingspanUnder",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "wingspanThreshold": 100
+      },
+      "text": "Look at a [card] from the deck. If less than 100cm, tuck it behind this bird. If not, discard it."
+    },
+    "victoryPoints": 5,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "RODENT": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 104,
+    "bonusCards": [
+      "falconer",
+      "large_bird_specialist",
+      "platform_builder",
+      "rodentologist"
+    ],
+    "flavorText": "Diving to attack, a peregrine falcon can reach speeds up to 320 kilometers per hour.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America",
+      "Europe",
+      "Asia",
+      "Africa",
+      "Oceania"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "pied_billed_grebe",
+    "name": "Pied-Billed Grebe",
+    "scientificName": "Podilymbus podiceps",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawCardsWithDelayedDiscard",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 2,
+        "discardCount": 1
+      },
+      "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn."
+    },
+    "victoryPoints": 0,
+    "nestType": "PLATFORM",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FISH": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 41,
+    "bonusCards": [
+      "anatomist",
+      "backyard_birder",
+      "fishery_manager",
+      "platform_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "Pied-billed grebes create a floating platform nest with plant material.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "pileated_woodpecker",
+    "name": "Pileated Woodpecker",
+    "scientificName": "Dryocopus pileatus",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "allPlayersLayEggOnNestType",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "nestType": "CAVITY",
+        "allPlayersCount": 1,
+        "bonusCount": 1
+      },
+      "text": "All players lay 1 [egg] on any 1 [cavity] bird. You may lay 1 [egg] on 1 additional [cavity] bird."
+    },
+    "victoryPoints": 4,
+    "nestType": "CAVITY",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 74,
+    "bonusCards": [
+      "forester",
+      "large_bird_specialist",
+      "nest_box_builder",
+      "viticulturalist"
+    ],
+    "flavorText": "Other birds use these birds' old nests and glean bugs where they've been feeding.\\",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "pine_siskin",
+    "name": "Pine Siskin",
+    "scientificName": "Spinus pinus",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "tuckAndGainFood",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "tuckCount": 1,
+        "foodType": "SEED",
+        "foodCount": 1
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [seed] from the supply."
+    },
+    "victoryPoints": 3,
+    "nestType": "BOWL",
+    "eggCapacity": 2,
+    "foodCost": {
+      "SEED": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 23,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_counter",
+      "bird_feeder",
+      "forester",
+      "passerine_specialist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Pine siskins are gregarious, traveling in flocks to look for food.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "prothonotary_warbler",
+    "name": "Prothonotary Warbler",
+    "scientificName": "Protonotaria citrea",
+    "habitats": [
+      "FOREST",
+      "WETLAND"
+    ],
+    "power": null,
+    "victoryPoints": 8,
+    "nestType": "CAVITY",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 2,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 23,
+    "bonusCards": [
+      "bird_feeder",
+      "nest_box_builder",
+      "passerine_specialist"
+    ],
+    "flavorText": "The name prothonotary comes from Catholic scribes who wore yellow robes.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "purple_gallinule",
+    "name": "Purple Gallinule",
+    "scientificName": "Porphyrio martinicus",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "allPlayersDrawCardsFromDeck",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1
+      },
+      "text": "All players draw 1 [card] from the deck."
+    },
+    "victoryPoints": 7,
+    "nestType": "PLATFORM",
+    "eggCapacity": 4,
+    "foodCost": {
+      "SEED": 1,
+      "FRUIT": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 56,
+    "bonusCards": [
+      "photographer",
+      "bird_feeder",
+      "omnivore_expert",
+      "platform_builder",
+      "viticulturalist",
+      "wetland_scientist"
+    ],
+    "flavorText": "With its long toes, this bird can walk on lily pads without sinking.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "purple_martin",
+    "name": "Purple Martin",
+    "scientificName": "Progne subis",
+    "habitats": [
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "tuckAndDraw",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 1,
+        "tuckCount": 1
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card]."
+    },
+    "victoryPoints": 2,
+    "nestType": "CAVITY",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 46,
+    "bonusCards": [
+      "photographer",
+      "backyard_birder",
+      "bird_counter",
+      "food_web_expert",
+      "nest_box_builder"
+    ],
+    "flavorText": "Native Americans hung gourds as houses for these birds, because they eat so many bugs.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "pygmy_nuthatch",
+    "name": "Pygmy Nuthatch",
+    "scientificName": "Sitta pygmaea",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "tuckAndGainFoodOfChoice",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "INVERTEBRATE",
+        "foodTypes": [
+          "INVERTEBRATE",
+          "SEED"
+        ],
+        "tuckCount": 1,
+        "foodCount": 1
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [invertebrate] or [seed] from the supply."
+    },
+    "victoryPoints": 2,
+    "nestType": "CAVITY",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 20,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_counter",
+      "bird_feeder",
+      "forester",
+      "nest_box_builder",
+      "passerine_specialist"
+    ],
+    "flavorText": "These flocking birds often have \"helper\" birds bringing food during nesting season.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "red_crossbill",
+    "name": "Red Crossbill",
+    "scientificName": "Loxia curvirostra",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "allPlayersGainFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "count": 1
+      },
+      "text": "All players gain 1 [seed] from the supply."
+    },
+    "victoryPoints": 6,
+    "nestType": "BOWL",
+    "eggCapacity": 2,
+    "foodCost": {
+      "SEED": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 28,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "bird_feeder",
+      "forester",
+      "passerine_specialist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "These birds use their specialized bills to pry apart conifer seed cones.",
+    "countries": [
+      "North America",
+      "Central America",
+      "Europe",
+      "Asia",
+      "Africa"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "red_bellied_woodpecker",
+    "name": "Red-Bellied Woodpecker",
+    "scientificName": "Melanerpes carolinus",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromFeederWithCache",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "count": 1
+      },
+      "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird."
+    },
+    "victoryPoints": 1,
+    "nestType": "CAVITY",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 41,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "bird_feeder",
+      "forester",
+      "nest_box_builder"
+    ],
+    "flavorText": "These birds' tongues each out 5 centimeters for insects, but seeds are half their diet.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "red_breasted_merganser",
+    "name": "Red-Breasted Merganser",
+    "scientificName": "Mergus serrator",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawCardsWithDelayedDiscard",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 2,
+        "discardCount": 1
+      },
+      "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn."
+    },
+    "victoryPoints": 3,
+    "nestType": "GROUND",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FISH": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 78,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "enclosure_builder",
+      "fishery_manager",
+      "large_bird_specialist",
+      "wetland_scientist"
+    ],
+    "flavorText": "A red-breasted merganser was recorded flying 160 kilometers per hour, the fastest of any duck.",
+    "countries": [
+      "North America",
+      "Europe",
+      "Asia"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "red_breasted_nuthatch",
+    "name": "Red-Breasted Nuthatch",
+    "scientificName": "Sitta canadensis",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "cacheFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "count": 1
+      },
+      "text": "Cache 1 [seed] from the supply on this bird."
+    },
+    "victoryPoints": 2,
+    "nestType": "CAVITY",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 23,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "bird_feeder",
+      "forester",
+      "nest_box_builder",
+      "passerine_specialist"
+    ],
+    "flavorText": "These birds put resin around their nest opening to keep out attackers.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "red_cockaded_woodpecker",
+    "name": "Red-Cockaded Woodpecker",
+    "scientificName": "Picoides borealis",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "drawBonusCardsAndKeep",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "drawCount": 2,
+        "keepCount": 1
+      },
+      "text": "Draw 2 new bonus cards and keep 1."
+    },
+    "victoryPoints": 4,
+    "nestType": "CAVITY",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 36,
+    "bonusCards": [
+      "photographer",
+      "forester",
+      "nest_box_builder",
+      "viticulturalist"
+    ],
+    "flavorText": "This bird is endangered due to habitat loss; there may be fewer than 10,000.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": "BONUS_CARD"
+  },
+  {
+    "id": "red_eyed_vireo",
+    "name": "Red-Eyed Vireo",
+    "scientificName": "Vireo olivaceus",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "playAdditionalBirdInHabitat",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "habitat": "FOREST"
+      },
+      "text": "Play an additional bird in your [forest]. Pay its normal cost."
+    },
+    "victoryPoints": 3,
+    "nestType": "WILD",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 25,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "enclosure_builder",
+      "forester",
+      "nest_box_builder",
+      "passerine_specialist",
+      "platform_builder",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Nearsighted vireos flock with other birds that make noise if predators are around.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "red_headed_woodpecker",
+    "name": "Red-Headed Woodpecker",
+    "scientificName": "Melanerpes erythrocephalus",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromFeederWithCache",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "count": 1
+      },
+      "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird."
+    },
+    "victoryPoints": 4,
+    "nestType": "CAVITY",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 43,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "bird_feeder",
+      "nest_box_builder",
+      "omnivore_expert"
+    ],
+    "flavorText": "These woodpeckers store nuts, seeds, and insects in wood or under bark.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "red_shouldered_hawk",
+    "name": "Red-Shouldered Hawk",
+    "scientificName": "Buteo lineatus",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "lookAtCardAndTuckIfWingspanUnder",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "wingspanThreshold": 75
+      },
+      "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it."
+    },
+    "victoryPoints": 3,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "RODENT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 102,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "falconer",
+      "forester",
+      "large_bird_specialist",
+      "platform_builder",
+      "rodentologist"
+    ],
+    "flavorText": "These hawks hunt from a perch, swooping down when prey is nearby.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "red_tailed_hawk",
+    "name": "Red-Tailed Hawk",
+    "scientificName": "Buteo jamaicensis",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "lookAtCardAndTuckIfWingspanUnder",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "wingspanThreshold": 75
+      },
+      "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it."
+    },
+    "victoryPoints": 5,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "RODENT": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 124,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "falconer",
+      "large_bird_specialist",
+      "platform_builder",
+      "rodentologist"
+    ],
+    "flavorText": "Movies almost always use the red-tailed hawk's call for any raptor.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "red_winged_blackbird",
+    "name": "Red-Winged Blackbird",
+    "scientificName": "Agelaius phoeniceus",
+    "habitats": [
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "tuckFromHandAndLay",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "tuckCount": 1,
+        "eggCount": 1,
+        "eggTarget": "THIS_BIRD"
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird."
+    },
+    "victoryPoints": 2,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 33,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "bird_counter",
+      "bird_feeder",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Blackbird flocks can include hundreds of thousands of birds",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "ring_billed_gull",
+    "name": "Ring-Billed Gull",
+    "scientificName": "Larus delawarensis",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "tuckAndDraw",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 1,
+        "tuckCount": 1
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card]."
+    },
+    "victoryPoints": 4,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "WILD": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 122,
+    "bonusCards": [
+      "anatomist",
+      "bird_counter",
+      "enclosure_builder",
+      "large_bird_specialist",
+      "omnivore_expert",
+      "wetland_scientist"
+    ],
+    "flavorText": "These gulls steal food and eggs from other birds and scavenge at garbage dumps.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "rose_breasted_grosbeak",
+    "name": "Rose-Breasted Grosbeak",
+    "scientificName": "Pheucticus ludovicianus",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromFeederIfAvailable",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "foodTypes": [
+          "SEED",
+          "FRUIT"
+        ],
+        "count": 1
+      },
+      "text": "Gain 1 [seed] or [fruit] from the birdfeeder, if available."
+    },
+    "victoryPoints": 6,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 33,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "bird_feeder",
+      "forester",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "This pretty, sweet-sounding bird has the gruesome nickname \"cut-throat\".",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "roseate_spoonbill",
+    "name": "Roseate Spoonbill",
+    "scientificName": "Platalea ajaja",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawBonusCardsAndKeep",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "drawCount": 2,
+        "keepCount": 1
+      },
+      "text": "Draw 2 new bonus cards and keep 1."
+    },
+    "victoryPoints": 6,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1,
+      "FISH": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 127,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "bird_feeder",
+      "fishery_manager",
+      "large_bird_specialist",
+      "platform_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "This bird's unusually shaped bill helps it feel prey in the water.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "BONUS_CARD"
+  },
+  {
+    "id": "ruby_crowned_kinglet",
+    "name": "Ruby-Crowned Kinglet",
+    "scientificName": "Regulus calendula",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "playAdditionalBirdInHabitat",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "habitat": "FOREST"
+      },
+      "text": "Play an additional bird in your [forest]. Pay its normal cost."
+    },
+    "victoryPoints": 2,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 20,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "bird_feeder",
+      "forester",
+      "passerine_specialist",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Kinglets' ruby-red crown feathers pop up when they are agitated.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "ruby_throated_hummingbird",
+    "name": "Ruby-Throated Hummingbird",
+    "scientificName": "Archilochus colubris",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "eachPlayerGainsFoodFromFeeder",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1
+      },
+      "text": "Each player gains 1 [die] from the birdfeeder, starting with the player of your choice."
+    },
+    "victoryPoints": 4,
+    "nestType": "BOWL",
+    "eggCapacity": 2,
+    "foodCost": {
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 10,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "omnivore_expert",
+      "passerine_specialist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Hummingbirds feed on nectar---but they also eat many small insects.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "ruddy_duck",
+    "name": "Ruddy Duck",
+    "scientificName": "Oxyura jamaicensis",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawCardsWithDelayedDiscard",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 2,
+        "discardCount": 1
+      },
+      "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn."
+    },
+    "victoryPoints": 0,
+    "nestType": "PLATFORM",
+    "eggCapacity": 5,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 48,
+    "bonusCards": [
+      "photographer",
+      "backyard_birder",
+      "bird_feeder",
+      "platform_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "To display for mates, male slap their blue bills on their chests and run across the water.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "sandhill_crane",
+    "name": "Sandhill Crane",
+    "scientificName": "Antigone canadensis",
+    "habitats": [
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "discardFoodToTuckFromDeck",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "tuckCount": 1
+      },
+      "text": "Discard 1 [seed] to tuck 2 [card] from the deck behind this bird."
+    },
+    "victoryPoints": 5,
+    "nestType": "GROUND",
+    "eggCapacity": 1,
+    "foodCost": {
+      "SEED": 2,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 196,
+    "bonusCards": [
+      "cartographer",
+      "bird_counter",
+      "bird_feeder",
+      "enclosure_builder",
+      "large_bird_specialist",
+      "omnivore_expert"
+    ],
+    "flavorText": "Sandhill cranes can live for decades and mate for life.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "savannah_sparrow",
+    "name": "Savannah Sparrow",
+    "scientificName": "Passerculus sandwichensis",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "playAdditionalBirdInHabitat",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "habitat": "GRASSLAND"
+      },
+      "text": "Play an additional bird in your [grassland]. Pay its normal cost."
+    },
+    "victoryPoints": 2,
+    "nestType": "GROUND",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 18,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "bird_feeder",
+      "enclosure_builder",
+      "passerine_specialist",
+      "prairie_manager"
+    ],
+    "flavorText": "This sparrow is named after both Savannah, Georgia, and Sandwich Sound, Alaska.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "says_phoebe",
+    "name": "Say's Phoebe",
+    "scientificName": "Sayornis saya",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "layEggOnBirdsWithNestType",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "nestType": "BOWL",
+        "count": 1
+      },
+      "text": "Lay 1 [egg] on each of your birds with a [bowl] nest."
+    },
+    "victoryPoints": 5,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 3
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 33,
+    "bonusCards": [
+      "historian",
+      "food_web_expert",
+      "prairie_manager",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Thomas Say also has snails, crabs, and a snake named after him.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "scaled_quail",
+    "name": "Scaled Quail",
+    "scientificName": "Callipepla squamata",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "layEggsOnBird",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1,
+        "eggTarget": "THIS_BIRD"
+      },
+      "text": "Lay 1 [egg] on this bird."
+    },
+    "victoryPoints": 0,
+    "nestType": "GROUND",
+    "eggCapacity": 6,
+    "foodCost": {
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 36,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_feeder",
+      "enclosure_builder",
+      "prairie_manager"
+    ],
+    "flavorText": "Quail chicks can get up and follow their parents as soon as they hatch.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "scissor_tailed_flycatcher",
+    "name": "Scissor-Tailed Flycatcher",
+    "scientificName": "Tyrannus forficatus",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "allPlayersGainFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "INVERTEBRATE",
+        "count": 1
+      },
+      "text": "All players gain 1 [invertebrate] from the supply."
+    },
+    "victoryPoints": 8,
+    "nestType": "BOWL",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 2,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 38,
+    "bonusCards": [
+      "anatomist",
+      "prairie_manager",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "The mating display of these birds involves aerial acrobatics that show off their long tails.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "snowy_egret",
+    "name": "Snowy Egret",
+    "scientificName": "Egretta thula",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "rollDiceAndCacheIfMatch",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "FISH",
+        "count": 1
+      },
+      "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird."
+    },
+    "victoryPoints": 4,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FISH": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 104,
+    "bonusCards": [
+      "photographer",
+      "falconer",
+      "fishery_manager",
+      "large_bird_specialist",
+      "platform_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "In the 1880's, these birds' wispy plumes were literally worth their weight in gold.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "song_sparrow",
+    "name": "Song Sparrow",
+    "scientificName": "Melospiza melodia",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "moveToAnotherHabitatIfRightmost",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {},
+      "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat."
+    },
+    "victoryPoints": 0,
+    "nestType": "BOWL",
+    "eggCapacity": 5,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 20,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_feeder",
+      "passerine_specialist",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "When resources are abundant, song sparrows can rear four clutches of eggs in a year.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "spotted_owl",
+    "name": "Spotted Owl",
+    "scientificName": "Strix occidentalis",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "drawBonusCardsAndKeep",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "drawCount": 2,
+        "keepCount": 1
+      },
+      "text": "Draw 2 new bonus cards and keep 1."
+    },
+    "victoryPoints": 5,
+    "nestType": "CAVITY",
+    "eggCapacity": 1,
+    "foodCost": {
+      "RODENT": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 102,
+    "bonusCards": [
+      "forester",
+      "large_bird_specialist",
+      "nest_box_builder",
+      "rodentologist"
+    ],
+    "flavorText": "Habitat for these birds was a topic in logging fights in the Pacific Northwest region of the US.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "BONUS_CARD"
+  },
+  {
+    "id": "spotted_sandpiper",
+    "name": "Spotted Sandpiper",
+    "scientificName": "Actitis macularius",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "allPlayersDrawCardsFromDeck",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1
+      },
+      "text": "All players draw 1 [card] from the deck."
+    },
+    "victoryPoints": 5,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 38,
+    "bonusCards": [
+      "enclosure_builder",
+      "food_web_expert",
+      "wetland_scientist"
+    ],
+    "flavorText": "These sandpipers consistently bob their tails; people call them teeter-peeps and tip-tails.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "spotted_towhee",
+    "name": "Spotted Towhee",
+    "scientificName": "Pipilo maculatus",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "count": 1
+      },
+      "text": "Gain 1 [seed] from the supply."
+    },
+    "victoryPoints": 0,
+    "nestType": "GROUND",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 28,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_feeder",
+      "enclosure_builder",
+      "passerine_specialist",
+      "viticulturalist"
+    ],
+    "flavorText": "These birds forage by hopping backwards to uncover insects and seeds in the leaf litter.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "spragues_pipit",
+    "name": "Sprague's Pipit",
+    "scientificName": "Anthus spragueii",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "drawBonusCardsAndKeep",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "drawCount": 2,
+        "keepCount": 1
+      },
+      "text": "Draw 2 new bonus cards and keep 1."
+    },
+    "victoryPoints": 3,
+    "nestType": "GROUND",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 25,
+    "bonusCards": [
+      "historian",
+      "backyard_birder",
+      "bird_feeder",
+      "enclosure_builder",
+      "passerine_specialist",
+      "prairie_manager"
+    ],
+    "flavorText": "This rare bird's mating display can last for over an hour.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "BONUS_CARD"
+  },
+  {
+    "id": "stellers_jay",
+    "name": "Steller's Jay",
+    "scientificName": "Cyanocitta stelleri",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromFeederWithCache",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "count": 1
+      },
+      "text": "Gain 1 [seed] from the birdfeeder, if available. You may cache it on this bird."
+    },
+    "victoryPoints": 5,
+    "nestType": "BOWL",
+    "eggCapacity": 2,
+    "foodCost": {
+      "SEED": 2,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 48,
+    "bonusCards": [
+      "historian",
+      "bird_feeder",
+      "forester",
+      "omnivore_expert",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Naturalist Georg Steller saw this bird on a Russian exploration to Alaska in 1741.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "swainsons_hawk",
+    "name": "Swainson's Hawk",
+    "scientificName": "Buteo swainsoni",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "lookAtCardAndTuckIfWingspanUnder",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "wingspanThreshold": 75
+      },
+      "text": "Look at a [card] from the deck. If less than 75cm, tuck it behind this bird. If not, discard it."
+    },
+    "victoryPoints": 5,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "RODENT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 130,
+    "bonusCards": [
+      "historian",
+      "falconer",
+      "large_bird_specialist",
+      "platform_builder",
+      "prairie_manager",
+      "rodentologist"
+    ],
+    "flavorText": "These hawks feed chicks small mammals and birds, but adults eat mostly insects.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "tree_swallow",
+    "name": "Tree Swallow",
+    "scientificName": "Tachycineta bicolor",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "tuckAndDraw",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 1,
+        "tuckCount": 1
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card]."
+    },
+    "victoryPoints": 3,
+    "nestType": "CAVITY",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 38,
+    "bonusCards": [
+      "backyard_birder",
+      "bird_counter",
+      "nest_box_builder",
+      "viticulturalist",
+      "wetland_scientist"
+    ],
+    "flavorText": "Tree swallows can form flocks numbering in the hundreds of thousands.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "trumpeter_swan",
+    "name": "Trumpeter Swan",
+    "scientificName": "Cygnus buccinator",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": null,
+    "victoryPoints": 9,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "SEED": 2,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 203,
+    "bonusCards": [
+      "bird_feeder",
+      "enclosure_builder",
+      "large_bird_specialist",
+      "omnivore_expert",
+      "wetland_scientist"
+    ],
+    "flavorText": "With a mass over 9 kilograms, trumpeter swans are the heaviest bird in North America.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "tufted_titmouse",
+    "name": "Tufted Titmouse",
+    "scientificName": "Baeolophus bicolor",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "playAdditionalBirdInHabitat",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "habitat": "FOREST"
+      },
+      "text": "Play an additional bird in your [forest]. Pay its normal cost."
+    },
+    "victoryPoints": 2,
+    "nestType": "CAVITY",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 25,
+    "bonusCards": [
+      "anatomist",
+      "backyard_birder",
+      "bird_feeder",
+      "forester",
+      "nest_box_builder",
+      "passerine_specialist",
+      "viticulturalist"
+    ],
+    "flavorText": "Titmice are key in the formation of mixed-species flocks.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "turkey_vulture",
+    "name": "Turkey Vulture",
+    "scientificName": "Cathartes aura",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "whenOpponentPredatorSucceedsGainFood",
+      "trigger": "ONCE_BETWEEN_TURNS",
+      "params": {
+        "count": 1
+      },
+      "text": "When another player's [predator] succeeds, gain 1 [die] from the birdfeeder."
+    },
+    "victoryPoints": 1,
+    "nestType": "CAVITY",
+    "eggCapacity": 1,
+    "foodCost": {},
+    "foodCostMode": "NONE",
+    "wingspanCentimeters": 170,
+    "bonusCards": [
+      "backyard_birder",
+      "large_bird_specialist",
+      "nest_box_builder"
+    ],
+    "flavorText": "Turkey vultures can projectile vomit to defend themselves.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "vauxs_swift",
+    "name": "Vaux's Swift",
+    "scientificName": "Chaetura vauxi",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "tuckAndGainFood",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "INVERTEBRATE",
+        "tuckCount": 1,
+        "foodCount": 1
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, gain 1 [invertebrate] from the supply."
+    },
+    "victoryPoints": 2,
+    "nestType": "CAVITY",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 31,
+    "bonusCards": [
+      "historian",
+      "backyard_birder",
+      "bird_counter",
+      "food_web_expert",
+      "forester",
+      "nest_box_builder"
+    ],
+    "flavorText": "William Sansom Vaux was a wealthy mineralogist and naturalist.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "violet_green_swallow",
+    "name": "Violet-Green Swallow",
+    "scientificName": "Tachycineta thalassina",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "tuckAndDraw",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 1,
+        "tuckCount": 1
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card]."
+    },
+    "victoryPoints": 3,
+    "nestType": "CAVITY",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 36,
+    "bonusCards": [
+      "photographer",
+      "backyard_birder",
+      "bird_counter",
+      "food_web_expert",
+      "nest_box_builder"
+    ],
+    "flavorText": "Like other swallows, these birds forage in large groups in open areas.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "western_meadowlark",
+    "name": "Western Meadowlark",
+    "scientificName": "Sturnella neglecta",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "allPlayersLayEggOnNestType",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "nestType": "GROUND",
+        "allPlayersCount": 1,
+        "bonusCount": 1
+      },
+      "text": "All players lay 1 [egg] on any 1 [ground] bird. You may lay 1 [egg] on 1 additional [ground] bird."
+    },
+    "victoryPoints": 2,
+    "nestType": "GROUND",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 38,
+    "bonusCards": [
+      "cartographer",
+      "backyard_birder",
+      "bird_feeder",
+      "enclosure_builder",
+      "prairie_manager"
+    ],
+    "flavorText": "This pretty bird also has a beautiful flute-like song.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "western_tanager",
+    "name": "Western Tanager",
+    "scientificName": "Piranga ludoviciana",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromFeederIfAvailable",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "INVERTEBRATE",
+        "foodTypes": [
+          "INVERTEBRATE",
+          "FRUIT"
+        ],
+        "count": 1
+      },
+      "text": "Gain 1 [invertebrate] or [fruit] from the birdfeeder, if available."
+    },
+    "victoryPoints": 6,
+    "nestType": "BOWL",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 2,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 30,
+    "bonusCards": [
+      "cartographer",
+      "forester",
+      "passerine_specialist",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "These flame-colored birds are hard to see because they like the canopies of evergreen forests.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "white_breasted_nuthatch",
+    "name": "White-Breasted Nuthatch",
+    "scientificName": "Sitta carolinensis",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "cacheFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "SEED",
+        "count": 1
+      },
+      "text": "Cache 1 [seed] from the supply on this bird."
+    },
+    "victoryPoints": 2,
+    "nestType": "CAVITY",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 28,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "bird_feeder",
+      "forester",
+      "nest_box_builder",
+      "passerine_specialist"
+    ],
+    "flavorText": "Nuthatches cache seeds for winter in the bark of a tree.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "white_crowned_sparrow",
+    "name": "White-Crowned Sparrow",
+    "scientificName": "Zonotrichia leucophrys",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "moveToAnotherHabitatIfRightmost",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {},
+      "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat."
+    },
+    "victoryPoints": 2,
+    "nestType": "GROUND",
+    "eggCapacity": 5,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 25,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "bird_feeder",
+      "enclosure_builder",
+      "passerine_specialist"
+    ],
+    "flavorText": "These sparrows like shrubby areas in many habitats, from tundra to desert.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "white_faced_ibis",
+    "name": "White-Faced Ibis",
+    "scientificName": "Plegadis chihi",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "rollDiceAndCacheIfMatch",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "FISH",
+        "count": 1
+      },
+      "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird."
+    },
+    "victoryPoints": 8,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 2,
+      "FISH": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 91,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "falconer",
+      "fishery_manager",
+      "large_bird_specialist",
+      "platform_builder",
+      "wetland_scientist"
+    ],
+    "flavorText": "White-faced herons nest in colonies with herons and egrets.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "white_throated_swift",
+    "name": "White-Throated Swift",
+    "scientificName": "Aeronautes saxatalis",
+    "habitats": [
+      "GRASSLAND"
+    ],
+    "power": {
+      "handlerId": "tuckFromHandAndLay",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "tuckCount": 1,
+        "eggCount": 1,
+        "eggTarget": "ANY_BIRD"
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, lay 1 [egg] on any bird."
+    },
+    "victoryPoints": 2,
+    "nestType": "CAVITY",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 38,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "bird_counter",
+      "food_web_expert",
+      "nest_box_builder",
+      "prairie_manager"
+    ],
+    "flavorText": "The white-throated swift is one of the fastest birds in North America.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "whooping_crane",
+    "name": "Whooping Crane",
+    "scientificName": "Grus americana",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawBonusCardsAndKeep",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "drawCount": 2,
+        "keepCount": 1
+      },
+      "text": "Draw 2 new bonus cards and keep 1."
+    },
+    "victoryPoints": 6,
+    "nestType": "GROUND",
+    "eggCapacity": 1,
+    "foodCost": {
+      "WILD": 3
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 221,
+    "bonusCards": [
+      "enclosure_builder",
+      "large_bird_specialist",
+      "omnivore_expert",
+      "wetland_scientist"
+    ],
+    "flavorText": "From its low of 20 birds, the whooping crane population has risen to about 600.",
+    "countries": [
+      "North America"
+    ],
+    "categorization": "BONUS_CARD"
+  },
+  {
+    "id": "wild_turkey",
+    "name": "Wild Turkey",
+    "scientificName": "Meleagris gallopavo",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND"
+    ],
+    "power": null,
+    "victoryPoints": 8,
+    "nestType": "GROUND",
+    "eggCapacity": 5,
+    "foodCost": {
+      "SEED": 2,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 135,
+    "bonusCards": [
+      "bird_feeder",
+      "enclosure_builder",
+      "large_bird_specialist",
+      "viticulturalist"
+    ],
+    "flavorText": "Wild turkeys were domesticated in the Americas before European contact.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "willet",
+    "name": "Willet",
+    "scientificName": "Tringa semipalmata",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "rollDiceAndCacheIfMatch",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "FISH",
+        "count": 1
+      },
+      "text": "Roll all dice not in birdfeeder. If any are [fish], cache 1 [fish] from the supply on this bird."
+    },
+    "victoryPoints": 4,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FISH": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 66,
+    "bonusCards": [
+      "enclosure_builder",
+      "falconer",
+      "fishery_manager",
+      "large_bird_specialist",
+      "wetland_scientist"
+    ],
+    "flavorText": "Willets feed during the day and the night.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "PREDATOR"
+  },
+  {
+    "id": "wilsons_snipe",
+    "name": "Wilson's Snipe",
+    "scientificName": "Gallinago delicata",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "allPlayersDrawCardsFromDeck",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "count": 1
+      },
+      "text": "All players draw 1 [card] from the deck."
+    },
+    "victoryPoints": 5,
+    "nestType": "GROUND",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 41,
+    "bonusCards": [
+      "historian",
+      "enclosure_builder",
+      "food_web_expert",
+      "wetland_scientist"
+    ],
+    "flavorText": "Due to the position of their eyes, Wilson's snipes can see predators approaching from the front and back.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "wood_duck",
+    "name": "Wood Duck",
+    "scientificName": "Aix sponsa",
+    "habitats": [
+      "FOREST",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawCardsWithDelayedDiscard",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 2,
+        "discardCount": 1
+      },
+      "text": "Draw 2 [card]. If you do, discard 1 [card] from your hand at the end of your turn."
+    },
+    "victoryPoints": 4,
+    "nestType": "CAVITY",
+    "eggCapacity": 4,
+    "foodCost": {
+      "SEED": 2,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 76,
+    "bonusCards": [
+      "bird_feeder",
+      "large_bird_specialist",
+      "nest_box_builder",
+      "viticulturalist"
+    ],
+    "flavorText": "Wood ducks nest in tree cavities in wooded areas.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "wood_stork",
+    "name": "Wood Stork",
+    "scientificName": "Mycteria americana",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "drawBonusCardsAndKeep",
+      "trigger": "WHEN_PLAYED",
+      "params": {
+        "drawCount": 2,
+        "keepCount": 1
+      },
+      "text": "Draw 2 new bonus cards and keep 1."
+    },
+    "victoryPoints": 6,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "FISH": 1,
+      "RODENT": 1,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 155,
+    "bonusCards": [
+      "fishery_manager",
+      "large_bird_specialist",
+      "omnivore_expert",
+      "platform_builder",
+      "rodentologist",
+      "wetland_scientist"
+    ],
+    "flavorText": "The wood stork was removed from the US endangered species list in 2014.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": "BONUS_CARD"
+  },
+  {
+    "id": "yellow_bellied_sapsucker",
+    "name": "Yellow-Bellied Sapsucker",
+    "scientificName": "Sphyrapicus varius",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "gainFoodFromSupply",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "foodType": "INVERTEBRATE",
+        "count": 1
+      },
+      "text": "Gain 1 [invertebrate] from the supply."
+    },
+    "victoryPoints": 3,
+    "nestType": "CAVITY",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 41,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "forester",
+      "nest_box_builder",
+      "viticulturalist"
+    ],
+    "flavorText": "Sapsuckers drill rows of holes in trees, then they lap up the sap and the insects it attracts.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "yellow_billed_cuckoo",
+    "name": "Yellow-Billed Cuckoo",
+    "scientificName": "Coccyzus americanus",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "whenOpponentLaysEggsLayEggOnNestType",
+      "trigger": "ONCE_BETWEEN_TURNS",
+      "params": {
+        "nestType": "BOWL",
+        "count": 1
+      },
+      "text": "When another player takes the \"lay eggs\" action, lay 1 [egg] on a bird with a [bowl] nest."
+    },
+    "victoryPoints": 5,
+    "nestType": "PLATFORM",
+    "eggCapacity": 2,
+    "foodCost": {
+      "INVERTEBRATE": 2,
+      "WILD": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 46,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "forester",
+      "omnivore_expert",
+      "platform_builder"
+    ],
+    "flavorText": "Yellow-billed cuckoos lay their eggs in other birds' nests when food is abundant.",
+    "countries": [
+      "North America",
+      "Central America",
+      "South America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "yellow_breasted_chat",
+    "name": "Yellow-Breasted Chat",
+    "scientificName": "Icteria virens",
+    "habitats": [
+      "FOREST",
+      "GRASSLAND",
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "moveToAnotherHabitatIfRightmost",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {},
+      "text": "If this bird is to the right of all other birds in its habitat, move it to another habitat."
+    },
+    "victoryPoints": 5,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "FRUIT": 2
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 25,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "passerine_specialist",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Because these birds like dense thickets, they are more often heard than seen.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": null
+  },
+  {
+    "id": "yellow_headed_blackbird",
+    "name": "Yellow-Headed Blackbird",
+    "scientificName": "Xanthocephalus xanthocephalus",
+    "habitats": [
+      "WETLAND"
+    ],
+    "power": {
+      "handlerId": "tuckFromHandAndLay",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "tuckCount": 1,
+        "eggCount": 1,
+        "eggTarget": "THIS_BIRD"
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, you may also lay 1 [egg] on this bird."
+    },
+    "victoryPoints": 4,
+    "nestType": "BOWL",
+    "eggCapacity": 3,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1
+    },
+    "foodCostMode": "AND",
+    "wingspanCentimeters": 38,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "bird_counter",
+      "bird_feeder",
+      "wetland_scientist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "These blackbirds form huge flocks, especially in winter.",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  },
+  {
+    "id": "yellow_rumped_warbler",
+    "name": "Yellow-Rumped Warbler",
+    "scientificName": "Setophaga coronata",
+    "habitats": [
+      "FOREST"
+    ],
+    "power": {
+      "handlerId": "tuckAndDraw",
+      "trigger": "WHEN_ACTIVATED",
+      "params": {
+        "drawCount": 1,
+        "tuckCount": 1
+      },
+      "text": "Tuck 1 [card] from your hand behind this bird. If you do, draw 1 [card]."
+    },
+    "victoryPoints": 1,
+    "nestType": "BOWL",
+    "eggCapacity": 4,
+    "foodCost": {
+      "INVERTEBRATE": 1,
+      "SEED": 1,
+      "FRUIT": 1
+    },
+    "foodCostMode": "OR",
+    "wingspanCentimeters": 23,
+    "bonusCards": [
+      "anatomist",
+      "photographer",
+      "backyard_birder",
+      "bird_counter",
+      "bird_feeder",
+      "forester",
+      "passerine_specialist",
+      "viticulturalist",
+      "wildlife_gardener"
+    ],
+    "flavorText": "Birders sometimes call these birds \"butterbutts.\"",
+    "countries": [
+      "North America",
+      "Central America"
+    ],
+    "categorization": "FLOCKING"
+  }
+]

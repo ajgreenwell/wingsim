@@ -1,0 +1,84 @@
+{
+  "playBirdCosts": [1, 1, 2, 2, 3],
+  "forest": {
+    "action": "GAIN_FOOD",
+    "baseRewards": [1, 1, 2, 2, 3, 3],
+    "bonusRewards": [
+      null,
+      {
+        "tradeFrom": "CARDS",
+        "tradeFromAmount": 1,
+        "tradeTo": "FOOD",
+        "tradeToAmount": 1
+      },
+      null,
+      {
+        "tradeFrom": "CARDS",
+        "tradeFromAmount": 1,
+        "tradeTo": "FOOD",
+        "tradeToAmount": 1
+      },
+      null,
+      {
+        "tradeFrom": "CARDS",
+        "tradeFromAmount": 1,
+        "tradeTo": "FOOD",
+        "tradeToAmount": 1
+      }
+    ]
+  },
+  "grassland": {
+    "action": "LAY_EGGS",
+    "baseRewards": [2, 2, 3, 3, 4, 4],
+    "bonusRewards": [
+      null,
+      {
+        "tradeFrom": "FOOD",
+        "tradeFromAmount": 1,
+        "tradeTo": "EGGS",
+        "tradeToAmount": 1
+      },
+      null,
+      {
+        "tradeFrom": "FOOD",
+        "tradeFromAmount": 1,
+        "tradeTo": "EGGS",
+        "tradeToAmount": 1
+      },
+      null,
+      {
+        "tradeFrom": "FOOD",
+        "tradeFromAmount": 1,
+        "tradeTo": "EGGS",
+        "tradeToAmount": 1
+      }
+    ]
+  },
+  "wetland": {
+    "action": "DRAW_CARDS",
+    "baseRewards": [1, 1, 2, 2, 3, 3],
+    "bonusRewards": [
+      null,
+      {
+        "tradeFrom": "EGGS",
+        "tradeFromAmount": 1,
+        "tradeTo": "CARDS",
+        "tradeToAmount": 1
+      },
+      null,
+      {
+        "tradeFrom": "EGGS",
+        "tradeFromAmount": 1,
+        "tradeTo": "CARDS",
+        "tradeToAmount": 1
+      },
+      null,
+      {
+        "tradeFrom": "EGGS",
+        "tradeFromAmount": 1,
+        "tradeTo": "CARDS",
+        "tradeToAmount": 1
+      }
+    ]
+  }
+}

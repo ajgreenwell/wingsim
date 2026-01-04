@@ -1,0 +1,82 @@
+[
+  {
+    "id": "birds_in_forest",
+    "name": "[bird] in [forest]",
+    "description": "Count the total number of birds you currently have in this specific habitat row."
+  },
+  {
+    "id": "birds_in_grassland",
+    "name": "[bird] in [grassland]",
+    "description": "Count the total number of birds you currently have in this specific habitat row."
+  },
+  {
+    "id": "birds_in_wetland",
+    "name": "[bird] in [wetland]",
+    "description": "Count the total number of birds you currently have in this specific habitat row."
+  },
+  {
+    "id": "eggs_in_forest",
+    "name": "[egg] in [forest]",
+    "description": "Count the total number of eggs your birds have laid in this specific habitat row. Multiple eggs on one bird each count."
+  },
+  {
+    "id": "eggs_in_grassland",
+    "name": "[egg] in [grassland]",
+    "description": "Count the total number of eggs your birds have laid in this specific habitat row. Multiple eggs on one bird each count."
+  },
+  {
+    "id": "eggs_in_wetland",
+    "name": "[egg] in [wetland]",
+    "description": "Count the total number of eggs your birds have laid in this specific habitat row. Multiple eggs on one bird each count."
+  },
+  {
+    "id": "eggs_in_bowl_nests",
+    "name": "[egg] in [bowl]",
+    "description": "Count the total number of eggs on birds with this specific nest type. Multiple eggs on one bird each count. Star nests count toward this goal."
+  },
+  {
+    "id": "eggs_in_cavity_nests",
+    "name": "[egg] in [cavity]",
+    "description": "Count the total number of eggs on birds with this specific nest type. Multiple eggs on one bird each count. Star nests count toward this goal."
+  },
+  {
+    "id": "eggs_in_ground_nests",
+    "name": "[egg] in [ground]",
+    "description": "Count the total number of eggs on birds with this specific nest type. Multiple eggs on one bird each count. Star nests count toward this goal."
+  },
+  {
+    "id": "eggs_in_platform_nests",
+    "name": "[egg] in [platform]",
+    "description": "Count the total number of eggs on birds with this specific nest type. Multiple eggs on one bird each count. Star nests count toward this goal."
+  },
+  {
+    "id": "bowl_nesting_birds_with_eggs",
+    "name": "[bowl] [bird] with [egg]",
+    "description": "Count the total number of birds with this specific nest type that have at least 1 egg. Each bird counts just once, regardless of how many eggs it has. Star nests count toward this goal."
+  },
+  {
+    "id": "cavity_nesting_birds_with_eggs",
+    "name": "[cavity] [bird] with [egg]",
+    "description": "Count the total number of birds with this specific nest type that have at least 1 egg. Each bird counts just once, regardless of how many eggs it has. Star nests count toward this goal."
+  },
+  {
+    "id": "ground_nesting_birds_with_eggs",
+    "name": "[ground] [bird] with [egg]",
+    "description": "Count the total number of birds with this specific nest type that have at least 1 egg. Each bird counts just once, regardless of how many eggs it has. Star nests count toward this goal."
+  },
+  {
+    "id": "platform_nesting_birds_with_eggs",
+    "name": "[platform] [bird] with [egg]",
+    "description": "Count the total number of birds with this specific nest type that have at least 1 egg. Each bird counts just once, regardless of how many eggs it has. Star nests count toward this goal."
+  },
+  {
+    "id": "total_birds_played",
+    "name": "total [bird]",
+    "description": "Count the total number of birds you have played."
+  },
+  {
+    "id": "egg_sets_across_habitats",
+    "name": "sets of [egg][egg][egg] in [wetland][grassland][forest]",
+    "description": "One set of eggs consists of 1 egg in the wetland row, 1 egg in the grassland row, and 1 egg in the forest row. Count the number of sets."
+  }
+]

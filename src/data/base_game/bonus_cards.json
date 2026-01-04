@@ -1,0 +1,466 @@
+[
+  {
+    "id": "anatomist",
+    "name": "Anatomist",
+    "condition": "Birds with body parts in their names",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 2,
+        "maxCount": 3,
+        "points": 3
+      },
+      {
+        "minCount": 4,
+        "maxCount": null,
+        "points": 6
+      }
+    ],
+    "explanatoryText": "Body parts include back, beak, belly, bill, breast, brow, cap, chin, collar, crest, crown, ear, eye, face, foot, head, leg, mouth, nape, neck, rump, shoulder, tail, throat, toe, vent, wattle, wing",
+    "percentageOfEligibleBirds": 22
+  },
+  {
+    "id": "backyard_birder",
+    "name": "Backyard Birder",
+    "condition": "Birds worth less than 4 points",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 5,
+        "maxCount": 6,
+        "points": 3
+      },
+      {
+        "minCount": 7,
+        "maxCount": null,
+        "points": 6
+      }
+    ],
+    "explanatoryText": null,
+    "percentageOfEligibleBirds": 42
+  },
+  {
+    "id": "bird_counter",
+    "name": "Bird Counter",
+    "condition": "Birds with a [flocking] power",
+    "scoringType": "PER_BIRD",
+    "scoring": [
+      {
+        "points": 2
+      }
+    ],
+    "explanatoryText": null,
+    "percentageOfEligibleBirds": 15
+  },
+  {
+    "id": "bird_feeder",
+    "name": "Bird Feeder",
+    "condition": "Birds that eat [seed]",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 5,
+        "maxCount": 7,
+        "points": 3
+      },
+      {
+        "minCount": 8,
+        "maxCount": null,
+        "points": 7
+      }
+    ],
+    "explanatoryText": "Any bird with a [seed] symbol. The bird may also eat other kinds of food.",
+    "percentageOfEligibleBirds": 44
+  },
+  {
+    "id": "breeding_manager",
+    "name": "Breeding Manager",
+    "condition": "Birds that have at least 4 eggs laid on them",
+    "scoringType": "PER_BIRD",
+    "scoring": [
+      {
+        "points": 1
+      }
+    ],
+    "explanatoryText": null,
+    "percentageOfEligibleBirds": 28
+  },
+  {
+    "id": "cartographer",
+    "name": "Cartographer",
+    "condition": "Birds with geography terms in their names",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 2,
+        "maxCount": 3,
+        "points": 3
+      },
+      {
+        "minCount": 4,
+        "maxCount": null,
+        "points": 7
+      }
+    ],
+    "explanatoryText": "Terms include America, Asia, Atlantic, Australasia, Australia, Baltimore, California, Canada, Carolina, Chihuahua, Corsica, desert, East, Eurasia, Europe, forest, Himalaya, Inca, India, island, jungle, mallee, marsh, Mississippi, moor, mountain, New Holland, North, Orient, Pacific, Philippine, plains, prairie, sandhill, Savannah, scrub, sea, South, Sri Lanka, West",
+    "percentageOfEligibleBirds": 23
+  },
+  {
+    "id": "ecologist",
+    "name": "Ecologist",
+    "condition": "Birds in your habitat with the fewest birds.",
+    "scoringType": "PER_BIRD",
+    "scoring": [
+      {
+        "points": 2
+      }
+    ],
+    "explanatoryText": "Ties count: If you have 3 birds in each habitat, your habitat with the fewest birds has 3 birds.",
+    "percentageOfEligibleBirds": null
+  },
+  {
+    "id": "enclosure_builder",
+    "name": "Enclosure Builder",
+    "condition": "Birds with [ground] nests",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 4,
+        "maxCount": 5,
+        "points": 4
+      },
+      {
+        "minCount": 6,
+        "maxCount": null,
+        "points": 7
+      }
+    ],
+    "explanatoryText": "Birds must have a [ground] or [star] nest symbol.",
+    "percentageOfEligibleBirds": 31
+  },
+  {
+    "id": "falconer",
+    "name": "Falconer",
+    "condition": "Birds with a [predator] power",
+    "scoringType": "PER_BIRD",
+    "scoring": [
+      {
+        "points": 2
+      }
+    ],
+    "explanatoryText": null,
+    "percentageOfEligibleBirds": 13
+  },
+  {
+    "id": "fishery_manager",
+    "name": "Fishery Manager",
+    "condition": "Birds that eat [fish]",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 2,
+        "maxCount": 3,
+        "points": 3
+      },
+      {
+        "minCount": 4,
+        "maxCount": null,
+        "points": 8
+      }
+    ],
+    "explanatoryText": "Any bird with a [fish] symbol. The bird may also eat other kinds of food.",
+    "percentageOfEligibleBirds": 18
+  },
+  {
+    "id": "food_web_expert",
+    "name": "Food Web Expert",
+    "condition": "Birds that eat only [invertebrate]",
+    "scoringType": "PER_BIRD",
+    "scoring": [
+      {
+        "points": 2
+      }
+    ],
+    "explanatoryText": "Any bird that has only [invertebrate] and no other food symbols.",
+    "percentageOfEligibleBirds": 9
+  },
+  {
+    "id": "forester",
+    "name": "Forester",
+    "condition": "Birds that can only live in [forest]",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 3,
+        "maxCount": 4,
+        "points": 4
+      },
+      {
+        "minCount": 5,
+        "maxCount": 5,
+        "points": 8
+      }
+    ],
+    "explanatoryText": null,
+    "percentageOfEligibleBirds": 24
+  },
+  {
+    "id": "historian",
+    "name": "Historian",
+    "condition": "Birds named after a person",
+    "scoringType": "PER_BIRD",
+    "scoring": [
+      {
+        "points": 2
+      }
+    ],
+    "explanatoryText": "Any bird with an 's in its name.",
+    "percentageOfEligibleBirds": 11
+  },
+  {
+    "id": "large_bird_specialist",
+    "name": "Large Bird Specialist",
+    "condition": "Birds with wingspans over 65 cm",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 4,
+        "maxCount": 5,
+        "points": 3
+      },
+      {
+        "minCount": 6,
+        "maxCount": null,
+        "points": 6
+      }
+    ],
+    "explanatoryText": null,
+    "percentageOfEligibleBirds": 35
+  },
+  {
+    "id": "nest_box_builder",
+    "name": "Nest Box Builder",
+    "condition": "Birds with [cavity] nests",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 4,
+        "maxCount": 5,
+        "points": 4
+      },
+      {
+        "minCount": 6,
+        "maxCount": null,
+        "points": 7
+      }
+    ],
+    "explanatoryText": "Birds must have a [cavity] or [star] nest symbol.",
+    "percentageOfEligibleBirds": 31
+  },
+  {
+    "id": "omnivore_expert",
+    "name": "Omnivore Expert",
+    "condition": "Birds that eat [wild]",
+    "scoringType": "PER_BIRD",
+    "scoring": [
+      {
+        "points": 2
+      }
+    ],
+    "explanatoryText": "Any bird that specifically has a [wild] symbol as part of its food cost.",
+    "percentageOfEligibleBirds": 16
+  },
+  {
+    "id": "oologist",
+    "name": "Oologist",
+    "condition": "Birds that have at least 1 egg laid on them",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 7,
+        "maxCount": 8,
+        "points": 3
+      },
+      {
+        "minCount": 9,
+        "maxCount": null,
+        "points": 6
+      }
+    ],
+    "explanatoryText": null,
+    "percentageOfEligibleBirds": null
+  },
+  {
+    "id": "passerine_specialist",
+    "name": "Passerine Specialist",
+    "condition": "Birds with wingspans 30 cm or less",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 4,
+        "maxCount": 5,
+        "points": 3
+      },
+      {
+        "minCount": 6,
+        "maxCount": null,
+        "points": 6
+      }
+    ],
+    "explanatoryText": null,
+    "percentageOfEligibleBirds": 35
+  },
+  {
+    "id": "photographer",
+    "name": "Photographer",
+    "condition": "Birds with colors in their names",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 4,
+        "maxCount": 5,
+        "points": 3
+      },
+      {
+        "minCount": 6,
+        "maxCount": null,
+        "points": 6
+      }
+    ],
+    "explanatoryText": "Colors include ash, azure, bay, black, blue, bronze, brown, cerulean, chestnut, coal, crimson, emerald, ferruginous, fire, gold, gray, green, indigo, lazuli, olive, orange, pink, plumbeous, purple, red, rose, ruby, ruddy, rufous, silver, snow, sulphur, tawny, teal, verditer, violet, white, yellow",
+    "percentageOfEligibleBirds": 34
+  },
+  {
+    "id": "platform_builder",
+    "name": "Platform Builder",
+    "condition": "Birds with [platform] nests",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 4,
+        "maxCount": 5,
+        "points": 4
+      },
+      {
+        "minCount": 6,
+        "maxCount": null,
+        "points": 7
+      }
+    ],
+    "explanatoryText": "Birds must have a [platform] or [star] nest symbol.",
+    "percentageOfEligibleBirds": 31
+  },
+  {
+    "id": "prairie_manager",
+    "name": "Prairie Manager",
+    "condition": "Birds that can only live in [grassland]",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 2,
+        "maxCount": 3,
+        "points": 3
+      },
+      {
+        "minCount": 4,
+        "maxCount": null,
+        "points": 8
+      }
+    ],
+    "explanatoryText": null,
+    "percentageOfEligibleBirds": 19
+  },
+  {
+    "id": "rodentologist",
+    "name": "Rodentologist",
+    "condition": "Birds that eat [rodent]",
+    "scoringType": "PER_BIRD",
+    "scoring": [
+      {
+        "points": 2
+      }
+    ],
+    "explanatoryText": "Any bird with a [rodent] symbol. The bird may also eat other kinds of food.",
+    "percentageOfEligibleBirds": 15
+  },
+  {
+    "id": "visionary_leader",
+    "name": "Visionary Leader",
+    "condition": "Bird cards in hand at end of game",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 5,
+        "maxCount": 7,
+        "points": 4
+      },
+      {
+        "minCount": 8,
+        "maxCount": null,
+        "points": 7
+      }
+    ],
+    "explanatoryText": null,
+    "percentageOfEligibleBirds": null
+  },
+  {
+    "id": "viticulturalist",
+    "name": "Viticulturalist",
+    "condition": "Birds that eat [fruit]",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 2,
+        "maxCount": 3,
+        "points": 3
+      },
+      {
+        "minCount": 4,
+        "maxCount": null,
+        "points": 7
+      }
+    ],
+    "explanatoryText": "Any bird with a [fruit] symbol. The bird may also eat other kinds of food.",
+    "percentageOfEligibleBirds": 22
+  },
+  {
+    "id": "wetland_scientist",
+    "name": "Wetland Scientist",
+    "condition": "Birds that can only live in [wetland]",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 3,
+        "maxCount": 4,
+        "points": 3
+      },
+      {
+        "minCount": 5,
+        "maxCount": 5,
+        "points": 7
+      }
+    ],
+    "explanatoryText": null,
+    "percentageOfEligibleBirds": 26
+  },
+  {
+    "id": "wildlife_gardener",
+    "name": "Wildlife Gardener",
+    "condition": "Birds with [bowl] nests",
+    "scoringType": "TIERED",
+    "scoring": [
+      {
+        "minCount": 4,
+        "maxCount": 5,
+        "points": 4
+      },
+      {
+        "minCount": 6,
+        "maxCount": null,
+        "points": 7
+      }
+    ],
+    "explanatoryText": "Birds must have a [bowl] or [star] nest symbol.",
+    "percentageOfEligibleBirds": 31
+  }
+]

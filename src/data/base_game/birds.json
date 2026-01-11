@@ -3,9 +3,7 @@
     "id": "acorn_woodpecker",
     "name": "Acorn Woodpecker",
     "scientificName": "Melanerpes formicivorus",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "gainFoodFromFeederWithCache",
       "trigger": "WHEN_ACTIVATED",
@@ -23,25 +21,16 @@
     },
     "foodCostMode": "AND",
     "wingspanCentimeters": 46,
-    "bonusCards": [
-      "bird_feeder",
-      "forester",
-      "nest_box_builder"
-    ],
+    "bonusCards": ["bird_feeder", "forester", "nest_box_builder"],
     "flavorText": "In a single dead tree, these birds may drill as many as 50,000 holes for storing acorns.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "american_avocet",
     "name": "American Avocet",
     "scientificName": "Recurvirostra americana",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "whenOpponentLaysEggsLayEggOnNestType",
       "trigger": "ONCE_BETWEEN_TURNS",
@@ -68,19 +57,14 @@
       "wetland_scientist"
     ],
     "flavorText": "American avocets build their own nests, but they also parasitize other birds' nests.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "american_bittern",
     "name": "American Bittern",
     "scientificName": "Botaurus lentiginosus",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "playersWithFewestInHabitatDrawCard",
       "trigger": "WHEN_ACTIVATED",
@@ -109,19 +93,14 @@
       "wetland_scientist"
     ],
     "flavorText": "Bitterns hide in reeds and cattails, where they are well camouflaged.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "american_coot",
     "name": "American Coot",
     "scientificName": "Fulica americana",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "tuckAndDraw",
       "trigger": "WHEN_ACTIVATED",
@@ -150,22 +129,14 @@
       "wetland_scientist"
     ],
     "flavorText": "These omnivorous birds eat a lot of algae, but also seeds, fish, insects, and mollusks.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "american_crow",
     "name": "American Crow",
     "scientificName": "Corvus brachyrhynchos",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "discardEggToGainFood",
       "trigger": "WHEN_ACTIVATED",
@@ -191,18 +162,14 @@
       "platform_builder"
     ],
     "flavorText": "These intelligent birds steal eggs and food from other birds, and cache food for later.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "american_goldfinch",
     "name": "American Goldfinch",
     "scientificName": "Spinus tristis",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "gainFoodFromSupply",
       "trigger": "WHEN_PLAYED",
@@ -230,19 +197,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Goldfinches breed late, after the milkweek and thistle have gone to seed.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "american_kestrel",
     "name": "American Kestrel",
     "scientificName": "Falco sparverius",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "rollDiceAndCacheIfMatch",
       "trigger": "WHEN_ACTIVATED",
@@ -269,20 +231,14 @@
       "rodentologist"
     ],
     "flavorText": "Kestrels track rodents by their urine and will cache surplus kills for later.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "american_oystercatcher",
     "name": "American Oystercatcher",
     "scientificName": "Haematopus palliatus",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawAndDistributeCards",
       "trigger": "WHEN_PLAYED",
@@ -305,20 +261,14 @@
       "wetland_scientist"
     ],
     "flavorText": "These birds feed not just on oysters and shellfish but also other invertebrates.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "american_redstart",
     "name": "American Redstart",
     "scientificName": "Setophaga ruticilla",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "gainFoodFromFeeder",
       "trigger": "WHEN_ACTIVATED",
@@ -346,21 +296,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Redstarts get their name from the Old English word \"steart,\" meaning tail.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "american_robin",
     "name": "American Robin",
     "scientificName": "Turdus migratorius",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND"],
     "power": {
       "handlerId": "tuckAndDraw",
       "trigger": "WHEN_ACTIVATED",
@@ -387,25 +330,20 @@
       "wildlife_gardener"
     ],
     "flavorText": "Robins have been known to roost in groups of a hundred thousand or more.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "american_white_pelican",
     "name": "American White Pelican",
     "scientificName": "Pelecanus erythrorhynchos",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "discardFoodToTuckFromDeck",
       "trigger": "WHEN_ACTIVATED",
       "params": {
         "foodType": "FISH",
-        "tuckCount": 1
+        "tuckCount": 2
       },
       "text": "Discard 1 [fish] to tuck 2 [card] from the deck behind this bird."
     },
@@ -427,20 +365,14 @@
       "wetland_scientist"
     ],
     "flavorText": "Pelicans work together to herd fish and then scoop them up.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "american_woodcock",
     "name": "American Woodcock",
     "scientificName": "Scolopax minor",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND"],
     "power": null,
     "victoryPoints": 9,
     "nestType": "GROUND",
@@ -451,25 +383,16 @@
     },
     "foodCostMode": "AND",
     "wingspanCentimeters": 46,
-    "bonusCards": [
-      "cartographer",
-      "bird_feeder",
-      "enclosure_builder"
-    ],
+    "bonusCards": ["cartographer", "bird_feeder", "enclosure_builder"],
     "flavorText": "The woodcock's amazing mating display involves repeated dives from 90 meters.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "anhinga",
     "name": "Anhinga",
     "scientificName": "Anhinga anhinga",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "rollDiceAndCacheIfMatch",
       "trigger": "WHEN_ACTIVATED",
@@ -495,22 +418,14 @@
       "wetland_scientist"
     ],
     "flavorText": "This bird is called \"snakebird\"---it swims with only head and neck above water.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "annas_hummingbird",
     "name": "Anna's Hummingbird",
     "scientificName": "Calypte anna",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "eachPlayerGainsFoodFromFeeder",
       "trigger": "WHEN_ACTIVATED",
@@ -534,18 +449,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "These birds' impressive mating displays involve diving from over 30 meters in the air.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "ash_throated_flycatcher",
     "name": "Ash-Throated Flycatcher",
     "scientificName": "Myiarchus cinerascens",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "layEggOnBirdsWithNestType",
       "trigger": "WHEN_PLAYED",
@@ -573,19 +484,14 @@
       "viticulturalist"
     ],
     "flavorText": "These birds are adapted to dry places: they get all their water from their food.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "atlantic_puffin",
     "name": "Atlantic Puffin",
     "scientificName": "Fratercula arctica",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawBonusCardsAndKeep",
       "trigger": "WHEN_PLAYED",
@@ -613,20 +519,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Puffins' breeding areas are threatened by climate change.",
-    "countries": [
-      "North America",
-      "Europe",
-      "Asia"
-    ],
+    "countries": ["North America", "Europe", "Asia"],
     "categorization": "BONUS_CARD"
   },
   {
     "id": "bairds_sparrow",
     "name": "Baird's Sparrow",
     "scientificName": "Ammodramus bairdii",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "layEggsOnBird",
       "trigger": "WHEN_ACTIVATED",
@@ -654,19 +554,14 @@
       "prairie_manager"
     ],
     "flavorText": "Spencer Fullerton Baird was the first curator of the Smithsonian.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "bald_eagle",
     "name": "Bald Eagle",
     "scientificName": "Haliaeetus leucocephalus",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "gainAllFoodTypeFromFeeder",
       "trigger": "WHEN_PLAYED",
@@ -692,19 +587,14 @@
       "wetland_scientist"
     ],
     "flavorText": "Bald eagles steal fish. Benjamin Franklin thought this was a bad choice for the US national bird.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "baltimore_oriole",
     "name": "Baltimore Oriole",
     "scientificName": "Icterus galbula",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "allPlayersGainFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -734,22 +624,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Orioles weave pouch nests that hang from a tree nest.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "barn_owl",
     "name": "Barn Owl",
     "scientificName": "Tyto alba",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "rollDiceAndCacheIfMatch",
       "trigger": "WHEN_ACTIVATED",
@@ -789,10 +671,7 @@
     "id": "barn_swallow",
     "name": "Barn Swallow",
     "scientificName": "Hirundo rustica",
-    "habitats": [
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "tuckAndDraw",
       "trigger": "WHEN_ACTIVATED",
@@ -835,9 +714,7 @@
     "id": "barred_owl",
     "name": "Barred Owl",
     "scientificName": "Strix varia",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "lookAtCardAndTuckIfWingspanUnder",
       "trigger": "WHEN_ACTIVATED",
@@ -863,19 +740,14 @@
       "rodentologist"
     ],
     "flavorText": "The barred owl's haunting call sounds like \"Who cooks for you?\"",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "barrows_goldeneye",
     "name": "Barrow's Goldeneye",
     "scientificName": "Bucephala islandica",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "whenOpponentLaysEggsLayEggOnNestType",
       "trigger": "ONCE_BETWEEN_TURNS",
@@ -906,20 +778,14 @@
       "wetland_scientist"
     ],
     "flavorText": "These ducks will lay their eggs in the nest of any cavity-nesting duck.",
-    "countries": [
-      "North America",
-      "Europe"
-    ],
+    "countries": ["North America", "Europe"],
     "categorization": null
   },
   {
     "id": "bells_vireo",
     "name": "Bell's Vireo",
     "scientificName": "Vireo bellii",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND"],
     "power": {
       "handlerId": "drawBonusCardsAndKeep",
       "trigger": "WHEN_PLAYED",
@@ -947,19 +813,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "John Graham Bell taught taxidermy to future US President Theodore Roosevelt.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "BONUS_CARD"
   },
   {
     "id": "belted_kingfisher",
     "name": "Belted Kingfisher",
     "scientificName": "Megaceryle alcyon",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "whenOpponentPlaysBirdInHabitatGainFood",
       "trigger": "ONCE_BETWEEN_TURNS",
@@ -989,21 +850,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "A kingfisher burrow can go up to 2 meters into a riverbank and slopes to shed water.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "bewicks_wren",
     "name": "Bewick's Wren",
     "scientificName": "Thryomanes bewickii",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "moveToAnotherHabitatIfRightmost",
       "trigger": "WHEN_ACTIVATED",
@@ -1026,19 +880,14 @@
       "passerine_specialist"
     ],
     "flavorText": "These wrens have largely disappeared in the eastern part of their range due to nest predation.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "black_skimmer",
     "name": "Black Skimmer",
     "scientificName": "Rynchops niger",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "rollDiceAndCacheIfMatch",
       "trigger": "WHEN_ACTIVATED",
@@ -1065,20 +914,14 @@
       "wetland_scientist"
     ],
     "flavorText": "Skimmers plow the water with their beaks, snapping shut when they hit a fish.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "black_tern",
     "name": "Black Tern",
     "scientificName": "Chlidonias niger",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawCardsWithDelayedDiscard",
       "trigger": "WHEN_ACTIVATED",
@@ -1121,9 +964,7 @@
     "id": "black_vulture",
     "name": "Black Vulture",
     "scientificName": "Coragyps atratus",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "whenOpponentPredatorSucceedsGainFood",
       "trigger": "ONCE_BETWEEN_TURNS",
@@ -1146,26 +987,20 @@
       "nest_box_builder"
     ],
     "flavorText": "Turkey vultures have a better sense of smell, so black vultures follow them to food.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "black_bellied_whistling_duck",
     "name": "Black-Bellied Whistling-Duck",
     "scientificName": "Dendrocygna autumnalis",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "discardFoodToTuckFromDeck",
       "trigger": "WHEN_ACTIVATED",
       "params": {
         "foodType": "SEED",
-        "tuckCount": 1
+        "tuckCount": 2
       },
       "text": "Discard 1 [seed] to tuck 2 [card] from the deck behind this bird."
     },
@@ -1188,20 +1023,14 @@
       "wetland_scientist"
     ],
     "flavorText": "These ducks really do whistle.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "black_billed_magpie",
     "name": "Black-Billed Magpie",
     "scientificName": "Pica hudsonia",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "whenOpponentPredatorSucceedsGainFood",
       "trigger": "ONCE_BETWEEN_TURNS",
@@ -1230,20 +1059,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "These omnivores steal eggs and eat carrion along with a diversity of other foods.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "black_chinned_hummingbird",
     "name": "Black-Chinned Hummingbird",
     "scientificName": "Archilochus alexandri",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "allPlayersGainFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -1269,18 +1092,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "To display, males of this species will fly up 30 m then dive, reaching speeds near 100 kilometers per hour.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "black_crowned_night_heron",
     "name": "Black-Crowned Night-Heron",
     "scientificName": "Nycticorax nycticorax",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "discardEggToGainFood",
       "trigger": "WHEN_ACTIVATED",
@@ -1326,9 +1145,7 @@
     "id": "black_necked_stilt",
     "name": "Black-Necked Stilt",
     "scientificName": "Himantopus mexicanus",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawCards",
       "trigger": "WHEN_PLAYED",
@@ -1354,22 +1171,14 @@
       "wetland_scientist"
     ],
     "flavorText": "When not breeding, stilts form closely packed groups and will mob predators.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "blue_grosbeak",
     "name": "Blue Grosbeak",
     "scientificName": "Passerina caerulea",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "moveToAnotherHabitatIfRightmost",
       "trigger": "WHEN_ACTIVATED",
@@ -1393,19 +1202,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Grosbeaks especially like tangled vines and shrubby areas on forest edges.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "blue_jay",
     "name": "Blue Jay",
     "scientificName": "Cyanocitta cristata",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "gainFoodFromFeederWithCache",
       "trigger": "WHEN_ACTIVATED",
@@ -1433,18 +1237,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Blue jays can carry up to 5 acorns at a time and will store hundreds for winter.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "blue_gray_gnatcatcher",
     "name": "Blue-Gray Gnatcatcher",
     "scientificName": "Polioptila caerulea",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "gainFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -1471,20 +1271,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Gnatcatchers' breeding range is steadily shifting north with climate change.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "blue_winged_warbler",
     "name": "Blue-Winged Warbler",
     "scientificName": "Vermivora cyanoptera",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND"],
     "power": null,
     "victoryPoints": 8,
     "nestType": "BOWL",
@@ -1502,19 +1296,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "This warbler especially likes to nest on the edges between forest and fields.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "bobolink",
     "name": "Bobolink",
     "scientificName": "Dolichonyx oryzivorus",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "layEggOnBirdsWithNestType",
       "trigger": "WHEN_PLAYED",
@@ -1540,20 +1329,14 @@
       "prairie_manager"
     ],
     "flavorText": "Emily Dickinson wrote poems about these birds as rowdy choristers in her church of nature.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "brant",
     "name": "Brant",
     "scientificName": "Branta bernicla",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawFaceUpCardsFromTray",
       "trigger": "WHEN_PLAYED",
@@ -1578,20 +1361,14 @@
       "wetland_scientist"
     ],
     "flavorText": "Brants can migrate the 5300 kilometers from Alaska to Mexico in 54 hours.",
-    "countries": [
-      "North America",
-      "Europe",
-      "Asia"
-    ],
+    "countries": ["North America", "Europe", "Asia"],
     "categorization": null
   },
   {
     "id": "brewers_blackbird",
     "name": "Brewer's Blackbird",
     "scientificName": "Euphagus cyanocephalus",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "tuckFromHandAndLay",
       "trigger": "WHEN_ACTIVATED",
@@ -1622,19 +1399,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Brewer was a prominent 19th-century ornithologist and oologist.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "broad_winged_hawk",
     "name": "Broad-Winged Hawk",
     "scientificName": "Buteo platypterus",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "rollDiceAndCacheIfMatch",
       "trigger": "WHEN_ACTIVATED",
@@ -1661,20 +1433,14 @@
       "rodentologist"
     ],
     "flavorText": "This hawk is seen more during migration than when it's in the forest interior.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "bronzed_cowbird",
     "name": "Bronzed Cowbird",
     "scientificName": "Molothrus aeneus",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "whenOpponentLaysEggsLayEggOnNestType",
       "trigger": "ONCE_BETWEEN_TURNS",
@@ -1693,25 +1459,16 @@
     },
     "foodCostMode": "AND",
     "wingspanCentimeters": 36,
-    "bonusCards": [
-      "photographer",
-      "bird_feeder",
-      "prairie_manager"
-    ],
+    "bonusCards": ["photographer", "bird_feeder", "prairie_manager"],
     "flavorText": "Cowbirds lay eggs in other birds' nests and often break or push out the host bird's eggs.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "brown_pelican",
     "name": "Brown Pelican",
     "scientificName": "Pelecanus occidentalis",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "gainFoodFromSupply",
       "trigger": "WHEN_PLAYED",
@@ -1737,20 +1494,14 @@
       "wetland_scientist"
     ],
     "flavorText": "Seriously endangered in the 1970s, brown pelicans are thriving after the US and Canada banned DDT.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "brown_headed_cowbird",
     "name": "Brown-Headed Cowbird",
     "scientificName": "Molothrus ater",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "whenOpponentLaysEggsLayEggOnNestType",
       "trigger": "ONCE_BETWEEN_TURNS",
@@ -1777,19 +1528,14 @@
       "prairie_manager"
     ],
     "flavorText": "Cowbirds do not make nests; they lay their eggs in other birds' nests.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "burrowing_owl",
     "name": "Burrowing Owl",
     "scientificName": "Athene cunicularia",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "rollDiceAndCacheIfMatch",
       "trigger": "WHEN_ACTIVATED",
@@ -1818,22 +1564,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "These owls often use old prairie dog burrows for their underground nests.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "bushtit",
     "name": "Bushtit",
     "scientificName": "Psaltriparus minimus",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "tuckFromHandAndLay",
       "trigger": "WHEN_ACTIVATED",
@@ -1864,21 +1602,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Bushtits live in flocks, and single adults will help couples raise their young.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "california_condor",
     "name": "California Condor",
     "scientificName": "Gymnogyps californianus",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "drawBonusCardsAndKeep",
       "trigger": "WHEN_PLAYED",
@@ -1901,19 +1632,14 @@
       "large_bird_specialist"
     ],
     "flavorText": "There were just 22 of these scavengers alive in the 1980s, but now there are over 500.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": "BONUS_CARD"
   },
   {
     "id": "california_quail",
     "name": "California Quail",
     "scientificName": "Callipepla californica",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND"],
     "power": {
       "handlerId": "layEggsOnBird",
       "trigger": "WHEN_ACTIVATED",
@@ -1939,26 +1665,20 @@
       "enclosure_builder"
     ],
     "flavorText": "California quail nests have been reported with as many as 28 eggs.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "canada_goose",
     "name": "Canada Goose",
     "scientificName": "Branta canadensis",
-    "habitats": [
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "discardFoodToTuckFromDeck",
       "trigger": "WHEN_ACTIVATED",
       "params": {
         "foodType": "SEED",
-        "tuckCount": 1
+        "tuckCount": 2
       },
       "text": "Discard 1 [seed] to tuck 2 [card] from the deck behind this bird."
     },
@@ -1979,19 +1699,14 @@
       "large_bird_specialist"
     ],
     "flavorText": "The oldest known Canada Goose was at least 33 years old.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "canvasback",
     "name": "Canvasback",
     "scientificName": "Aythya valisineria",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "allPlayersDrawCardsFromDeck",
       "trigger": "WHEN_ACTIVATED",
@@ -2021,18 +1736,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "The fastest recorded canvasback was flying 116 kilometers per hour.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "carolina_chickadee",
     "name": "Carolina Chickadee",
     "scientificName": "Poecile carolinensis",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "cacheFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -2060,18 +1771,14 @@
       "passerine_specialist"
     ],
     "flavorText": "Chickadees hide seeds and can remember thousands of hiding places.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "carolina_wren",
     "name": "Carolina Wren",
     "scientificName": "Thryothorus ludovicianus",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "drawCards",
       "trigger": "WHEN_PLAYED",
@@ -2098,19 +1805,14 @@
       "viticulturalist"
     ],
     "flavorText": "A single male Carolina Wren can sing nearly 3,000 times in a single day.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "cassins_finch",
     "name": "Cassin's Finch",
     "scientificName": "Haemorhous cassinii",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "drawBonusCardsAndKeep",
       "trigger": "WHEN_PLAYED",
@@ -2138,19 +1840,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Fifteen birds are named after ornithologist John Cassin, including 2 in this game.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "BONUS_CARD"
   },
   {
     "id": "cassins_sparrow",
     "name": "Cassin's Sparrow",
     "scientificName": "Peucaea cassinii",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "layEggsOnBird",
       "trigger": "WHEN_ACTIVATED",
@@ -2178,20 +1875,14 @@
       "prairie_manager"
     ],
     "flavorText": "Ornithologist Josh Cassin died from years of handling arsenic-preserved birds.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "cedar_waxwing",
     "name": "Cedar Waxwing",
     "scientificName": "Bombycilla cedrorum",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND"],
     "power": {
       "handlerId": "tuckAndGainFood",
       "trigger": "WHEN_ACTIVATED",
@@ -2219,19 +1910,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "These birds secrete red wax on the tips of their wing feathers.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "cerulean_warbler",
     "name": "Cerulean Warbler",
     "scientificName": "Setophaga cerulea",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "drawBonusCardsAndKeep",
       "trigger": "WHEN_PLAYED",
@@ -2258,20 +1944,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Between 1966 and 2015, this species lost 74% of its population.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "BONUS_CARD"
   },
   {
     "id": "chestnut_collared_longspur",
     "name": "Chestnut-Collared Longspur",
     "scientificName": "Calcarius ornatus",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "drawBonusCardsAndKeep",
       "trigger": "WHEN_PLAYED",
@@ -2299,19 +1979,14 @@
       "prairie_manager"
     ],
     "flavorText": "This bird's population dropped by 82% between 1966 and 2015.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "BONUS_CARD"
   },
   {
     "id": "chihuahuan_raven",
     "name": "Chihuahuan Raven",
     "scientificName": "Corvus cryptoleucus",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "discardEggToGainFood",
       "trigger": "WHEN_ACTIVATED",
@@ -2340,21 +2015,14 @@
       "rodentologist"
     ],
     "flavorText": "This bird is native to the Chihuahuan Desert of the southwest US and northern Mexico.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "chimney_swift",
     "name": "Chimney Swift",
     "scientificName": "Chaetura pelagica",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "moveToAnotherHabitatIfRightmost",
       "trigger": "WHEN_ACTIVATED",
@@ -2378,21 +2046,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "These birds have adapted to nest in chimneys instead of hollow trees.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "chipping_sparrow",
     "name": "Chipping Sparrow",
     "scientificName": "Spizella passerina",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND"],
     "power": {
       "handlerId": "layEggsOnBird",
       "trigger": "WHEN_ACTIVATED",
@@ -2418,19 +2079,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "These sparrows generally feed on open ground, but near trees.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "clarks_grebe",
     "name": "Clark's Grebe",
     "scientificName": "Aechmophorus clarkii",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawCardsWithDelayedDiscard",
       "trigger": "WHEN_ACTIVATED",
@@ -2458,19 +2114,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Clark was a 19th-century surveyor who collected specimens for the Smithsonian.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "clarks_nutcracker",
     "name": "Clark's Nutcracker",
     "scientificName": "Nucifraga columbiana",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "gainFoodFromFeederWithCache",
       "trigger": "WHEN_ACTIVATED",
@@ -2497,20 +2148,14 @@
       "platform_builder"
     ],
     "flavorText": "These birds are omnivorous but cache thousands of pine seeds for the winter.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "common_grackle",
     "name": "Common Grackle",
     "scientificName": "Quiscalus quiscula",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "tuckFromHandAndLay",
       "trigger": "WHEN_ACTIVATED",
@@ -2538,18 +2183,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "In winter, grackles roost in large flocks that can include millions of individuals.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "common_loon",
     "name": "Common Loon",
     "scientificName": "Gavia immer",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "playersWithFewestInHabitatDrawCard",
       "trigger": "WHEN_ACTIVATED",
@@ -2576,19 +2217,14 @@
       "wetland_scientist"
     ],
     "flavorText": "Loon chicks spend the majority of their first week of life riding on a parent's back.",
-    "countries": [
-      "North America",
-      "Europe"
-    ],
+    "countries": ["North America", "Europe"],
     "categorization": null
   },
   {
     "id": "common_merganser",
     "name": "Common Merganser",
     "scientificName": "Mergus merganser",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "rollDiceAndCacheIfMatch",
       "trigger": "WHEN_ACTIVATED",
@@ -2616,22 +2252,14 @@
       "wetland_scientist"
     ],
     "flavorText": "Adult males can eat fish more than a foot long.",
-    "countries": [
-      "North America",
-      "Europe",
-      "Asia"
-    ],
+    "countries": ["North America", "Europe", "Asia"],
     "categorization": "PREDATOR"
   },
   {
     "id": "common_nighthawk",
     "name": "Common Nighthawk",
     "scientificName": "Chordeiles minor",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "moveToAnotherHabitatIfRightmost",
       "trigger": "WHEN_ACTIVATED",
@@ -2646,28 +2274,16 @@
     },
     "foodCostMode": "AND",
     "wingspanCentimeters": 56,
-    "bonusCards": [
-      "backyard_birder",
-      "enclosure_builder",
-      "food_web_expert"
-    ],
+    "bonusCards": ["backyard_birder", "enclosure_builder", "food_web_expert"],
     "flavorText": "Nighthawks are crepuscular, hunting flying insects at dawn and dusk.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "common_raven",
     "name": "Common Raven",
     "scientificName": "Corvus corax",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "discardEggToGainFood",
       "trigger": "WHEN_ACTIVATED",
@@ -2707,9 +2323,7 @@
     "id": "common_yellowthroat",
     "name": "Common Yellowthroat",
     "scientificName": "Geothlypis trichas",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawCardsWithDelayedDiscard",
       "trigger": "WHEN_ACTIVATED",
@@ -2737,19 +2351,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "This was one of the first American birds to be cataloged by Linnaeus, in 1766.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "coopers_hawk",
     "name": "Cooper's Hawk",
     "scientificName": "Accipiter cooperii",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "lookAtCardAndTuckIfWingspanUnder",
       "trigger": "WHEN_ACTIVATED",
@@ -2776,20 +2385,14 @@
       "rodentologist"
     ],
     "flavorText": "Cooper's hawks hunt forest birds and mammals with great stealth.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "dark_eyed_junco",
     "name": "Dark-Eyed Junco",
     "scientificName": "Junco hyemalis",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND"],
     "power": {
       "handlerId": "tuckAndGainFood",
       "trigger": "WHEN_ACTIVATED",
@@ -2818,18 +2421,14 @@
       "passerine_specialist"
     ],
     "flavorText": "Juncos summer in the cool woods but will use more open habitats in the winter.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "dickcissel",
     "name": "Dickcissel",
     "scientificName": "Spiza americana",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "tuckFromHandAndLay",
       "trigger": "WHEN_ACTIVATED",
@@ -2857,26 +2456,20 @@
       "prairie_manager"
     ],
     "flavorText": "This bird used to live in the eastern US, but its range has shrunk due to habitat loss.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "double_crested_cormorant",
     "name": "Double-Crested Cormorant",
     "scientificName": "Phalacrocorax auritus",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "discardFoodToTuckFromDeck",
       "trigger": "WHEN_ACTIVATED",
       "params": {
         "foodType": "FISH",
-        "tuckCount": 1
+        "tuckCount": 2
       },
       "text": "Discard 1 [fish] to tuck 2 [card] from the deck behind this bird."
     },
@@ -2900,19 +2493,14 @@
       "wetland_scientist"
     ],
     "flavorText": "Cormorant colonies can be so dense that their guano kills the trees.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "downy_woodpecker",
     "name": "Downy Woodpecker",
     "scientificName": "Picoides pubescens",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
       "trigger": "WHEN_PLAYED",
@@ -2940,18 +2528,14 @@
       "viticulturalist"
     ],
     "flavorText": "This little woodpecker frequently joins mixed flocks.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "eastern_bluebird",
     "name": "Eastern Bluebird",
     "scientificName": "Sialia sialis",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
       "trigger": "WHEN_PLAYED",
@@ -2977,21 +2561,14 @@
       "viticulturalist"
     ],
     "flavorText": "Bluebirds struggle to breed when there is a lack of tree cavities. Nest boxed help.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "eastern_kingbird",
     "name": "Eastern Kingbird",
     "scientificName": "Tyrannus tyrannus",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "whenOpponentPlaysBirdInHabitatGainFood",
       "trigger": "ONCE_BETWEEN_TURNS",
@@ -3018,22 +2595,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "The kingbird displays its orange crown while defending its territory.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "eastern_phoebe",
     "name": "Eastern Phoebe",
     "scientificName": "Sayornis phoebe",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "allPlayersGainFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -3063,19 +2632,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Phoebes use mud to attach nests to riverbanks, rocky outcrops, or human structures.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "eastern_screech_owl",
     "name": "Eastern Screech-Owl",
     "scientificName": "Megascops asio",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "rollDiceAndCacheIfMatch",
       "trigger": "WHEN_ACTIVATED",
@@ -3102,18 +2666,14 @@
       "rodentologist"
     ],
     "flavorText": "These owls live near humans, but because they're small and nocturnal, they're rarely seen.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "ferruginous_hawk",
     "name": "Ferruginous Hawk",
     "scientificName": "Buteo regalis",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "rollDiceAndCacheIfMatch",
       "trigger": "WHEN_ACTIVATED",
@@ -3140,21 +2700,14 @@
       "rodentologist"
     ],
     "flavorText": "These rust-colored birds sometimes hunt in groups in prairie dog towns.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "fish_crow",
     "name": "Fish Crow",
     "scientificName": "Corvus ossifragus",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "discardEggToGainFood",
       "trigger": "WHEN_ACTIVATED",
@@ -3181,18 +2734,14 @@
       "platform_builder"
     ],
     "flavorText": "These birds may eat more fish than other crows, but they're actually omnivores.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "forsters_tern",
     "name": "Forster's Tern",
     "scientificName": "Sterna forsteri",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawCardsWithDelayedDiscard",
       "trigger": "WHEN_ACTIVATED",
@@ -3222,20 +2771,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "These birds nest on the ground, on rafts of floating vegetation, or on muskrat lodges.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "franklins_gull",
     "name": "Franklin's Gull",
     "scientificName": "Leucophaeus pipixcan",
-    "habitats": [
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "discardEggToDrawCards",
       "trigger": "WHEN_ACTIVATED",
@@ -3266,21 +2809,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "These gulls make floating nests of plant material on prairie marshes.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "golden_eagle",
     "name": "Golden Eagle",
     "scientificName": "Aquila chrysaetos",
-    "habitats": [
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "lookAtCardAndTuckIfWingspanUnder",
       "trigger": "WHEN_ACTIVATED",
@@ -3318,9 +2854,7 @@
     "id": "grasshopper_sparrow",
     "name": "Grasshopper Sparrow",
     "scientificName": "Ammodramus savannarum",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "layEggsOnBird",
       "trigger": "WHEN_ACTIVATED",
@@ -3347,21 +2881,14 @@
       "prairie_manager"
     ],
     "flavorText": "The song of these sparrows is often mistaken for grasshoppers.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "gray_catbird",
     "name": "Gray Catbird",
     "scientificName": "Dumetella carolinensis",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "repeatBrownPowerInHabitat",
       "trigger": "WHEN_ACTIVATED",
@@ -3384,19 +2911,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Catbirds mimic other birds, and they also have a call that sounds like a cat meowing.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "great_blue_heron",
     "name": "Great Blue Heron",
     "scientificName": "Ardea herodias",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
       "trigger": "WHEN_PLAYED",
@@ -3422,28 +2944,20 @@
       "wetland_scientist"
     ],
     "flavorText": "Great blue herons form rookeries with egrets, cormorants, and other herons.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "great_crested_flycatcher",
     "name": "Great Crested Flycatcher",
     "scientificName": "Myiarchus crinitus",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "gainFoodFromFeederIfAvailable",
       "trigger": "WHEN_ACTIVATED",
       "params": {
         "foodType": "INVERTEBRATE",
-        "foodTypes": [
-          "INVERTEBRATE"
-        ],
+        "foodTypes": ["INVERTEBRATE"],
         "count": 1
       },
       "text": "Gain 1 [invertebrate] from the birdfeeder, if available."
@@ -3464,20 +2978,14 @@
       "viticulturalist"
     ],
     "flavorText": "These birds avoid competition by focusing on insects high up in trees.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "great_egret",
     "name": "Great Egret",
     "scientificName": "Ardea alba",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
       "trigger": "WHEN_PLAYED",
@@ -3518,9 +3026,7 @@
     "id": "great_horned_owl",
     "name": "Great Horned Owl",
     "scientificName": "Bubo virginianus",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "lookAtCardAndTuckIfWingspanUnder",
       "trigger": "WHEN_ACTIVATED",
@@ -3545,20 +3051,14 @@
       "rodentologist"
     ],
     "flavorText": "These strong owls can kill large prey including skunks, cats, and dogs.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "greater_prairie_chicken",
     "name": "Greater Prairie-Chicken",
     "scientificName": "Tympanuchus cupido",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "drawBonusCardsAndKeep",
       "trigger": "WHEN_PLAYED",
@@ -3585,18 +3085,14 @@
       "prairie_manager"
     ],
     "flavorText": "One subspecies of this bird went extinct in 1932, and a Texas form is endangered.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": "BONUS_CARD"
   },
   {
     "id": "greater_roadrunner",
     "name": "Greater Roadrunner",
     "scientificName": "Geococcyx californianus",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "lookAtCardAndTuckIfWingspanUnder",
       "trigger": "WHEN_ACTIVATED",
@@ -3623,19 +3119,14 @@
       "rodentologist"
     ],
     "flavorText": "Roadrunners rarely fly, but will jump up to snatch prey out of the air.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "green_heron",
     "name": "Green Heron",
     "scientificName": "Butorides virescens",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "tradeFoodType",
       "trigger": "WHEN_ACTIVATED",
@@ -3663,19 +3154,14 @@
       "wetland_scientist"
     ],
     "flavorText": "Green herons drop insects and other objects onto the water to attract fish.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "hermit_thrush",
     "name": "Hermit Thrush",
     "scientificName": "Catharus guttatus",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "playersWithFewestInHabitatGainFood",
       "trigger": "WHEN_ACTIVATED",
@@ -3704,19 +3190,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Hermit thrushes tend to nest on the ground in the western US and in trees in the East.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "hooded_merganser",
     "name": "Hooded Merganser",
     "scientificName": "Lophodytes cucullatus",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "repeatPredatorPowerInHabitat",
       "trigger": "WHEN_ACTIVATED",
@@ -3732,24 +3213,16 @@
     },
     "foodCostMode": "AND",
     "wingspanCentimeters": 61,
-    "bonusCards": [
-      "fishery_manager",
-      "nest_box_builder",
-      "wetland_scientist"
-    ],
+    "bonusCards": ["fishery_manager", "nest_box_builder", "wetland_scientist"],
     "flavorText": "Merganser chicks jump from their cavity nest to the ground when they're just 1 day old.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "hooded_warbler",
     "name": "Hooded Warbler",
     "scientificName": "Setophaga citrina",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": null,
     "victoryPoints": 7,
     "nestType": "BOWL",
@@ -3766,19 +3239,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "This bird spends its time in the understory and nests within a meter of the ground.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "horned_lark",
     "name": "Horned Lark",
     "scientificName": "Eremophila alpestris",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "whenOpponentPlaysBirdInHabitatTuckCard",
       "trigger": "ONCE_BETWEEN_TURNS",
@@ -3805,23 +3273,14 @@
       "prairie_manager"
     ],
     "flavorText": "Horned larks form large nomadic flocks, mixing with birds of other species.",
-    "countries": [
-      "North America",
-      "Central America",
-      "Europe",
-      "Asia"
-    ],
+    "countries": ["North America", "Central America", "Europe", "Asia"],
     "categorization": "FLOCKING"
   },
   {
     "id": "house_finch",
     "name": "House Finch",
     "scientificName": "Haemorhous mexicanus",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "tuckAndDraw",
       "trigger": "WHEN_ACTIVATED",
@@ -3849,20 +3308,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "These finches are rarely alone and can flock in the hundreds.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "house_wren",
     "name": "House Wren",
     "scientificName": "Troglodytes aedon",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND"],
     "power": {
       "handlerId": "playAdditionalBirdInThisHabitat",
       "trigger": "WHEN_PLAYED",
@@ -3884,20 +3337,14 @@
       "passerine_specialist"
     ],
     "flavorText": "House wrens will remove the eggs of other birds and take over their nests.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "inca_dove",
     "name": "Inca Dove",
     "scientificName": "Columbina inca",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "layEggOnBirdsWithNestType",
       "trigger": "WHEN_PLAYED",
@@ -3924,29 +3371,20 @@
       "prairie_manager"
     ],
     "flavorText": "This bird likes human settlements and is expanding its range north.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "indigo_bunting",
     "name": "Indigo Bunting",
     "scientificName": "Passerina cyanea",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND"],
     "power": {
       "handlerId": "gainFoodFromFeederIfAvailable",
       "trigger": "WHEN_ACTIVATED",
       "params": {
         "foodType": "INVERTEBRATE",
-        "foodTypes": [
-          "INVERTEBRATE",
-          "FRUIT"
-        ],
+        "foodTypes": ["INVERTEBRATE", "FRUIT"],
         "count": 1
       },
       "text": "Gain 1 [invertebrate] or [fruit] from the birdfeeder, if available."
@@ -3969,19 +3407,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Indigo buntings are almost always found on forest edges.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "juniper_titmouse",
     "name": "Juniper Titmouse",
     "scientificName": "Baeolophus ridgwayi",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "cacheFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -4007,19 +3440,14 @@
       "passerine_specialist"
     ],
     "flavorText": "These little birds make it through winter by storing seeds.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "killdeer",
     "name": "Killdeer",
     "scientificName": "Charadrius vociferus",
-    "habitats": [
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "discardEggToDrawCards",
       "trigger": "WHEN_ACTIVATED",
@@ -4038,26 +3466,16 @@
     },
     "foodCostMode": "OR",
     "wingspanCentimeters": 46,
-    "bonusCards": [
-      "backyard_birder",
-      "bird_feeder",
-      "enclosure_builder"
-    ],
+    "bonusCards": ["backyard_birder", "bird_feeder", "enclosure_builder"],
     "flavorText": "Killdeers will fake a broken wing to lure predators from their nests.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "king_rail",
     "name": "King Rail",
     "scientificName": "Rallus elegans",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawBonusCardsAndKeep",
       "trigger": "WHEN_PLAYED",
@@ -4084,19 +3502,14 @@
       "wetland_scientist"
     ],
     "flavorText": "King rails declined 90% from 1966 to 2015, due to habitat loss and pesticide runoff.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "BONUS_CARD"
   },
   {
     "id": "lazuli_bunting",
     "name": "Lazuli Bunting",
     "scientificName": "Passerina amoena",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "allPlayersLayEggOnNestType",
       "trigger": "WHEN_ACTIVATED",
@@ -4126,21 +3539,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "The Latin name amoena means \"beautiful\" or \"charming\".",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "lincolns_sparrow",
     "name": "Lincoln's Sparrow",
     "scientificName": "Melospiza lincolnii",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "moveToAnotherHabitatIfRightmost",
       "trigger": "WHEN_ACTIVATED",
@@ -4164,20 +3570,14 @@
       "passerine_specialist"
     ],
     "flavorText": "Thomas Lincoln collected this sparrow in Canada with John James Audubon.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "loggerhead_shrike",
     "name": "Loggerhead Shrike",
     "scientificName": "Lanius ludovicianus",
-    "habitats": [
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "whenOpponentGainsFoodCacheIfMatch",
       "trigger": "ONCE_BETWEEN_TURNS",
@@ -4204,18 +3604,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Shrikes impale their prey on thorse or barbed wire and may save them for later.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "mallard",
     "name": "Mallard",
     "scientificName": "Anas platyrhynchos",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawCards",
       "trigger": "WHEN_ACTIVATED",
@@ -4254,10 +3650,7 @@
     "id": "mississippi_kite",
     "name": "Mississippi Kite",
     "scientificName": "Ictinia mississippiensis",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND"],
     "power": {
       "handlerId": "rollDiceAndCacheIfMatch",
       "trigger": "WHEN_ACTIVATED",
@@ -4284,20 +3677,14 @@
       "rodentologist"
     ],
     "flavorText": "These birds mostly eat large insects, but they'll also eat rodents, bats, and birds.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "mountain_bluebird",
     "name": "Mountain Bluebird",
     "scientificName": "Sialia currucoides",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
       "trigger": "WHEN_PLAYED",
@@ -4323,19 +3710,14 @@
       "viticulturalist"
     ],
     "flavorText": "These birds can be found from prairies up to alpine zones above treeline.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "mountain_chickadee",
     "name": "Mountain Chickadee",
     "scientificName": "Poecile gambeli",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "cacheFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -4363,20 +3745,14 @@
       "passerine_specialist"
     ],
     "flavorText": "Mountain chickadees are generally found in the conifer forests of the American West.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "mourning_dove",
     "name": "Mourning Dove",
     "scientificName": "Zenaida macroura",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "layEggsOnBird",
       "trigger": "WHEN_ACTIVATED",
@@ -4394,25 +3770,16 @@
     },
     "foodCostMode": "AND",
     "wingspanCentimeters": 46,
-    "bonusCards": [
-      "backyard_birder",
-      "bird_feeder",
-      "platform_builder"
-    ],
+    "bonusCards": ["backyard_birder", "bird_feeder", "platform_builder"],
     "flavorText": "One pair of doves may raise 5 or 6 small broods in a year.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "northern_bobwhite",
     "name": "Northern Bobwhite",
     "scientificName": "Colinus virginianus",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "layEggsOnBird",
       "trigger": "WHEN_ACTIVATED",
@@ -4438,19 +3805,14 @@
       "prairie_manager"
     ],
     "flavorText": "Bobwhites are prolific breeders, but their numbers are in decline.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "northern_cardinal",
     "name": "Northern Cardinal",
     "scientificName": "Cardinalis cardinalis",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "gainFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -4479,19 +3841,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "In most North American species, only males sing, but female cardinals break this rule.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "northern_flicker",
     "name": "Northern Flicker",
     "scientificName": "Colaptes auratus",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND"],
     "power": {
       "handlerId": "gainAllFoodTypeFromFeeder",
       "trigger": "WHEN_PLAYED",
@@ -4518,19 +3875,14 @@
       "viticulturalist"
     ],
     "flavorText": "These woodpeckers seek out ground-dwelling insects rather than pecking wood.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "northern_harrier",
     "name": "Northern Harrier",
     "scientificName": "Circus hudsonius",
-    "habitats": [
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "lookAtCardAndTuckIfWingspanUnder",
       "trigger": "WHEN_ACTIVATED",
@@ -4569,11 +3921,7 @@
     "id": "northern_mockingbird",
     "name": "Northern Mockingbird",
     "scientificName": "Mimus polyglottos",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "repeatBrownPowerInHabitat",
       "trigger": "WHEN_ACTIVATED",
@@ -4596,19 +3944,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "A male mockingbird may learn around 200 songs throughout its life.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "northern_shoveler",
     "name": "Northern Shoveler",
     "scientificName": "Spatula clypeata",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "allPlayersDrawCardsFromDeck",
       "trigger": "WHEN_ACTIVATED",
@@ -4647,9 +3990,7 @@
     "id": "osprey",
     "name": "Osprey",
     "scientificName": "Pandion haliaetus",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "allPlayersGainFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -4689,9 +4030,7 @@
     "id": "painted_bunting",
     "name": "Painted Bunting",
     "scientificName": "Passerina ciris",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "drawBonusCardsAndKeep",
       "trigger": "WHEN_PLAYED",
@@ -4717,19 +4056,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Poachers sell these birds as pets, making it harder for wild populations to thrive.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "BONUS_CARD"
   },
   {
     "id": "painted_whitestart",
     "name": "Painted Whitestart",
     "scientificName": "Myioborus pictus",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "gainFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -4756,20 +4090,14 @@
       "passerine_specialist"
     ],
     "flavorText": "When they forage, whitestarts will flick their wings or tails to flush insects.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "peregrine_falcon",
     "name": "Peregrine Falcon",
     "scientificName": "Falco peregrinus",
-    "habitats": [
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "lookAtCardAndTuckIfWingspanUnder",
       "trigger": "WHEN_ACTIVATED",
@@ -4808,9 +4136,7 @@
     "id": "pied_billed_grebe",
     "name": "Pied-Billed Grebe",
     "scientificName": "Podilymbus podiceps",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawCardsWithDelayedDiscard",
       "trigger": "WHEN_ACTIVATED",
@@ -4837,20 +4163,14 @@
       "wetland_scientist"
     ],
     "flavorText": "Pied-billed grebes create a floating platform nest with plant material.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "pileated_woodpecker",
     "name": "Pileated Woodpecker",
     "scientificName": "Dryocopus pileatus",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "allPlayersLayEggOnNestType",
       "trigger": "WHEN_ACTIVATED",
@@ -4877,19 +4197,14 @@
       "viticulturalist"
     ],
     "flavorText": "Other birds use these birds' old nests and glean bugs where they've been feeding.\\",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "pine_siskin",
     "name": "Pine Siskin",
     "scientificName": "Spinus pinus",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "tuckAndGainFood",
       "trigger": "WHEN_ACTIVATED",
@@ -4917,19 +4232,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Pine siskins are gregarious, traveling in flocks to look for food.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "prothonotary_warbler",
     "name": "Prothonotary Warbler",
     "scientificName": "Protonotaria citrea",
-    "habitats": [
-      "FOREST",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "WETLAND"],
     "power": null,
     "victoryPoints": 8,
     "nestType": "CAVITY",
@@ -4940,25 +4250,16 @@
     },
     "foodCostMode": "AND",
     "wingspanCentimeters": 23,
-    "bonusCards": [
-      "bird_feeder",
-      "nest_box_builder",
-      "passerine_specialist"
-    ],
+    "bonusCards": ["bird_feeder", "nest_box_builder", "passerine_specialist"],
     "flavorText": "The name prothonotary comes from Catholic scribes who wore yellow robes.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "purple_gallinule",
     "name": "Purple Gallinule",
     "scientificName": "Porphyrio martinicus",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "allPlayersDrawCardsFromDeck",
       "trigger": "WHEN_ACTIVATED",
@@ -4986,21 +4287,14 @@
       "wetland_scientist"
     ],
     "flavorText": "With its long toes, this bird can walk on lily pads without sinking.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "purple_martin",
     "name": "Purple Martin",
     "scientificName": "Progne subis",
-    "habitats": [
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "tuckAndDraw",
       "trigger": "WHEN_ACTIVATED",
@@ -5026,29 +4320,20 @@
       "nest_box_builder"
     ],
     "flavorText": "Native Americans hung gourds as houses for these birds, because they eat so many bugs.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "pygmy_nuthatch",
     "name": "Pygmy Nuthatch",
     "scientificName": "Sitta pygmaea",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "tuckAndGainFoodOfChoice",
       "trigger": "WHEN_ACTIVATED",
       "params": {
         "foodType": "INVERTEBRATE",
-        "foodTypes": [
-          "INVERTEBRATE",
-          "SEED"
-        ],
+        "foodTypes": ["INVERTEBRATE", "SEED"],
         "tuckCount": 1,
         "foodCount": 1
       },
@@ -5072,19 +4357,14 @@
       "passerine_specialist"
     ],
     "flavorText": "These flocking birds often have \"helper\" birds bringing food during nesting season.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "red_crossbill",
     "name": "Red Crossbill",
     "scientificName": "Loxia curvirostra",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "allPlayersGainFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -5124,9 +4404,7 @@
     "id": "red_bellied_woodpecker",
     "name": "Red-Bellied Woodpecker",
     "scientificName": "Melanerpes carolinus",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "gainFoodFromFeederWithCache",
       "trigger": "WHEN_ACTIVATED",
@@ -5154,18 +4432,14 @@
       "nest_box_builder"
     ],
     "flavorText": "These birds' tongues each out 5 centimeters for insects, but seeds are half their diet.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "red_breasted_merganser",
     "name": "Red-Breasted Merganser",
     "scientificName": "Mergus serrator",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawCardsWithDelayedDiscard",
       "trigger": "WHEN_ACTIVATED",
@@ -5194,20 +4468,14 @@
       "wetland_scientist"
     ],
     "flavorText": "A red-breasted merganser was recorded flying 160 kilometers per hour, the fastest of any duck.",
-    "countries": [
-      "North America",
-      "Europe",
-      "Asia"
-    ],
+    "countries": ["North America", "Europe", "Asia"],
     "categorization": null
   },
   {
     "id": "red_breasted_nuthatch",
     "name": "Red-Breasted Nuthatch",
     "scientificName": "Sitta canadensis",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "cacheFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -5236,18 +4504,14 @@
       "passerine_specialist"
     ],
     "flavorText": "These birds put resin around their nest opening to keep out attackers.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "red_cockaded_woodpecker",
     "name": "Red-Cockaded Woodpecker",
     "scientificName": "Picoides borealis",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "drawBonusCardsAndKeep",
       "trigger": "WHEN_PLAYED",
@@ -5273,18 +4537,14 @@
       "viticulturalist"
     ],
     "flavorText": "This bird is endangered due to habitat loss; there may be fewer than 10,000.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": "BONUS_CARD"
   },
   {
     "id": "red_eyed_vireo",
     "name": "Red-Eyed Vireo",
     "scientificName": "Vireo olivaceus",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
       "trigger": "WHEN_PLAYED",
@@ -5315,22 +4575,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Nearsighted vireos flock with other birds that make noise if predators are around.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "red_headed_woodpecker",
     "name": "Red-Headed Woodpecker",
     "scientificName": "Melanerpes erythrocephalus",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "gainFoodFromFeederWithCache",
       "trigger": "WHEN_ACTIVATED",
@@ -5358,18 +4610,14 @@
       "omnivore_expert"
     ],
     "flavorText": "These woodpeckers store nuts, seeds, and insects in wood or under bark.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "red_shouldered_hawk",
     "name": "Red-Shouldered Hawk",
     "scientificName": "Buteo lineatus",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "lookAtCardAndTuckIfWingspanUnder",
       "trigger": "WHEN_ACTIVATED",
@@ -5397,21 +4645,14 @@
       "rodentologist"
     ],
     "flavorText": "These hawks hunt from a perch, swooping down when prey is nearby.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "red_tailed_hawk",
     "name": "Red-Tailed Hawk",
     "scientificName": "Buteo jamaicensis",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "lookAtCardAndTuckIfWingspanUnder",
       "trigger": "WHEN_ACTIVATED",
@@ -5437,20 +4678,14 @@
       "rodentologist"
     ],
     "flavorText": "Movies almost always use the red-tailed hawk's call for any raptor.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "red_winged_blackbird",
     "name": "Red-Winged Blackbird",
     "scientificName": "Agelaius phoeniceus",
-    "habitats": [
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "tuckFromHandAndLay",
       "trigger": "WHEN_ACTIVATED",
@@ -5478,19 +4713,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Blackbird flocks can include hundreds of thousands of birds",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "ring_billed_gull",
     "name": "Ring-Billed Gull",
     "scientificName": "Larus delawarensis",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "tuckAndDraw",
       "trigger": "WHEN_ACTIVATED",
@@ -5517,28 +4747,20 @@
       "wetland_scientist"
     ],
     "flavorText": "These gulls steal food and eggs from other birds and scavenge at garbage dumps.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "rose_breasted_grosbeak",
     "name": "Rose-Breasted Grosbeak",
     "scientificName": "Pheucticus ludovicianus",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "gainFoodFromFeederIfAvailable",
       "trigger": "WHEN_ACTIVATED",
       "params": {
         "foodType": "SEED",
-        "foodTypes": [
-          "SEED",
-          "FRUIT"
-        ],
+        "foodTypes": ["SEED", "FRUIT"],
         "count": 1
       },
       "text": "Gain 1 [seed] or [fruit] from the birdfeeder, if available."
@@ -5562,19 +4784,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "This pretty, sweet-sounding bird has the gruesome nickname \"cut-throat\".",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "roseate_spoonbill",
     "name": "Roseate Spoonbill",
     "scientificName": "Platalea ajaja",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawBonusCardsAndKeep",
       "trigger": "WHEN_PLAYED",
@@ -5604,20 +4821,14 @@
       "wetland_scientist"
     ],
     "flavorText": "This bird's unusually shaped bill helps it feel prey in the water.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "BONUS_CARD"
   },
   {
     "id": "ruby_crowned_kinglet",
     "name": "Ruby-Crowned Kinglet",
     "scientificName": "Regulus calendula",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
       "trigger": "WHEN_PLAYED",
@@ -5647,21 +4858,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Kinglets' ruby-red crown feathers pop up when they are agitated.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "ruby_throated_hummingbird",
     "name": "Ruby-Throated Hummingbird",
     "scientificName": "Archilochus colubris",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "eachPlayerGainsFoodFromFeeder",
       "trigger": "WHEN_ACTIVATED",
@@ -5686,19 +4890,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Hummingbirds feed on nectar---but they also eat many small insects.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "ruddy_duck",
     "name": "Ruddy Duck",
     "scientificName": "Oxyura jamaicensis",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawCardsWithDelayedDiscard",
       "trigger": "WHEN_ACTIVATED",
@@ -5725,27 +4924,20 @@
       "wetland_scientist"
     ],
     "flavorText": "To display for mates, male slap their blue bills on their chests and run across the water.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "sandhill_crane",
     "name": "Sandhill Crane",
     "scientificName": "Antigone canadensis",
-    "habitats": [
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "discardFoodToTuckFromDeck",
       "trigger": "WHEN_ACTIVATED",
       "params": {
         "foodType": "SEED",
-        "tuckCount": 1
+        "tuckCount": 2
       },
       "text": "Discard 1 [seed] to tuck 2 [card] from the deck behind this bird."
     },
@@ -5767,19 +4959,14 @@
       "omnivore_expert"
     ],
     "flavorText": "Sandhill cranes can live for decades and mate for life.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "savannah_sparrow",
     "name": "Savannah Sparrow",
     "scientificName": "Passerculus sandwichensis",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
       "trigger": "WHEN_PLAYED",
@@ -5806,19 +4993,14 @@
       "prairie_manager"
     ],
     "flavorText": "This sparrow is named after both Savannah, Georgia, and Sandwich Sound, Alaska.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "says_phoebe",
     "name": "Say's Phoebe",
     "scientificName": "Sayornis saya",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "layEggOnBirdsWithNestType",
       "trigger": "WHEN_PLAYED",
@@ -5843,19 +5025,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Thomas Say also has snails, crabs, and a snake named after him.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "scaled_quail",
     "name": "Scaled Quail",
     "scientificName": "Callipepla squamata",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "layEggsOnBird",
       "trigger": "WHEN_ACTIVATED",
@@ -5880,19 +5057,14 @@
       "prairie_manager"
     ],
     "flavorText": "Quail chicks can get up and follow their parents as soon as they hatch.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "scissor_tailed_flycatcher",
     "name": "Scissor-Tailed Flycatcher",
     "scientificName": "Tyrannus forficatus",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "allPlayersGainFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -5918,19 +5090,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "The mating display of these birds involves aerial acrobatics that show off their long tails.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "snowy_egret",
     "name": "Snowy Egret",
     "scientificName": "Egretta thula",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "rollDiceAndCacheIfMatch",
       "trigger": "WHEN_ACTIVATED",
@@ -5958,22 +5125,14 @@
       "wetland_scientist"
     ],
     "flavorText": "In the 1880's, these birds' wispy plumes were literally worth their weight in gold.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "song_sparrow",
     "name": "Song Sparrow",
     "scientificName": "Melospiza melodia",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "moveToAnotherHabitatIfRightmost",
       "trigger": "WHEN_ACTIVATED",
@@ -5998,18 +5157,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "When resources are abundant, song sparrows can rear four clutches of eggs in a year.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "spotted_owl",
     "name": "Spotted Owl",
     "scientificName": "Strix occidentalis",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "drawBonusCardsAndKeep",
       "trigger": "WHEN_PLAYED",
@@ -6034,19 +5189,14 @@
       "rodentologist"
     ],
     "flavorText": "Habitat for these birds was a topic in logging fights in the Pacific Northwest region of the US.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "BONUS_CARD"
   },
   {
     "id": "spotted_sandpiper",
     "name": "Spotted Sandpiper",
     "scientificName": "Actitis macularius",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "allPlayersDrawCardsFromDeck",
       "trigger": "WHEN_ACTIVATED",
@@ -6063,27 +5213,16 @@
     },
     "foodCostMode": "AND",
     "wingspanCentimeters": 38,
-    "bonusCards": [
-      "enclosure_builder",
-      "food_web_expert",
-      "wetland_scientist"
-    ],
+    "bonusCards": ["enclosure_builder", "food_web_expert", "wetland_scientist"],
     "flavorText": "These sandpipers consistently bob their tails; people call them teeter-peeps and tip-tails.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "spotted_towhee",
     "name": "Spotted Towhee",
     "scientificName": "Pipilo maculatus",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND"],
     "power": {
       "handlerId": "gainFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -6111,20 +5250,14 @@
       "viticulturalist"
     ],
     "flavorText": "These birds forage by hopping backwards to uncover insects and seeds in the leaf litter.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "spragues_pipit",
     "name": "Sprague's Pipit",
     "scientificName": "Anthus spragueii",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "drawBonusCardsAndKeep",
       "trigger": "WHEN_PLAYED",
@@ -6152,19 +5285,14 @@
       "prairie_manager"
     ],
     "flavorText": "This rare bird's mating display can last for over an hour.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "BONUS_CARD"
   },
   {
     "id": "stellers_jay",
     "name": "Steller's Jay",
     "scientificName": "Cyanocitta stelleri",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "gainFoodFromFeederWithCache",
       "trigger": "WHEN_ACTIVATED",
@@ -6191,19 +5319,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Naturalist Georg Steller saw this bird on a Russian exploration to Alaska in 1741.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "swainsons_hawk",
     "name": "Swainson's Hawk",
     "scientificName": "Buteo swainsoni",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "lookAtCardAndTuckIfWingspanUnder",
       "trigger": "WHEN_ACTIVATED",
@@ -6230,20 +5353,14 @@
       "rodentologist"
     ],
     "flavorText": "These hawks feed chicks small mammals and birds, but adults eat mostly insects.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "tree_swallow",
     "name": "Tree Swallow",
     "scientificName": "Tachycineta bicolor",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "tuckAndDraw",
       "trigger": "WHEN_ACTIVATED",
@@ -6270,19 +5387,14 @@
       "wetland_scientist"
     ],
     "flavorText": "Tree swallows can form flocks numbering in the hundreds of thousands.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "trumpeter_swan",
     "name": "Trumpeter Swan",
     "scientificName": "Cygnus buccinator",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": null,
     "victoryPoints": 9,
     "nestType": "GROUND",
@@ -6301,19 +5413,14 @@
       "wetland_scientist"
     ],
     "flavorText": "With a mass over 9 kilograms, trumpeter swans are the heaviest bird in North America.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "tufted_titmouse",
     "name": "Tufted Titmouse",
     "scientificName": "Baeolophus bicolor",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
       "trigger": "WHEN_PLAYED",
@@ -6342,20 +5449,14 @@
       "viticulturalist"
     ],
     "flavorText": "Titmice are key in the formation of mixed-species flocks.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": null
   },
   {
     "id": "turkey_vulture",
     "name": "Turkey Vulture",
     "scientificName": "Cathartes aura",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "whenOpponentPredatorSucceedsGainFood",
       "trigger": "ONCE_BETWEEN_TURNS",
@@ -6376,20 +5477,14 @@
       "nest_box_builder"
     ],
     "flavorText": "Turkey vultures can projectile vomit to defend themselves.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "vauxs_swift",
     "name": "Vaux's Swift",
     "scientificName": "Chaetura vauxi",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "tuckAndGainFood",
       "trigger": "WHEN_ACTIVATED",
@@ -6417,21 +5512,14 @@
       "nest_box_builder"
     ],
     "flavorText": "William Sansom Vaux was a wealthy mineralogist and naturalist.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "violet_green_swallow",
     "name": "Violet-Green Swallow",
     "scientificName": "Tachycineta thalassina",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "tuckAndDraw",
       "trigger": "WHEN_ACTIVATED",
@@ -6457,19 +5545,14 @@
       "nest_box_builder"
     ],
     "flavorText": "Like other swallows, these birds forage in large groups in open areas.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "western_meadowlark",
     "name": "Western Meadowlark",
     "scientificName": "Sturnella neglecta",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "allPlayersLayEggOnNestType",
       "trigger": "WHEN_ACTIVATED",
@@ -6497,28 +5580,20 @@
       "prairie_manager"
     ],
     "flavorText": "This pretty bird also has a beautiful flute-like song.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "western_tanager",
     "name": "Western Tanager",
     "scientificName": "Piranga ludoviciana",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "gainFoodFromFeederIfAvailable",
       "trigger": "WHEN_ACTIVATED",
       "params": {
         "foodType": "INVERTEBRATE",
-        "foodTypes": [
-          "INVERTEBRATE",
-          "FRUIT"
-        ],
+        "foodTypes": ["INVERTEBRATE", "FRUIT"],
         "count": 1
       },
       "text": "Gain 1 [invertebrate] or [fruit] from the birdfeeder, if available."
@@ -6540,19 +5615,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "These flame-colored birds are hard to see because they like the canopies of evergreen forests.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "white_breasted_nuthatch",
     "name": "White-Breasted Nuthatch",
     "scientificName": "Sitta carolinensis",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "cacheFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -6581,21 +5651,14 @@
       "passerine_specialist"
     ],
     "flavorText": "Nuthatches cache seeds for winter in the bark of a tree.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "white_crowned_sparrow",
     "name": "White-Crowned Sparrow",
     "scientificName": "Zonotrichia leucophrys",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "moveToAnotherHabitatIfRightmost",
       "trigger": "WHEN_ACTIVATED",
@@ -6620,19 +5683,14 @@
       "passerine_specialist"
     ],
     "flavorText": "These sparrows like shrubby areas in many habitats, from tundra to desert.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "white_faced_ibis",
     "name": "White-Faced Ibis",
     "scientificName": "Plegadis chihi",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "rollDiceAndCacheIfMatch",
       "trigger": "WHEN_ACTIVATED",
@@ -6661,20 +5719,14 @@
       "wetland_scientist"
     ],
     "flavorText": "White-faced herons nest in colonies with herons and egrets.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "white_throated_swift",
     "name": "White-Throated Swift",
     "scientificName": "Aeronautes saxatalis",
-    "habitats": [
-      "GRASSLAND"
-    ],
+    "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "tuckFromHandAndLay",
       "trigger": "WHEN_ACTIVATED",
@@ -6703,19 +5755,14 @@
       "prairie_manager"
     ],
     "flavorText": "The white-throated swift is one of the fastest birds in North America.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "whooping_crane",
     "name": "Whooping Crane",
     "scientificName": "Grus americana",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawBonusCardsAndKeep",
       "trigger": "WHEN_PLAYED",
@@ -6740,19 +5787,14 @@
       "wetland_scientist"
     ],
     "flavorText": "From its low of 20 birds, the whooping crane population has risen to about 600.",
-    "countries": [
-      "North America"
-    ],
+    "countries": ["North America"],
     "categorization": "BONUS_CARD"
   },
   {
     "id": "wild_turkey",
     "name": "Wild Turkey",
     "scientificName": "Meleagris gallopavo",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND"],
     "power": null,
     "victoryPoints": 8,
     "nestType": "GROUND",
@@ -6770,19 +5812,14 @@
       "viticulturalist"
     ],
     "flavorText": "Wild turkeys were domesticated in the Americas before European contact.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "willet",
     "name": "Willet",
     "scientificName": "Tringa semipalmata",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "rollDiceAndCacheIfMatch",
       "trigger": "WHEN_ACTIVATED",
@@ -6809,20 +5846,14 @@
       "wetland_scientist"
     ],
     "flavorText": "Willets feed during the day and the night.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "PREDATOR"
   },
   {
     "id": "wilsons_snipe",
     "name": "Wilson's Snipe",
     "scientificName": "Gallinago delicata",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "allPlayersDrawCardsFromDeck",
       "trigger": "WHEN_ACTIVATED",
@@ -6846,21 +5877,14 @@
       "wetland_scientist"
     ],
     "flavorText": "Due to the position of their eyes, Wilson's snipes can see predators approaching from the front and back.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "wood_duck",
     "name": "Wood Duck",
     "scientificName": "Aix sponsa",
-    "habitats": [
-      "FOREST",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "WETLAND"],
     "power": {
       "handlerId": "drawCardsWithDelayedDiscard",
       "trigger": "WHEN_ACTIVATED",
@@ -6886,19 +5910,14 @@
       "viticulturalist"
     ],
     "flavorText": "Wood ducks nest in tree cavities in wooded areas.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "wood_stork",
     "name": "Wood Stork",
     "scientificName": "Mycteria americana",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "drawBonusCardsAndKeep",
       "trigger": "WHEN_PLAYED",
@@ -6927,20 +5946,14 @@
       "wetland_scientist"
     ],
     "flavorText": "The wood stork was removed from the US endangered species list in 2014.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": "BONUS_CARD"
   },
   {
     "id": "yellow_bellied_sapsucker",
     "name": "Yellow-Bellied Sapsucker",
     "scientificName": "Sphyrapicus varius",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "gainFoodFromSupply",
       "trigger": "WHEN_ACTIVATED",
@@ -6968,19 +5981,14 @@
       "viticulturalist"
     ],
     "flavorText": "Sapsuckers drill rows of holes in trees, then they lap up the sap and the insects it attracts.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "yellow_billed_cuckoo",
     "name": "Yellow-Billed Cuckoo",
     "scientificName": "Coccyzus americanus",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "whenOpponentLaysEggsLayEggOnNestType",
       "trigger": "ONCE_BETWEEN_TURNS",
@@ -7007,22 +6015,14 @@
       "platform_builder"
     ],
     "flavorText": "Yellow-billed cuckoos lay their eggs in other birds' nests when food is abundant.",
-    "countries": [
-      "North America",
-      "Central America",
-      "South America"
-    ],
+    "countries": ["North America", "Central America", "South America"],
     "categorization": null
   },
   {
     "id": "yellow_breasted_chat",
     "name": "Yellow-Breasted Chat",
     "scientificName": "Icteria virens",
-    "habitats": [
-      "FOREST",
-      "GRASSLAND",
-      "WETLAND"
-    ],
+    "habitats": ["FOREST", "GRASSLAND", "WETLAND"],
     "power": {
       "handlerId": "moveToAnotherHabitatIfRightmost",
       "trigger": "WHEN_ACTIVATED",
@@ -7046,19 +6046,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "Because these birds like dense thickets, they are more often heard than seen.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": null
   },
   {
     "id": "yellow_headed_blackbird",
     "name": "Yellow-Headed Blackbird",
     "scientificName": "Xanthocephalus xanthocephalus",
-    "habitats": [
-      "WETLAND"
-    ],
+    "habitats": ["WETLAND"],
     "power": {
       "handlerId": "tuckFromHandAndLay",
       "trigger": "WHEN_ACTIVATED",
@@ -7087,19 +6082,14 @@
       "wildlife_gardener"
     ],
     "flavorText": "These blackbirds form huge flocks, especially in winter.",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   },
   {
     "id": "yellow_rumped_warbler",
     "name": "Yellow-Rumped Warbler",
     "scientificName": "Setophaga coronata",
-    "habitats": [
-      "FOREST"
-    ],
+    "habitats": ["FOREST"],
     "power": {
       "handlerId": "tuckAndDraw",
       "trigger": "WHEN_ACTIVATED",
@@ -7131,10 +6121,7 @@
       "wildlife_gardener"
     ],
     "flavorText": "Birders sometimes call these birds \"butterbutts.\"",
-    "countries": [
-      "North America",
-      "Central America"
-    ],
+    "countries": ["North America", "Central America"],
     "categorization": "FLOCKING"
   }
 ]

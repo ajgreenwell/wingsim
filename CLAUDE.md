@@ -55,6 +55,12 @@ The codebase follows the specification in `WingsimSpec.md` and implementation pl
 - `WingsimSpec.md` - Authoritative specification; all implementation must adhere to this
 - `WingsimImplementationPlan.md` - Phased implementation tasks
 
+## Orchestration Tips
+
+- When possible, use subagents in parallel for exploring files and gathering context about existing code.
+- When possible, use subagents in parallel for implementing independent TODOs.
+- When possible, use the TypeScript LSP as much as possible for exploring the codebase, falling back to tools like ripgrep as needed.
+
 ## Implementation Notes
 
 - Power handlers live in `PowerProcessor.powerHandlersById` registry; JSON stores `PowerSpec` with `powerHandlerId` referencing code
@@ -62,3 +68,18 @@ The codebase follows the specification in `WingsimSpec.md` and implementation pl
 - Effects are granular (e.g., `GainFoodEffect`, `DiscardCardsEffect`); events are semantic
 - `AgentProxy` pattern handles timeouts/retries with 3-strike forfeit rule
 - The `GameObserver` interface enables renderers/loggers to observe without coupling
+
+## Testing
+
+- Always run unit tests for each unit of code added, to verify it works before claiming task completion.
+- If a test begins failing after you make some changes, assume it is YOUR RESPONSIBILITY to fix it now. Do not wait or delay fixing broken tests, even if they don't appear to be your fault.
+
+## Style Preferences
+
+- Avoid using big section comments like:
+
+```
+// ============================================================================
+// Power Handler Tests
+// ============================================================================
+```

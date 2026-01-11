@@ -9,14 +9,17 @@ import type {
   PlayerId,
   BirdCardId,
   BonusCardId,
+  BirdCard,
+  BonusCard,
   FoodType,
   Habitat,
   BirdInstanceId,
+  BirdInstance,
   FoodByType,
   EggsByBird,
   EggCostByHabitat,
+  PowerSpec,
 } from "./core.js";
-import { PinkPowerTriggerEvent } from "./events.js";
 
 /**
  * PlayerView represents the game state as visible to a specific player.
@@ -27,10 +30,10 @@ import { PinkPowerTriggerEvent } from "./events.js";
 export interface PlayerView {
   // The player's own state
   playerId: PlayerId;
-  hand: BirdCardId[];
-  bonusCards: BonusCardId[];
-  food: Record<FoodType, number>;
-  board: Record<Habitat, Array<BirdInstanceView | null>>;
+  hand: BirdCard[];
+  bonusCards: BonusCard[];
+  food: FoodByType;
+  board: Record<Habitat, Array<BirdInstance | null>>;
   actionCubes: number;
 
   // Public game state
@@ -38,29 +41,17 @@ export interface PlayerView {
   turn: number;
   activePlayerId: PlayerId;
   birdfeeder: FoodType[];
-  birdTray: BirdCardId[];
+  birdTray: BirdCard[];
   deckSize: number;
 
   // Opponent boards (visible, but not their hands)
   opponents: Array<{
     playerId: PlayerId;
-    board: Record<Habitat, Array<BirdInstanceView | null>>;
+    board: Record<Habitat, Array<BirdInstance | null>>;
     food: Record<FoodType, number>;
     actionCubes: number;
     handSize: number;
   }>;
-}
-
-/**
- * A view of a bird instance on a player's board.
- * Includes the bird's current state (eggs, cached food, tucked cards).
- */
-export interface BirdInstanceView {
-  id: BirdInstanceId;
-  cardId: BirdCardId;
-  eggs: number;
-  cachedFood: Record<FoodType, number>;
-  tuckedCardCount: number;
 }
 
 /** Unique identifier for a prompt instance */
@@ -73,14 +64,11 @@ export type PromptId = string;
 export interface PromptContext {
   round: number;
   activePlayerId: PlayerId;
-  trigger:
-    | { type: "WHEN_ACTIVATED"; habitat: Habitat; sourceBirdId: BirdInstanceId }
-    | { type: "WHEN_PLAYED"; sourceBirdId: BirdInstanceId }
-    | {
-        type: "ONCE_BETWEEN_TURNS";
-        sourceBirdId: BirdInstanceId;
-        event: PinkPowerTriggerEvent;
-      };
+  trigger: {
+    type: "WHEN_ACTIVATED" | "WHEN_PLAYED" | "ONCE_BETWEEN_TURNS";
+    habitat: Habitat;
+    sourceBirdId: BirdInstanceId;
+  };
 }
 
 /**
@@ -106,8 +94,8 @@ export interface DecisionChoiceBase {
 
 export interface StartingHandPrompt extends DecisionPromptBase {
   kind: "startingHand";
-  eligibleBirds: Set<BirdCardId>;
-  eligibleBonusCards: Set<BonusCardId>;
+  eligibleBirds: BirdCard[];
+  eligibleBonusCards: BonusCard[];
 }
 
 export interface StartingHandChoice extends DecisionChoiceBase {
@@ -153,7 +141,8 @@ export interface TurnActionChoice extends DecisionChoiceBase {
 export interface ActivatePowerPrompt extends DecisionPromptBase {
   kind: "activatePower";
   birdInstanceId: BirdInstanceId;
-  powerHandlerId: string;
+  /** The full power specification from the bird card */
+  power: PowerSpec;
 }
 
 export interface ActivatePowerChoice extends DecisionChoiceBase {
@@ -182,7 +171,7 @@ export interface SelectFoodFromSupplyPrompt extends DecisionPromptBase {
 
 export interface SelectFoodFromSupplyChoice extends DecisionChoiceBase {
   kind: "selectFoodFromSupply";
-  foods: FoodByType;
+  food: FoodByType;
 }
 
 export type FoodDestination = "PLAYER_SUPPLY" | "CACHE_ON_SOURCE_BIRD";
@@ -234,7 +223,7 @@ export interface SelectCardsPrompt extends DecisionPromptBase {
   mode: SelectCardsMode;
   source: SelectCardsSource;
   count: number;
-  eligibleCards: BirdCardId[];
+  eligibleCards: BirdCard[];
 }
 
 export interface SelectCardsChoice extends DecisionChoiceBase {
@@ -250,7 +239,7 @@ export interface DrawCardsPrompt extends DecisionPromptBase {
   // in follow-up prompts/choices (e.g. rest from the tray)
   remaining: number;
   // empty means trayCards aren't allowed to be drawn
-  trayCards: BirdCardId[];
+  trayCards: BirdCard[];
 }
 
 export interface DrawCardsChoice extends DecisionChoiceBase {
@@ -265,7 +254,7 @@ export interface DrawCardsChoice extends DecisionChoiceBase {
 export interface SelectBonusCardsPrompt extends DecisionPromptBase {
   kind: "selectBonusCards";
   count: number;
-  eligibleCards: BonusCardId[];
+  eligibleCards: BonusCard[];
 }
 
 export interface SelectBonusCardsChoice extends DecisionChoiceBase {
@@ -298,7 +287,7 @@ export interface RepeatPowerChoice extends DecisionChoiceBase {
 
 export interface PlayBirdPrompt extends DecisionPromptBase {
   kind: "playBird";
-  eligibleBirds: BirdCardId[];
+  eligibleBirds: BirdCard[];
   // will only include eligible habitats
   // (e.g. if a habitat is full, it won't be included here)
   eggCostByEligibleHabitat: EggCostByHabitat;
@@ -327,6 +316,17 @@ export interface DiscardFoodChoice extends DecisionChoiceBase {
   food: FoodByType;
 }
 
+export interface SelectHabitatPrompt extends DecisionPromptBase {
+  kind: "selectHabitat";
+  eligibleHabitats: Habitat[];
+}
+
+export interface SelectHabitatChoice extends DecisionChoiceBase {
+  kind: "selectHabitat";
+  // must be one of the SelectHabitatPrompt.eligibleHabitats
+  habitat: Habitat;
+}
+
 /**
  * These are typically triggered by bird powers or habitat activations.
  */
@@ -343,7 +343,8 @@ export type OptionPrompt =
   | SelectPlayerPrompt
   | RepeatPowerPrompt
   | PlayBirdPrompt
-  | DiscardFoodPrompt;
+  | DiscardFoodPrompt
+  | SelectHabitatPrompt;
 
 export type OptionChoice =
   | ActivatePowerChoice
@@ -358,7 +359,8 @@ export type OptionChoice =
   | SelectPlayerChoice
   | RepeatPowerChoice
   | PlayBirdChoice
-  | DiscardFoodChoice;
+  | DiscardFoodChoice
+  | SelectHabitatChoice;
 
 export type DecisionPrompt =
   | StartingHandPrompt

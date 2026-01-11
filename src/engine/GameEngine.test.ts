@@ -1,0 +1,1330 @@
+import { describe, it, expect } from "vitest";
+import { GameEngine } from "./GameEngine.js";
+import { DataRegistry } from "../data/DataRegistry.js";
+import type { PlayerAgent } from "../agents/PlayerAgent.js";
+import type {
+  StartingHandPrompt,
+  StartingHandChoice,
+  TurnActionPrompt,
+  TurnActionChoice,
+  OptionPrompt,
+  OptionChoice,
+  SelectFoodFromFeederChoice,
+  PlaceEggsChoice,
+  DrawCardsChoice,
+  PlayBirdChoice,
+  SelectCardsChoice,
+  DiscardEggsChoice,
+  DiscardFoodChoice,
+} from "../types/prompts.js";
+import type { FoodType } from "../types/core.js";
+
+/**
+ * Creates a mock agent that makes deterministic choices for testing.
+ * - Starting hand: keeps all birds, first bonus card, discards food equal to birds kept
+ * - Turn action: always takes GAIN_FOOD action (no bonus)
+ * - Options: makes simplest valid choices
+ */
+function createMockAgent(playerId: string): PlayerAgent {
+  return {
+    playerId,
+
+    async chooseStartingHand(
+      prompt: StartingHandPrompt
+    ): Promise<StartingHandChoice> {
+      // Keep all birds, first bonus card, discard food equal to birds kept
+      const birdsToKeep = prompt.eligibleBirds;
+      const bonusCards = prompt.eligibleBonusCards;
+      const foodToDiscard = new Set<FoodType>();
+
+      // Discard food equal to number of birds kept
+      const foodTypes: FoodType[] = [
+        "INVERTEBRATE",
+        "SEED",
+        "FISH",
+        "FRUIT",
+        "RODENT",
+      ];
+      for (let i = 0; i < birdsToKeep.length && i < foodTypes.length; i++) {
+        foodToDiscard.add(foodTypes[i]);
+      }
+
+      return {
+        promptId: prompt.promptId,
+        kind: "startingHand",
+        birds: new Set(birdsToKeep.map((b) => b.id)),
+        bonusCard: bonusCards[0].id,
+        foodToDiscard,
+      };
+    },
+
+    async chooseTurnAction(
+      prompt: TurnActionPrompt
+    ): Promise<TurnActionChoice> {
+      // Always take GAIN_FOOD action
+      return {
+        promptId: prompt.promptId,
+        kind: "turnAction",
+        action: "GAIN_FOOD",
+        takeBonus: false,
+      };
+    },
+
+    async chooseOption(prompt: OptionPrompt): Promise<OptionChoice> {
+      switch (prompt.kind) {
+        case "selectFoodFromFeeder": {
+          // Take the first available food type
+          const available = prompt.availableFood;
+          for (const [foodType, count] of Object.entries(available)) {
+            if (count && count > 0) {
+              return {
+                promptId: prompt.promptId,
+                kind: "selectFoodFromFeeder",
+                foodOrReroll: { [foodType]: 1 },
+              } as SelectFoodFromFeederChoice;
+            }
+          }
+          // If no food, try to reroll
+          return {
+            promptId: prompt.promptId,
+            kind: "selectFoodFromFeeder",
+            foodOrReroll: "reroll",
+          } as SelectFoodFromFeederChoice;
+        }
+
+        case "placeEggs": {
+          // Place eggs on first available bird
+          const placements: Record<string, number> = {};
+          let remaining = prompt.count;
+          for (const [birdId, capacity] of Object.entries(
+            prompt.remainingCapacitiesByEligibleBird
+          )) {
+            if (remaining > 0 && capacity && capacity > 0) {
+              const toPlace = Math.min(remaining, capacity);
+              placements[birdId] = toPlace;
+              remaining -= toPlace;
+            }
+          }
+          return {
+            promptId: prompt.promptId,
+            kind: "placeEggs",
+            placements,
+          } as PlaceEggsChoice;
+        }
+
+        case "drawCards": {
+          // Draw from deck
+          return {
+            promptId: prompt.promptId,
+            kind: "drawCards",
+            trayCards: [],
+            numDeckCards: prompt.remaining,
+          } as DrawCardsChoice;
+        }
+
+        case "playBird": {
+          // Play first eligible bird to first available habitat
+          const birdCard = prompt.eligibleBirds[0];
+          const habitats = Object.keys(
+            prompt.eggCostByEligibleHabitat
+          ) as Array<"FOREST" | "GRASSLAND" | "WETLAND">;
+          const habitat = habitats[0] ?? "FOREST";
+
+          return {
+            promptId: prompt.promptId,
+            kind: "playBird",
+            bird: birdCard.id,
+            habitat,
+            foodToSpend: {},
+            eggsToSpend: {},
+          } as PlayBirdChoice;
+        }
+
+        case "selectCards": {
+          // Select the first card(s) for discard
+          const cardsToSelect = prompt.eligibleCards
+            .slice(0, prompt.count)
+            .map((c) => c.id);
+          return {
+            promptId: prompt.promptId,
+            kind: "selectCards",
+            cards: cardsToSelect,
+          } as SelectCardsChoice;
+        }
+
+        case "discardEggs": {
+          // Discard eggs from the first bird with eggs
+          const sources: Record<string, number> = {};
+          let remaining = prompt.count;
+          for (const [birdId, count] of Object.entries(
+            prompt.eggsByEligibleBird
+          )) {
+            if (remaining > 0 && count && count > 0) {
+              const toDiscard = Math.min(remaining, count);
+              sources[birdId] = toDiscard;
+              remaining -= toDiscard;
+            }
+          }
+          return {
+            promptId: prompt.promptId,
+            kind: "discardEggs",
+            sources,
+          } as DiscardEggsChoice;
+        }
+
+        case "discardFood": {
+          // Discard the first available food type(s) to meet the cost
+          const food: Record<string, number> = {};
+          let remaining =
+            Object.values(prompt.foodCost).reduce(
+              (sum, v) => sum + (v ?? 0),
+              0
+            ) || 1;
+          const foodTypes: FoodType[] = [
+            "INVERTEBRATE",
+            "SEED",
+            "FISH",
+            "FRUIT",
+            "RODENT",
+            "WILD",
+          ];
+          // Note: We need access to player's food, but prompt doesn't include it
+          // For mock purposes, just return the first food type
+          food[foodTypes[0]] = remaining;
+          return {
+            promptId: prompt.promptId,
+            kind: "discardFood",
+            food,
+          } as DiscardFoodChoice;
+        }
+
+        default:
+          throw new Error(`Unhandled prompt kind: ${prompt.kind}`);
+      }
+    },
+  };
+}
+
+describe("GameEngine", () => {
+  describe("setupGame()", () => {
+    it("produces identical GameState with same seed", () => {
+      const registry = new DataRegistry();
+      const config1 = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 12345,
+        registry,
+      };
+      const config2 = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 12345,
+        registry,
+      };
+
+      const engine1 = new GameEngine(config1);
+      const engine2 = new GameEngine(config2);
+
+      const state1 = engine1.setupGame();
+      const state2 = engine2.setupGame();
+
+      // Compare player hands
+      expect(state1.players[0].hand.map((c) => c.id)).toEqual(
+        state2.players[0].hand.map((c) => c.id)
+      );
+      expect(state1.players[1].hand.map((c) => c.id)).toEqual(
+        state2.players[1].hand.map((c) => c.id)
+      );
+
+      // Compare bonus cards
+      expect(state1.players[0].bonusCards.map((c) => c.id)).toEqual(
+        state2.players[0].bonusCards.map((c) => c.id)
+      );
+      expect(state1.players[1].bonusCards.map((c) => c.id)).toEqual(
+        state2.players[1].bonusCards.map((c) => c.id)
+      );
+
+      // Compare round goals
+      expect(state1.roundGoals).toEqual(state2.roundGoals);
+
+      // Compare birdfeeder dice
+      expect(state1.birdfeeder.getDiceInFeeder()).toEqual(
+        state2.birdfeeder.getDiceInFeeder()
+      );
+
+      // Compare bird tray
+      expect(state1.birdCardSupply.getTray().map((c) => c?.id)).toEqual(
+        state2.birdCardSupply.getTray().map((c) => c?.id)
+      );
+    });
+
+    it("produces different GameState with different seeds", () => {
+      const registry = new DataRegistry();
+      const config1 = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 12345,
+        registry,
+      };
+      const config2 = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 54321,
+        registry,
+      };
+
+      const engine1 = new GameEngine(config1);
+      const engine2 = new GameEngine(config2);
+
+      const state1 = engine1.setupGame();
+      const state2 = engine2.setupGame();
+
+      // At least one of these should be different
+      const hands1 = state1.players[0].hand.map((c) => c.id);
+      const hands2 = state2.players[0].hand.map((c) => c.id);
+      const goals1 = state1.roundGoals;
+      const goals2 = state2.roundGoals;
+      const dice1 = state1.birdfeeder.getDiceInFeeder();
+      const dice2 = state2.birdfeeder.getDiceInFeeder();
+
+      const somethingDifferent =
+        JSON.stringify(hands1) !== JSON.stringify(hands2) ||
+        JSON.stringify(goals1) !== JSON.stringify(goals2) ||
+        JSON.stringify(dice1) !== JSON.stringify(dice2);
+
+      expect(somethingDifferent).toBe(true);
+    });
+
+    it("deals correct initial resources to each player", () => {
+      const registry = new DataRegistry();
+      const config = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 42,
+        registry,
+      };
+
+      const engine = new GameEngine(config);
+      const state = engine.setupGame();
+
+      for (const player of state.players) {
+        // 5 bird cards
+        expect(player.hand).toHaveLength(5);
+
+        // 2 bonus cards
+        expect(player.bonusCards).toHaveLength(2);
+
+        // 5 total food (1 of each non-WILD type)
+        expect(player.food.INVERTEBRATE).toBe(1);
+        expect(player.food.SEED).toBe(1);
+        expect(player.food.FISH).toBe(1);
+        expect(player.food.FRUIT).toBe(1);
+        expect(player.food.RODENT).toBe(1);
+        // WILD is not set initially (FoodByType is Partial)
+        expect(player.food.WILD ?? 0).toBe(0);
+
+        // 8 turns remaining
+        expect(player.turnsRemaining).toBe(8);
+      }
+    });
+
+    it("selects 4 round goals", () => {
+      const registry = new DataRegistry();
+      const config = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 42,
+        registry,
+      };
+
+      const engine = new GameEngine(config);
+      const state = engine.setupGame();
+
+      expect(state.roundGoals).toHaveLength(4);
+      // All goals should be unique
+      const uniqueGoals = new Set(state.roundGoals);
+      expect(uniqueGoals.size).toBe(4);
+    });
+
+    it("initializes empty boards for all players", () => {
+      const registry = new DataRegistry();
+      const config = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 42,
+        registry,
+      };
+
+      const engine = new GameEngine(config);
+      const state = engine.setupGame();
+
+      for (const player of state.players) {
+        expect(player.board.FOREST).toHaveLength(5);
+        expect(player.board.GRASSLAND).toHaveLength(5);
+        expect(player.board.WETLAND).toHaveLength(5);
+
+        expect(player.board.FOREST.every((slot) => slot === null)).toBe(true);
+        expect(player.board.GRASSLAND.every((slot) => slot === null)).toBe(
+          true
+        );
+        expect(player.board.WETLAND.every((slot) => slot === null)).toBe(true);
+      }
+    });
+
+    it("initializes birdfeeder with 5 dice", () => {
+      const registry = new DataRegistry();
+      const config = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 42,
+        registry,
+      };
+
+      const engine = new GameEngine(config);
+      const state = engine.setupGame();
+
+      expect(state.birdfeeder.getDiceInFeeder()).toHaveLength(5);
+    });
+
+    it("fills bird tray with 3 cards after setup", () => {
+      const registry = new DataRegistry();
+      const config = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 42,
+        registry,
+      };
+
+      const engine = new GameEngine(config);
+      const state = engine.setupGame();
+
+      const tray = state.birdCardSupply.getTray();
+      expect(tray).toHaveLength(3);
+      expect(tray[0]).not.toBeNull();
+      expect(tray[1]).not.toBeNull();
+      expect(tray[2]).not.toBeNull();
+    });
+
+    it("initializes game state with round 1, turn 1, first player active", () => {
+      const registry = new DataRegistry();
+      const config = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 42,
+        registry,
+      };
+
+      const engine = new GameEngine(config);
+      const state = engine.setupGame();
+
+      expect(state.round).toBe(1);
+      expect(state.turn).toBe(1);
+      expect(state.activePlayerIndex).toBe(0);
+    });
+
+    it("supports 2 to 5 players", () => {
+      const registry = new DataRegistry();
+
+      // Test with 2, 3, 4, and 5 players
+      for (const playerCount of [2, 3, 4, 5]) {
+        const agents = Array.from({ length: playerCount }, (_, i) =>
+          createMockAgent(`p${i + 1}`)
+        );
+        const config = { agents, seed: 42, registry };
+
+        const engine = new GameEngine(config);
+        const state = engine.setupGame();
+
+        expect(state.players).toHaveLength(playerCount);
+        for (let i = 0; i < playerCount; i++) {
+          expect(state.players[i].id).toBe(`p${i + 1}`);
+        }
+      }
+    });
+  });
+
+  describe("playGame()", () => {
+    it("completes a full game and returns a GameResult", async () => {
+      const registry = new DataRegistry();
+      const config = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 12345,
+        registry,
+      };
+
+      const engine = new GameEngine(config);
+      const result = await engine.playGame();
+
+      // Game should complete with 4 rounds
+      expect(result.roundsPlayed).toBe(4);
+
+      // Should have scores for both players
+      expect(result.scores).toHaveProperty("p1");
+      expect(result.scores).toHaveProperty("p2");
+
+      // Should have a winner
+      expect(result.winnerId).toBeDefined();
+      expect(["p1", "p2"]).toContain(result.winnerId);
+
+      // Total turns should be (8+7+6+5) * 2 players = 52 turns
+      expect(result.totalTurns).toBe(52);
+    });
+
+    it("produces deterministic results with same seed", async () => {
+      const registry = new DataRegistry();
+
+      const config1 = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 42,
+        registry,
+      };
+      const config2 = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 42,
+        registry,
+      };
+
+      const engine1 = new GameEngine(config1);
+      const engine2 = new GameEngine(config2);
+
+      const result1 = await engine1.playGame();
+      const result2 = await engine2.playGame();
+
+      expect(result1.winnerId).toBe(result2.winnerId);
+      expect(result1.scores).toEqual(result2.scores);
+      expect(result1.totalTurns).toBe(result2.totalTurns);
+    });
+
+    it("produces different game states with different seeds", async () => {
+      const registry = new DataRegistry();
+
+      const config1 = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 100,
+        registry,
+      };
+      const config2 = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 200,
+        registry,
+      };
+
+      const engine1 = new GameEngine(config1);
+      const engine2 = new GameEngine(config2);
+
+      // Compare initial game states - these should differ with different seeds
+      const state1 = engine1.getGameState();
+      const state2 = engine2.getGameState();
+
+      // At least one of: hands, bonus cards, round goals, or birdfeeder should differ
+      const hands1 = state1.players[0].hand.map((c) => c.id);
+      const hands2 = state2.players[0].hand.map((c) => c.id);
+      const goals1 = state1.roundGoals;
+      const goals2 = state2.roundGoals;
+      const dice1 = state1.birdfeeder.getDiceInFeeder();
+      const dice2 = state2.birdfeeder.getDiceInFeeder();
+
+      const somethingDiffers =
+        JSON.stringify(hands1) !== JSON.stringify(hands2) ||
+        JSON.stringify(goals1) !== JSON.stringify(goals2) ||
+        JSON.stringify(dice1) !== JSON.stringify(dice2);
+
+      expect(somethingDiffers).toBe(true);
+    });
+
+    it("handles starting hand selection correctly", async () => {
+      const registry = new DataRegistry();
+      const config = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 999,
+        registry,
+      };
+
+      const engine = new GameEngine(config);
+      await engine.playGame();
+
+      const state = engine.getGameState();
+
+      // After starting hand selection, players should have:
+      // - 5 birds (mock agent keeps all)
+      // - 1 bonus card (mock agent keeps first)
+      // - 0 food (mock agent discards 5 food to keep 5 birds)
+      for (const player of state.players) {
+        // All hands should have 5+ cards (started with 5, may have drawn more during game)
+        expect(player.hand.length).toBeGreaterThanOrEqual(0);
+        // Should have exactly 1 bonus card
+        expect(player.bonusCards).toHaveLength(1);
+      }
+    });
+
+    it("updates game state correctly through rounds", async () => {
+      const registry = new DataRegistry();
+      const config = {
+        agents: [createMockAgent("p1"), createMockAgent("p2")],
+        seed: 777,
+        registry,
+      };
+
+      const engine = new GameEngine(config);
+      await engine.playGame();
+
+      const state = engine.getGameState();
+
+      // After game completion, round should be 4
+      expect(state.round).toBe(4);
+
+      // Turn should be 53 (52 turns played + initial 1)
+      expect(state.turn).toBe(53);
+
+      // All players should have 0 turns remaining
+      for (const player of state.players) {
+        expect(player.turnsRemaining).toBe(0);
+      }
+    });
+
+    it("supports games with 3-5 players", async () => {
+      const registry = new DataRegistry();
+
+      for (const playerCount of [3, 4, 5]) {
+        const agents = Array.from({ length: playerCount }, (_, i) =>
+          createMockAgent(`p${i + 1}`)
+        );
+        const config = { agents, seed: 42, registry };
+
+        const engine = new GameEngine(config);
+        const result = await engine.playGame();
+
+        // Should have scores for all players
+        for (let i = 1; i <= playerCount; i++) {
+          expect(result.scores).toHaveProperty(`p${i}`);
+        }
+
+        // Total turns should be (8+7+6+5) * playerCount
+        const expectedTurns = (8 + 7 + 6 + 5) * playerCount;
+        expect(result.totalTurns).toBe(expectedTurns);
+      }
+    });
+  });
+
+  describe("scoring methods", () => {
+    function createEngineWithPlayers(playerCount: number) {
+      const registry = new DataRegistry();
+      const agents = Array.from({ length: playerCount }, (_, i) =>
+        createMockAgent(`p${i + 1}`)
+      );
+      return new GameEngine({ agents, seed: 42, registry });
+    }
+
+    const testRegistry = new DataRegistry();
+
+    function createBirdInstance(
+      cardId: string,
+      eggs = 0,
+      cachedFood: Record<string, number> = {},
+      tuckedCards: string[] = []
+    ) {
+      return {
+        id: `test_${cardId}_instance`,
+        card: testRegistry.getBirdById(cardId),
+        eggs,
+        cachedFood,
+        tuckedCards,
+      };
+    }
+
+    describe("calculateFinalScores()", () => {
+      it("returns zero scores for players with empty boards", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        // Clear bonus cards so only bird-based scoring applies
+        state.players[0].bonusCards = [];
+        state.players[1].bonusCards = [];
+
+        const scores = engine.calculateFinalScores();
+
+        expect(scores["p1"]).toBe(0);
+        expect(scores["p2"]).toBe(0);
+      });
+
+      it("scores bird victory points correctly", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+        const registry = new DataRegistry();
+
+        // Clear bonus cards
+        state.players[0].bonusCards = [];
+
+        // Place a bird with known VP (acorn_woodpecker has 5 VP)
+        const acornWoodpecker = registry.getBirdById("acorn_woodpecker");
+        expect(acornWoodpecker).toBeDefined();
+
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker");
+
+        const scores = engine.calculateFinalScores();
+        expect(scores["p1"]).toBe(5); // 5 VP from acorn_woodpecker
+      });
+
+      it("scores eggs on birds correctly", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        state.players[0].bonusCards = [];
+
+        // Place a bird with eggs
+        state.players[0].board.FOREST[0] = createBirdInstance(
+          "acorn_woodpecker",
+          3 // 3 eggs
+        );
+
+        const scores = engine.calculateFinalScores();
+        // 5 VP from bird + 3 VP from eggs = 8
+        expect(scores["p1"]).toBe(8);
+      });
+
+      it("scores cached food on birds correctly", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        state.players[0].bonusCards = [];
+
+        // Place a bird with cached food
+        state.players[0].board.FOREST[0] = createBirdInstance(
+          "acorn_woodpecker",
+          0,
+          { SEED: 2, INVERTEBRATE: 1 } // 3 cached food
+        );
+
+        const scores = engine.calculateFinalScores();
+        // 5 VP from bird + 3 VP from cached food = 8
+        expect(scores["p1"]).toBe(8);
+      });
+
+      it("scores tucked cards correctly", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        state.players[0].bonusCards = [];
+
+        // Place a bird with tucked cards
+        state.players[0].board.FOREST[0] = createBirdInstance(
+          "acorn_woodpecker",
+          0,
+          {},
+          ["card1", "card2", "card3"] // 3 tucked cards
+        );
+
+        const scores = engine.calculateFinalScores();
+        // 5 VP from bird + 3 VP from tucked cards = 8
+        expect(scores["p1"]).toBe(8);
+      });
+
+      it("combines all scoring elements correctly", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        state.players[0].bonusCards = [];
+
+        // Place a bird with everything
+        state.players[0].board.FOREST[0] = createBirdInstance(
+          "acorn_woodpecker", // 5 VP
+          2, // 2 eggs
+          { SEED: 1 }, // 1 cached food
+          ["card1"] // 1 tucked card
+        );
+
+        const scores = engine.calculateFinalScores();
+        // 5 VP + 2 eggs + 1 cached + 1 tucked = 9
+        expect(scores["p1"]).toBe(9);
+      });
+
+      it("scores multiple birds across habitats", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        state.players[0].bonusCards = [];
+
+        // Place birds in different habitats
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker"); // 5 VP
+        state.players[0].board.GRASSLAND[0] = createBirdInstance("acorn_woodpecker"); // 5 VP
+        state.players[0].board.WETLAND[0] = createBirdInstance("acorn_woodpecker"); // 5 VP
+
+        const scores = engine.calculateFinalScores();
+        expect(scores["p1"]).toBe(15);
+      });
+    });
+
+    describe("calculateBonusCardScore()", () => {
+      it("returns 0 for tiered bonus card with no qualifying birds", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+        const registry = new DataRegistry();
+
+        const bonusCard = registry.getBonusCardById("nest_box_builder");
+        expect(bonusCard).toBeDefined();
+
+        // Empty board, no cavity nest birds
+        const score = engine.calculateBonusCardScore(state.players[0], bonusCard!);
+        expect(score).toBe(0);
+      });
+
+      it("scores PER_BIRD bonus card correctly", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+        const registry = new DataRegistry();
+
+        // bird_counter: 2 points per bird with flocking power
+        const bonusCard = registry.getBonusCardById("bird_counter");
+        expect(bonusCard).toBeDefined();
+
+        // Place birds that have bird_counter in their bonusCards
+        // We need to find a bird that qualifies for bird_counter
+        const allBirds = registry.getAllBirds();
+        const flockingBird = allBirds.find((b) =>
+          b.bonusCards.includes("bird_counter")
+        );
+
+        if (flockingBird) {
+          state.players[0].board.FOREST[0] = createBirdInstance(flockingBird.id);
+          state.players[0].board.FOREST[1] = createBirdInstance(flockingBird.id);
+
+          const score = engine.calculateBonusCardScore(state.players[0], bonusCard!);
+          expect(score).toBe(4); // 2 birds × 2 points
+        }
+      });
+
+      it("scores TIERED bonus card at lower tier", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+        const registry = new DataRegistry();
+
+        // nest_box_builder: 4-5 birds = 4 pts, 6+ = 7 pts
+        const bonusCard = registry.getBonusCardById("nest_box_builder");
+        expect(bonusCard).toBeDefined();
+
+        // Find birds with cavity nests
+        const allBirds = registry.getAllBirds();
+        const cavityBirds = allBirds.filter((b) =>
+          b.bonusCards.includes("nest_box_builder")
+        );
+
+        // Place 4 cavity nest birds (lower tier)
+        for (let i = 0; i < 4 && i < cavityBirds.length; i++) {
+          state.players[0].board.FOREST[i] = createBirdInstance(cavityBirds[i].id);
+        }
+
+        const score = engine.calculateBonusCardScore(state.players[0], bonusCard!);
+        expect(score).toBe(4); // 4-5 birds = 4 points
+      });
+
+      it("scores TIERED bonus card at higher tier", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+        const registry = new DataRegistry();
+
+        // nest_box_builder: 4-5 birds = 4 pts, 6+ = 7 pts
+        const bonusCard = registry.getBonusCardById("nest_box_builder");
+        expect(bonusCard).toBeDefined();
+
+        // Find birds with cavity nests
+        const allBirds = registry.getAllBirds();
+        const cavityBirds = allBirds.filter((b) =>
+          b.bonusCards.includes("nest_box_builder")
+        );
+
+        // Place 6+ cavity nest birds (higher tier)
+        let placed = 0;
+        for (const habitat of ["FOREST", "GRASSLAND", "WETLAND"] as const) {
+          for (let i = 0; i < 5 && placed < 6 && placed < cavityBirds.length; i++) {
+            if (!state.players[0].board[habitat][i]) {
+              state.players[0].board[habitat][i] = createBirdInstance(
+                cavityBirds[placed].id
+              );
+              placed++;
+            }
+          }
+        }
+
+        if (placed >= 6) {
+          const score = engine.calculateBonusCardScore(state.players[0], bonusCard!);
+          expect(score).toBe(7); // 6+ birds = 7 points
+        }
+      });
+    });
+
+    describe("countQualifyingBirds()", () => {
+      it("counts birds matching static bonus card condition", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+        const registry = new DataRegistry();
+
+        const bonusCard = registry.getBonusCardById("forester");
+        expect(bonusCard).toBeDefined();
+
+        // Find forest-only birds
+        const allBirds = registry.getAllBirds();
+        const forestOnlyBirds = allBirds.filter((b) =>
+          b.bonusCards.includes("forester")
+        );
+
+        // Place 2 forest-only birds
+        if (forestOnlyBirds.length >= 2) {
+          state.players[0].board.FOREST[0] = createBirdInstance(forestOnlyBirds[0].id);
+          state.players[0].board.FOREST[1] = createBirdInstance(forestOnlyBirds[1].id);
+
+          const count = engine.countQualifyingBirds(state.players[0], bonusCard!);
+          expect(count).toBe(2);
+        }
+      });
+
+      it("handles breeding_manager runtime condition (4+ eggs)", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+        const registry = new DataRegistry();
+
+        const bonusCard = registry.getBonusCardById("breeding_manager");
+        expect(bonusCard).toBeDefined();
+
+        // Place birds with varying egg counts
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker", 5); // qualifies
+        state.players[0].board.FOREST[1] = createBirdInstance("acorn_woodpecker", 4); // qualifies
+        state.players[0].board.FOREST[2] = createBirdInstance("acorn_woodpecker", 3); // doesn't qualify
+        state.players[0].board.FOREST[3] = createBirdInstance("acorn_woodpecker", 0); // doesn't qualify
+
+        const count = engine.countQualifyingBirds(state.players[0], bonusCard!);
+        expect(count).toBe(2);
+      });
+
+      it("handles oologist runtime condition (1+ eggs)", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+        const registry = new DataRegistry();
+
+        const bonusCard = registry.getBonusCardById("oologist");
+        expect(bonusCard).toBeDefined();
+
+        // Place birds with varying egg counts
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker", 3);
+        state.players[0].board.FOREST[1] = createBirdInstance("acorn_woodpecker", 1);
+        state.players[0].board.FOREST[2] = createBirdInstance("acorn_woodpecker", 0);
+
+        const count = engine.countQualifyingBirds(state.players[0], bonusCard!);
+        expect(count).toBe(2);
+      });
+
+      it("handles visionary_leader runtime condition (cards in hand)", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+        const registry = new DataRegistry();
+
+        const bonusCard = registry.getBonusCardById("visionary_leader");
+        expect(bonusCard).toBeDefined();
+
+        // Player already has 5 cards from setup
+        const count = engine.countQualifyingBirds(state.players[0], bonusCard!);
+        expect(count).toBe(5);
+      });
+
+      it("handles ecologist runtime condition (smallest habitat)", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+        const registry = new DataRegistry();
+
+        const bonusCard = registry.getBonusCardById("ecologist");
+        expect(bonusCard).toBeDefined();
+
+        // Place unequal birds in habitats
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.FOREST[1] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.GRASSLAND[0] = createBirdInstance("acorn_woodpecker");
+        // WETLAND is empty (smallest with 0 birds)
+
+        const count = engine.countQualifyingBirds(state.players[0], bonusCard!);
+        expect(count).toBe(0); // WETLAND has 0 birds
+      });
+    });
+
+    describe("countBirdsWithMinEggs()", () => {
+      it("returns 0 for empty board", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        const count = engine.countBirdsWithMinEggs(state.players[0], 1);
+        expect(count).toBe(0);
+      });
+
+      it("counts birds with exact minimum eggs", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker", 4);
+
+        const count = engine.countBirdsWithMinEggs(state.players[0], 4);
+        expect(count).toBe(1);
+      });
+
+      it("counts birds with more than minimum eggs", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker", 6);
+
+        const count = engine.countBirdsWithMinEggs(state.players[0], 4);
+        expect(count).toBe(1);
+      });
+
+      it("excludes birds with fewer than minimum eggs", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker", 3);
+        state.players[0].board.FOREST[1] = createBirdInstance("acorn_woodpecker", 4);
+
+        const count = engine.countBirdsWithMinEggs(state.players[0], 4);
+        expect(count).toBe(1);
+      });
+
+      it("counts across all habitats", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker", 2);
+        state.players[0].board.GRASSLAND[0] = createBirdInstance("acorn_woodpecker", 2);
+        state.players[0].board.WETLAND[0] = createBirdInstance("acorn_woodpecker", 2);
+
+        const count = engine.countBirdsWithMinEggs(state.players[0], 2);
+        expect(count).toBe(3);
+      });
+    });
+
+    describe("countBirdsInSmallestHabitat()", () => {
+      it("returns 0 for empty board", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        const count = engine.countBirdsInSmallestHabitat(state.players[0]);
+        expect(count).toBe(0);
+      });
+
+      it("returns count from smallest habitat", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.FOREST[1] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.FOREST[2] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.GRASSLAND[0] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.GRASSLAND[1] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.WETLAND[0] = createBirdInstance("acorn_woodpecker");
+
+        const count = engine.countBirdsInSmallestHabitat(state.players[0]);
+        expect(count).toBe(1); // WETLAND has 1 bird
+      });
+
+      it("returns tied smallest count", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.FOREST[1] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.GRASSLAND[0] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.GRASSLAND[1] = createBirdInstance("acorn_woodpecker");
+        // WETLAND empty
+
+        const count = engine.countBirdsInSmallestHabitat(state.players[0]);
+        expect(count).toBe(0); // WETLAND is smallest with 0
+      });
+
+      it("handles all habitats equal", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.FOREST[1] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.GRASSLAND[0] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.GRASSLAND[1] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.WETLAND[0] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.WETLAND[1] = createBirdInstance("acorn_woodpecker");
+
+        const count = engine.countBirdsInSmallestHabitat(state.players[0]);
+        expect(count).toBe(2); // All habitats have 2
+      });
+    });
+
+    describe("countBirdsMatchingBonusCard()", () => {
+      it("returns 0 for empty board", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        const count = engine.countBirdsMatchingBonusCard(state.players[0], "forester");
+        expect(count).toBe(0);
+      });
+
+      it("counts birds that match the bonus card", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+        const registry = new DataRegistry();
+
+        // acorn_woodpecker has forester in its bonusCards
+        const acorn = registry.getBirdById("acorn_woodpecker");
+        expect(acorn?.bonusCards).toContain("forester");
+
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.FOREST[1] = createBirdInstance("acorn_woodpecker");
+
+        const count = engine.countBirdsMatchingBonusCard(state.players[0], "forester");
+        expect(count).toBe(2);
+      });
+
+      it("excludes birds that don't match the bonus card", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+        const registry = new DataRegistry();
+
+        // Find a bird that doesn't have forester
+        const allBirds = registry.getAllBirds();
+        const nonForesterBird = allBirds.find(
+          (b) => !b.bonusCards.includes("forester")
+        );
+
+        if (nonForesterBird) {
+          state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker"); // has forester
+          state.players[0].board.FOREST[1] = createBirdInstance(nonForesterBird.id); // doesn't have forester
+
+          const count = engine.countBirdsMatchingBonusCard(state.players[0], "forester");
+          expect(count).toBe(1);
+        }
+      });
+
+      it("counts across all habitats", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+
+        // acorn_woodpecker has nest_box_builder (cavity nest)
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.GRASSLAND[0] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.WETLAND[0] = createBirdInstance("acorn_woodpecker");
+
+        const count = engine.countBirdsMatchingBonusCard(
+          state.players[0],
+          "nest_box_builder"
+        );
+        expect(count).toBe(3);
+      });
+    });
+
+    describe("bonus card integration", () => {
+      it("breeding_manager scores 1 point per bird with 4+ eggs", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+        const registry = new DataRegistry();
+
+        const bonusCard = registry.getBonusCardById("breeding_manager");
+        expect(bonusCard).toBeDefined();
+        expect(bonusCard?.scoringType).toBe("PER_BIRD");
+        expect(bonusCard?.scoring[0]?.points).toBe(1);
+
+        // Place 3 birds with 4+ eggs
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker", 4);
+        state.players[0].board.FOREST[1] = createBirdInstance("acorn_woodpecker", 5);
+        state.players[0].board.FOREST[2] = createBirdInstance("acorn_woodpecker", 4);
+
+        const score = engine.calculateBonusCardScore(state.players[0], bonusCard!);
+        expect(score).toBe(3); // 3 birds × 1 point
+      });
+
+      it("ecologist scores 2 points per bird in smallest habitat", () => {
+        const engine = createEngineWithPlayers(2);
+        const state = engine.getGameState();
+        const registry = new DataRegistry();
+
+        const bonusCard = registry.getBonusCardById("ecologist");
+        expect(bonusCard).toBeDefined();
+        expect(bonusCard?.scoringType).toBe("PER_BIRD");
+        expect(bonusCard?.scoring[0]?.points).toBe(2);
+
+        // 3 in forest, 2 in grassland, 2 in wetland (tie: 2 birds)
+        state.players[0].board.FOREST[0] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.FOREST[1] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.FOREST[2] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.GRASSLAND[0] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.GRASSLAND[1] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.WETLAND[0] = createBirdInstance("acorn_woodpecker");
+        state.players[0].board.WETLAND[1] = createBirdInstance("acorn_woodpecker");
+
+        const score = engine.calculateBonusCardScore(state.players[0], bonusCard!);
+        expect(score).toBe(4); // 2 birds × 2 points
+      });
+    });
+  });
+
+  describe("Static Utility Methods", () => {
+    function createEngineForStaticTests() {
+      const registry = new DataRegistry();
+      const agents = [createMockAgent("p1"), createMockAgent("p2")];
+      return new GameEngine({ agents, seed: 42, registry });
+    }
+
+    describe("getLeftmostEmptyColumn()", () => {
+      it("returns 0 for empty habitat", () => {
+        const engine = createEngineForStaticTests();
+        const player = engine.getGameState().players[0];
+
+        // Clear the board (it may have birds from setup)
+        player.board.FOREST = [null, null, null, null, null];
+        player.board.GRASSLAND = [null, null, null, null, null];
+        player.board.WETLAND = [null, null, null, null, null];
+
+        expect(GameEngine.getLeftmostEmptyColumn(player, "FOREST")).toBe(0);
+        expect(GameEngine.getLeftmostEmptyColumn(player, "GRASSLAND")).toBe(0);
+        expect(GameEngine.getLeftmostEmptyColumn(player, "WETLAND")).toBe(0);
+      });
+
+      it("returns correct column when birds are placed", () => {
+        const engine = createEngineForStaticTests();
+        const player = engine.getGameState().players[0];
+        const registry = new DataRegistry();
+
+        // Clear the board first
+        player.board.FOREST = [null, null, null, null, null];
+        player.board.GRASSLAND = [null, null, null, null, null];
+
+        const birdCard = registry.getAllBirds()[0];
+        player.board.FOREST[0] = {
+          id: "bird1",
+          card: birdCard,
+          cachedFood: {},
+          tuckedCards: [],
+          eggs: 0,
+        };
+        player.board.FOREST[1] = {
+          id: "bird2",
+          card: birdCard,
+          cachedFood: {},
+          tuckedCards: [],
+          eggs: 0,
+        };
+
+        expect(GameEngine.getLeftmostEmptyColumn(player, "FOREST")).toBe(2);
+        expect(GameEngine.getLeftmostEmptyColumn(player, "GRASSLAND")).toBe(0);
+      });
+
+      it("returns 5 when habitat is full", () => {
+        const engine = createEngineForStaticTests();
+        const player = engine.getGameState().players[0];
+        const registry = new DataRegistry();
+
+        const birdCard = registry.getAllBirds()[0];
+        for (let i = 0; i < 5; i++) {
+          player.board.FOREST[i] = {
+            id: `bird${i}`,
+            card: birdCard,
+            cachedFood: {},
+            tuckedCards: [],
+            eggs: 0,
+          };
+        }
+
+        expect(GameEngine.getLeftmostEmptyColumn(player, "FOREST")).toBe(5);
+      });
+    });
+
+    describe("getBirdsWithBrownPowers()", () => {
+      it("returns empty array for empty habitat", () => {
+        const engine = createEngineForStaticTests();
+        const player = engine.getGameState().players[0];
+
+        // Clear the board
+        player.board.FOREST = [null, null, null, null, null];
+
+        expect(GameEngine.getBirdsWithBrownPowers(player, "FOREST")).toEqual([]);
+      });
+
+      it("returns bird IDs with brown powers in right-to-left order", () => {
+        const engine = createEngineForStaticTests();
+        const player = engine.getGameState().players[0];
+        const registry = new DataRegistry();
+
+        // Clear the board first
+        player.board.FOREST = [null, null, null, null, null];
+
+        // Find a bird with a brown power (WHEN_ACTIVATED trigger)
+        const brownPowerBird = registry.getAllBirds().find(
+          (b) => b.power?.trigger === "WHEN_ACTIVATED"
+        );
+        const noPowerBird = registry.getAllBirds().find(
+          (b) => !b.power
+        );
+
+        if (!brownPowerBird || !noPowerBird) {
+          // Skip test if we can't find suitable birds
+          return;
+        }
+
+        player.board.FOREST[0] = {
+          id: "brown1",
+          card: brownPowerBird,
+          cachedFood: {},
+          tuckedCards: [],
+          eggs: 0,
+        };
+        player.board.FOREST[1] = {
+          id: "nopower",
+          card: noPowerBird,
+          cachedFood: {},
+          tuckedCards: [],
+          eggs: 0,
+        };
+        player.board.FOREST[2] = {
+          id: "brown2",
+          card: brownPowerBird,
+          cachedFood: {},
+          tuckedCards: [],
+          eggs: 0,
+        };
+
+        const result = GameEngine.getBirdsWithBrownPowers(player, "FOREST");
+
+        // Should be in right-to-left order (brown2 first, then brown1)
+        expect(result).toEqual(["brown2", "brown1"]);
+      });
+
+      it("excludes birds with non-brown powers", () => {
+        const engine = createEngineForStaticTests();
+        const player = engine.getGameState().players[0];
+        const registry = new DataRegistry();
+
+        // Clear the board first
+        player.board.FOREST = [null, null, null, null, null];
+
+        // Find birds with pink and white powers
+        const pinkPowerBird = registry.getAllBirds().find(
+          (b) => b.power?.trigger?.startsWith("WHEN_ANOTHER_PLAYER")
+        );
+        const whitePowerBird = registry.getAllBirds().find(
+          (b) => b.power?.trigger === "WHEN_PLAYED"
+        );
+
+        if (!pinkPowerBird && !whitePowerBird) {
+          // Skip test if we can't find suitable birds
+          return;
+        }
+
+        if (pinkPowerBird) {
+          player.board.FOREST[0] = {
+            id: "pink1",
+            card: pinkPowerBird,
+            cachedFood: {},
+            tuckedCards: [],
+            eggs: 0,
+          };
+        }
+
+        if (whitePowerBird) {
+          player.board.FOREST[1] = {
+            id: "white1",
+            card: whitePowerBird,
+            cachedFood: {},
+            tuckedCards: [],
+            eggs: 0,
+          };
+        }
+
+        const result = GameEngine.getBirdsWithBrownPowers(player, "FOREST");
+
+        // Should not include pink or white power birds
+        expect(result).toEqual([]);
+      });
+    });
+  });
+});

@@ -14,6 +14,7 @@ import type {
   FoodByType,
   CardSource,
   FoodSource,
+  BirdCardId,
 } from "./core.ts";
 
 export type Effect =
@@ -25,7 +26,7 @@ export type Effect =
   | GainFoodEffect
   | DrawCardsEffect
   | LayEggsEffect
-  | GainBonusCardsEffect
+  | DrawBonusCardsEffect
 
   // Resource Spend Effects
   | DiscardFoodEffect
@@ -35,6 +36,7 @@ export type Effect =
   // Card Manipulation Effects
   | TuckCardsEffect
   | RevealCardsEffect
+  | RevealBonusCardsEffect
 
   // Bird State Effects
   | CacheFoodEffect
@@ -88,21 +90,21 @@ export interface DrawCardsEffect extends EffectBase {
   type: "DRAW_CARDS";
   playerId: PlayerId;
   fromDeck: number;
-  fromTray: BirdInstanceId[];
-  drawnCards?: BirdInstanceId[];
+  fromTray: BirdCardId[];
+  fromRevealed?: BirdCardId[];
+  drawnCards?: BirdCardId[];
+}
+export interface DrawBonusCardsEffect extends EffectBase {
+  type: "DRAW_BONUS_CARDS";
+  playerId: PlayerId;
+  keptCards: BonusCardId[];
+  discardedCards: BonusCardId[];
 }
 export interface LayEggsEffect extends EffectBase {
   type: "LAY_EGGS";
   playerId: PlayerId;
   placements: Record<BirdInstanceId, number>;
 }
-export interface GainBonusCardsEffect extends EffectBase {
-  type: "GAIN_BONUS_CARDS";
-  playerId: PlayerId;
-  keptCards: BonusCardId[];
-  discardedCards: BonusCardId[];
-}
-
 export interface DiscardFoodEffect extends EffectBase {
   type: "DISCARD_FOOD";
   playerId: PlayerId;
@@ -116,24 +118,30 @@ export interface DiscardEggsEffect extends EffectBase {
 export interface DiscardCardsEffect extends EffectBase {
   type: "DISCARD_CARDS";
   playerId: PlayerId;
-  cards: BirdInstanceId[];
+  cards: BirdCardId[];
 }
 
 export interface TuckCardsEffect extends EffectBase {
   type: "TUCK_CARDS";
   playerId: PlayerId;
   targetBirdInstanceId: BirdInstanceId;
-  fromHand: BirdInstanceId[];
+  fromRevealed: BirdCardId[];
+  fromHand: BirdCardId[];
   fromDeck: number;
-  tuckedFromDeck?: BirdInstanceId[];
+  tuckedFromDeck?: BirdCardId[];
 }
 export interface RevealCardsEffect extends EffectBase {
   type: "REVEAL_CARDS";
   playerId: PlayerId;
   source: CardSource;
-  revealedCards: BirdInstanceId[];
-  disposition: "TUCKED" | "DISCARDED";
-  tuckedUnderBirdInstanceId?: BirdInstanceId;
+  count: number;
+  revealedCards?: BirdCardId[];
+}
+export interface RevealBonusCardsEffect extends EffectBase {
+  type: "REVEAL_BONUS_CARDS";
+  playerId: PlayerId;
+  count: number;
+  revealedCards?: BonusCardId[];
 }
 
 export interface CacheFoodEffect extends EffectBase {

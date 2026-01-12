@@ -5,7 +5,9 @@ import {
   type TurnActionContext,
   type TurnActionExecutionContext,
 } from "./ActionProcessor.js";
-import type { GameState } from "./GameEngine.js";
+import { GameState } from "./GameState.js";
+import { PlayerState } from "./PlayerState.js";
+import { PlayerBoard } from "./PlayerBoard.js";
 import type { PowerExecutionContext } from "../types/power.js";
 import type { PinkPowerTriggerEvent } from "../types/events.js";
 import type { PlayerAgent } from "../agents/PlayerAgent.js";
@@ -13,7 +15,6 @@ import type {
   BirdCard,
   BirdInstance,
   Habitat,
-  PlayerState,
   PlayerId,
   PowerSpec,
 } from "../types/core.js";
@@ -31,6 +32,7 @@ import type {
   PlayBirdChoice,
 } from "../types/prompts.js";
 import { DataRegistry } from "../data/DataRegistry.js";
+import { AgentForfeitError } from "./errors.js";
 import { Birdfeeder } from "./Birdfeeder.js";
 import { BirdCardSupply } from "./BirdCardSupply.js";
 import { Rng } from "../util/Rng.js";
@@ -65,25 +67,24 @@ function createPlayerState(
   id: string,
   board: Partial<Record<Habitat, Array<BirdInstance | null>>> = {}
 ): PlayerState {
-  return {
-    id,
-    board: {
+  return PlayerState.from(id, {
+    board: PlayerBoard.from({
       FOREST: board.FOREST ?? [null, null, null, null, null],
       GRASSLAND: board.GRASSLAND ?? [null, null, null, null, null],
       WETLAND: board.WETLAND ?? [null, null, null, null, null],
-    },
+    }),
     hand: [],
     bonusCards: [],
     food: { INVERTEBRATE: 1, SEED: 1, FISH: 1, FRUIT: 1, RODENT: 1 },
     turnsRemaining: 8,
-  };
+  });
 }
 
 /**
  * Creates a minimal game state for testing.
  */
 function createGameState(players: PlayerState[]): GameState {
-  return {
+  return new GameState({
     players,
     activePlayerIndex: 0,
     birdfeeder: {} as GameState["birdfeeder"],
@@ -93,7 +94,7 @@ function createGameState(players: PlayerState[]): GameState {
     round: 1,
     turn: 1,
     endOfTurnContinuations: [],
-  };
+  });
 }
 
 /**
@@ -189,7 +190,7 @@ function createTestPlayer(
     birds?: Array<{ habitat: Habitat; column: number; bird: BirdInstance }>;
   }
 ): PlayerState {
-  const board: Record<Habitat, Array<BirdInstance | null>> = {
+  const boardData: Record<Habitat, Array<BirdInstance | null>> = {
     FOREST: [null, null, null, null, null],
     GRASSLAND: [null, null, null, null, null],
     WETLAND: [null, null, null, null, null],
@@ -198,14 +199,13 @@ function createTestPlayer(
   // Place any specified birds
   if (options?.birds) {
     for (const { habitat, column, bird } of options.birds) {
-      board[habitat][column] = bird;
+      boardData[habitat][column] = bird;
     }
   }
 
-  return {
-    id,
-    board,
-    hand: (options?.hand as PlayerState["hand"]) ?? [],
+  return PlayerState.from(id, {
+    board: PlayerBoard.from(boardData),
+    hand: (options?.hand as BirdCard[]) ?? [],
     bonusCards: [],
     food: {
       INVERTEBRATE: options?.food?.INVERTEBRATE ?? 0,
@@ -215,7 +215,7 @@ function createTestPlayer(
       RODENT: options?.food?.RODENT ?? 0,
     },
     turnsRemaining: 8,
-  };
+  });
 }
 
 /**
@@ -287,7 +287,7 @@ function createTestContext(
     getAgent: (_playerId: PlayerId) => agent,
     generatePromptId: () => `prompt_${++promptCounter}`,
     buildPlayerView: (_playerId: PlayerId) => ({
-      board: player.board,
+      board: player.board.toRecord(),
       hand: player.hand,
       food: player.food,
       birdTray: mockState.birdCardSupply.getTray().filter((c): c is any => c !== null),
@@ -324,7 +324,7 @@ function createTestContext(
           for (const [birdId, count] of Object.entries(effect.placements)) {
             if (count && count > 0) {
               for (const habitat of ["FOREST", "GRASSLAND", "WETLAND"] as const) {
-                const bird = p.board[habitat].find((b) => b?.id === birdId);
+                const bird = p.board.getHabitat(habitat).find((b) => b?.id === birdId);
                 if (bird) {
                   bird.eggs += count;
                 }
@@ -382,7 +382,7 @@ describe("ActionProcessor", () => {
 
   describe("executeSinglePower()", () => {
     describe("when bird has no power", () => {
-      it("returns activated=false with CONDITION_NOT_MET reason", async () => {
+      it("returns activated=false with NO_POWER reason", async () => {
         // Find a bird with no power in the registry
         const allBirds = registry.getAllBirds();
         const birdWithNoPower = allBirds.find((b) => b.power === null);
@@ -409,84 +409,13 @@ describe("ActionProcessor", () => {
         const result = await processor.executeSinglePower(
           "test_instance_1",
           "player1",
-          "FOREST",
           execCtx
         );
 
         expect(result.activated).toBe(false);
-        expect(result.skipReason).toBe("CONDITION_NOT_MET");
+        expect(result.skipReason).toBe("NO_POWER");
         expect(result.handlerId).toBe("none");
         expect(result.effects).toEqual([]);
-      });
-    });
-
-    describe("when bird has a power but no handler is registered", () => {
-      it("returns activated=false with CONDITION_NOT_MET reason", async () => {
-        // Find a bird with a power that uses a handler we haven't implemented
-        const implementedHandlers = [
-          "gainFoodFromSupply",
-          "gainFoodFromFeederWithCache",
-          "whenOpponentLaysEggsLayEggOnNestType",
-          "playersWithFewestInHabitatDrawCard",
-          "tuckAndDraw",
-          "discardEggToGainFood",
-          "rollDiceAndCacheIfMatch",
-          "drawAndDistributeCards",
-          "gainFoodFromFeeder",
-          "discardFoodToTuckFromDeck",
-          "eachPlayerGainsFoodFromFeeder",
-          "layEggOnBirdsWithNestType",
-          "drawBonusCardsAndKeep",
-          "layEggsOnBird",
-          "gainAllFoodTypeFromFeeder",
-          "allPlayersGainFoodFromSupply",
-          "lookAtCardAndTuckIfWingspanUnder",
-          "whenOpponentPlaysBirdInHabitatGainFood",
-          "moveToAnotherHabitatIfRightmost",
-          "drawCardsWithDelayedDiscard",
-        ];
-
-        const allBirds = registry.getAllBirds();
-        const birdWithUnimplementedPower = allBirds.find(
-          (b) => b.power && !implementedHandlers.includes(b.power.handlerId)
-        );
-
-        if (!birdWithUnimplementedPower) {
-          console.log(
-            "All birds have implemented handlers, skipping test"
-          );
-          return;
-        }
-
-        const birdInstance = createBirdInstance(
-          "test_instance_1",
-          birdWithUnimplementedPower.id
-        );
-        const player = createPlayerState("player1", {
-          FOREST: [birdInstance, null, null, null, null],
-        });
-        const state = createGameState([player]);
-
-        const mockAgent = createMockAgent("player1");
-        const agents = new Map([["player1", mockAgent]]);
-        const execCtx = createMockExecutionContext(state, registry, agents);
-
-        // Suppress console.error for this test
-        const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-
-        const result = await processor.executeSinglePower(
-          "test_instance_1",
-          "player1",
-          "FOREST",
-          execCtx
-        );
-
-        expect(result.activated).toBe(false);
-        expect(result.skipReason).toBe("CONDITION_NOT_MET");
-        expect(result.handlerId).toBe(birdWithUnimplementedPower.power!.handlerId);
-        expect(result.effects).toEqual([]);
-
-        consoleSpy.mockRestore();
       });
     });
 
@@ -503,7 +432,6 @@ describe("ActionProcessor", () => {
           processor.executeSinglePower(
             "nonexistent_bird",
             "player1",
-            "FOREST",
             execCtx
           )
         ).rejects.toThrow("Bird instance nonexistent_bird not found");
@@ -546,7 +474,6 @@ describe("ActionProcessor", () => {
         const result = await processor.executeSinglePower(
           "test_instance_1",
           "player1",
-          "FOREST",
           execCtx
         );
 
@@ -599,10 +526,11 @@ describe("ActionProcessor", () => {
               } as ActivatePowerChoice);
             } else if (prompt.kind === "selectFoodFromSupply") {
               const foodType = (birdWithPower.power?.params.foodType as string) || "SEED";
+              // Return the exact count requested by the prompt
               return Promise.resolve({
                 kind: "selectFoodFromSupply",
                 promptId: prompt.promptId,
-                food: { [foodType]: 1 },
+                food: { [foodType]: prompt.count },
               } as SelectFoodFromSupplyChoice);
             }
             throw new Error(`Unexpected prompt kind: ${prompt.kind}`);
@@ -615,7 +543,6 @@ describe("ActionProcessor", () => {
         const result = await processor.executeSinglePower(
           "test_instance_1",
           "player1",
-          "FOREST",
           execCtx
         );
 
@@ -683,7 +610,6 @@ describe("ActionProcessor", () => {
         await processor.executeSinglePower(
           "test_instance_1",
           "player1",
-          "FOREST",
           execCtx
         );
 
@@ -1446,14 +1372,14 @@ describe("ActionProcessor", () => {
       const player = createTestPlayer("p1");
       const agent = createMockAgentWithHandler("p1", (prompt) => {
         if (prompt.kind === "selectFoodFromFeeder") {
-          // Take the first available food
-          const available = prompt.availableFood;
-          for (const [foodType, count] of Object.entries(available)) {
+          // Take the first available die
+          const available = prompt.availableDice;
+          for (const [dieType, count] of Object.entries(available)) {
             if (count && count > 0) {
               return {
                 promptId: prompt.promptId,
                 kind: "selectFoodFromFeeder",
-                foodOrReroll: { [foodType]: 1 },
+                diceOrReroll: [{ die: dieType }],
               } as SelectFoodFromFeederChoice;
             }
           }
@@ -1499,22 +1425,22 @@ describe("ActionProcessor", () => {
       const player = createTestPlayer("p1");
       const agent = createMockAgentWithHandler("p1", (prompt) => {
         if (prompt.kind === "selectFoodFromFeeder") {
-          // Always take first available food
-          const available = prompt.availableFood;
-          for (const [foodType, count] of Object.entries(available)) {
+          // Always take first available die
+          const available = prompt.availableDice;
+          for (const [dieType, count] of Object.entries(available)) {
             if (count && count > 0) {
               return {
                 promptId: prompt.promptId,
                 kind: "selectFoodFromFeeder",
-                foodOrReroll: { [foodType]: 1 },
+                diceOrReroll: [{ die: dieType }],
               } as SelectFoodFromFeederChoice;
             }
           }
-          // No food available - this shouldn't happen in test but handle gracefully
+          // No dice available - this shouldn't happen in test but handle gracefully
           return {
             promptId: prompt.promptId,
             kind: "selectFoodFromFeeder",
-            foodOrReroll: { SEED: 1 },
+            diceOrReroll: [{ die: "SEED" }],
           } as SelectFoodFromFeederChoice;
         }
         throw new Error(`Unexpected prompt: ${prompt.kind}`);
@@ -1772,6 +1698,231 @@ describe("ActionProcessor", () => {
 
       // Should have returned BIRD_PLAYED event
       expect(result.events.some((e) => e.type === "BIRD_PLAYED")).toBe(true);
+    });
+  });
+
+  describe("choice validation and reprompting", () => {
+    it("reprompts with previousError when agent makes invalid choice", async () => {
+      // Find a bird with gainFoodFromSupply power for testing
+      const allBirds = registry.getAllBirds();
+      const birdWithPower = allBirds.find(
+        (b) => b.power?.handlerId === "gainFoodFromSupply"
+      );
+
+      if (!birdWithPower) {
+        console.log("No birds with gainFoodFromSupply power, skipping test");
+        return;
+      }
+
+      const birdInstance = createBirdInstance(
+        "test_instance_1",
+        birdWithPower.id
+      );
+      const player = createPlayerState("player1", {
+        FOREST: [birdInstance, null, null, null, null],
+      });
+      const state = createGameState([player]);
+
+      const mockAgent = createMockAgent("player1");
+      const promptsReceived: OptionPrompt[] = [];
+      let callCount = 0;
+
+      // First call: return invalid choice (wrong count)
+      // Second call: return valid choice
+      (mockAgent.chooseOption as ReturnType<typeof vi.fn>).mockImplementation(
+        (prompt) => {
+          promptsReceived.push(prompt);
+          callCount++;
+
+          if (prompt.kind === "activatePower") {
+            return Promise.resolve({
+              kind: "activatePower",
+              promptId: prompt.promptId,
+              activate: true,
+            } as ActivatePowerChoice);
+          } else if (prompt.kind === "selectFoodFromSupply") {
+            const foodType =
+              (birdWithPower.power?.params.foodType as string) || "SEED";
+
+            if (callCount === 2) {
+              // First selectFoodFromSupply call - return invalid (wrong count)
+              return Promise.resolve({
+                kind: "selectFoodFromSupply",
+                promptId: prompt.promptId,
+                food: { [foodType]: 1 }, // Wrong count - should be prompt.count
+              } as SelectFoodFromSupplyChoice);
+            } else {
+              // Second call - return valid choice
+              return Promise.resolve({
+                kind: "selectFoodFromSupply",
+                promptId: prompt.promptId,
+                food: { [foodType]: prompt.count },
+              } as SelectFoodFromSupplyChoice);
+            }
+          }
+          throw new Error(`Unexpected prompt kind: ${prompt.kind}`);
+        }
+      );
+
+      const agents = new Map([["player1", mockAgent]]);
+      const execCtx = createMockExecutionContext(state, registry, agents);
+
+      const result = await processor.executeSinglePower(
+        "test_instance_1",
+        "player1",
+        execCtx
+      );
+
+      // Should succeed after reprompt
+      expect(result.activated).toBe(true);
+
+      // Should have received at least 3 prompts: activatePower, invalid selectFoodFromSupply, valid selectFoodFromSupply
+      expect(promptsReceived.length).toBeGreaterThanOrEqual(3);
+
+      // The third prompt (second selectFoodFromSupply) should have previousError set
+      const reprompt = promptsReceived[2];
+      expect(reprompt.kind).toBe("selectFoodFromSupply");
+      expect(reprompt.previousError).toBeDefined();
+      expect(reprompt.previousError?.code).toBe("INVALID_FOOD_COUNT");
+    });
+
+    it("throws AgentForfeitError after 3 consecutive invalid choices", async () => {
+      // Find a bird with gainFoodFromSupply power for testing
+      const allBirds = registry.getAllBirds();
+      const birdWithPower = allBirds.find(
+        (b) => b.power?.handlerId === "gainFoodFromSupply"
+      );
+
+      if (!birdWithPower) {
+        console.log("No birds with gainFoodFromSupply power, skipping test");
+        return;
+      }
+
+      const birdInstance = createBirdInstance(
+        "test_instance_1",
+        birdWithPower.id
+      );
+      const player = createPlayerState("player1", {
+        FOREST: [birdInstance, null, null, null, null],
+      });
+      const state = createGameState([player]);
+
+      const mockAgent = createMockAgent("player1");
+
+      // Always return invalid choice (wrong count)
+      (mockAgent.chooseOption as ReturnType<typeof vi.fn>).mockImplementation(
+        (prompt) => {
+          if (prompt.kind === "activatePower") {
+            return Promise.resolve({
+              kind: "activatePower",
+              promptId: prompt.promptId,
+              activate: true,
+            } as ActivatePowerChoice);
+          } else if (prompt.kind === "selectFoodFromSupply") {
+            const foodType =
+              (birdWithPower.power?.params.foodType as string) || "SEED";
+            // Always return wrong count
+            return Promise.resolve({
+              kind: "selectFoodFromSupply",
+              promptId: prompt.promptId,
+              food: { [foodType]: 999 }, // Invalid - wrong count
+            } as SelectFoodFromSupplyChoice);
+          }
+          throw new Error(`Unexpected prompt kind: ${prompt.kind}`);
+        }
+      );
+
+      const agents = new Map([["player1", mockAgent]]);
+      const execCtx = createMockExecutionContext(state, registry, agents);
+
+      // Should throw AgentForfeitError after 3 attempts
+      await expect(
+        processor.executeSinglePower("test_instance_1", "player1", execCtx)
+      ).rejects.toThrow(AgentForfeitError);
+
+      // Verify error details
+      try {
+        await processor.executeSinglePower("test_instance_1", "player1", execCtx);
+      } catch (e) {
+        expect(e).toBeInstanceOf(AgentForfeitError);
+        const error = e as AgentForfeitError;
+        expect(error.playerId).toBe("player1");
+        expect(error.attempts).toBe(3);
+        expect(error.lastError.code).toBe("INVALID_FOOD_COUNT");
+      }
+    });
+
+    it("succeeds when valid choice is made after 2 failed attempts", async () => {
+      // Find a bird with gainFoodFromSupply power for testing
+      const allBirds = registry.getAllBirds();
+      const birdWithPower = allBirds.find(
+        (b) => b.power?.handlerId === "gainFoodFromSupply"
+      );
+
+      if (!birdWithPower) {
+        console.log("No birds with gainFoodFromSupply power, skipping test");
+        return;
+      }
+
+      const birdInstance = createBirdInstance(
+        "test_instance_1",
+        birdWithPower.id
+      );
+      const player = createPlayerState("player1", {
+        FOREST: [birdInstance, null, null, null, null],
+      });
+      const state = createGameState([player]);
+
+      const mockAgent = createMockAgent("player1");
+      let selectFoodCallCount = 0;
+
+      // First two selectFoodFromSupply calls: invalid
+      // Third call: valid
+      (mockAgent.chooseOption as ReturnType<typeof vi.fn>).mockImplementation(
+        (prompt) => {
+          if (prompt.kind === "activatePower") {
+            return Promise.resolve({
+              kind: "activatePower",
+              promptId: prompt.promptId,
+              activate: true,
+            } as ActivatePowerChoice);
+          } else if (prompt.kind === "selectFoodFromSupply") {
+            selectFoodCallCount++;
+            const foodType =
+              (birdWithPower.power?.params.foodType as string) || "SEED";
+
+            if (selectFoodCallCount <= 2) {
+              // First two calls - invalid
+              return Promise.resolve({
+                kind: "selectFoodFromSupply",
+                promptId: prompt.promptId,
+                food: { [foodType]: 0 }, // Invalid - wrong count
+              } as SelectFoodFromSupplyChoice);
+            } else {
+              // Third call - valid
+              return Promise.resolve({
+                kind: "selectFoodFromSupply",
+                promptId: prompt.promptId,
+                food: { [foodType]: prompt.count },
+              } as SelectFoodFromSupplyChoice);
+            }
+          }
+          throw new Error(`Unexpected prompt kind: ${prompt.kind}`);
+        }
+      );
+
+      const agents = new Map([["player1", mockAgent]]);
+      const execCtx = createMockExecutionContext(state, registry, agents);
+
+      // Should succeed on the third attempt (2 failures + 1 success)
+      const result = await processor.executeSinglePower(
+        "test_instance_1",
+        "player1",
+        execCtx
+      );
+
+      expect(result.activated).toBe(true);
+      expect(selectFoodCallCount).toBe(3);
     });
   });
 });

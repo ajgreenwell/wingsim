@@ -16,6 +16,9 @@ import type {
   BirdInstanceId,
   BirdInstance,
   FoodByType,
+  FoodByDice,
+  DieSelection,
+  DieFace,
   EggsByBird,
   EggCostByHabitat,
   PowerSpec,
@@ -40,7 +43,7 @@ export interface PlayerView {
   round: number;
   turn: number;
   activePlayerId: PlayerId;
-  birdfeeder: FoodType[];
+  birdfeeder: DieFace[];
   birdTray: BirdCard[];
   deckSize: number;
 
@@ -56,6 +59,17 @@ export interface PlayerView {
 
 /** Unique identifier for a prompt instance */
 export type PromptId = string;
+
+/**
+ * Validation error returned when an agent makes an invalid choice.
+ * Included in reprompts to help agents understand what went wrong.
+ */
+export interface ValidationError {
+  /** Machine-readable error code (e.g., "INVALID_EGG_COUNT", "EXCEEDS_CAPACITY") */
+  code: string;
+  /** Human-readable error message explaining what was wrong */
+  message: string;
+}
 
 /**
  * Context information about what triggered this prompt.
@@ -81,6 +95,11 @@ export interface DecisionPromptBase {
   kind: string;
   view: PlayerView;
   context: PromptContext;
+  /**
+   * If present, the previous choice was invalid and this is a reprompt.
+   * Contains error details to help the agent correct their choice.
+   */
+  previousError?: ValidationError;
 }
 
 /**
@@ -152,15 +171,16 @@ export interface ActivatePowerChoice extends DecisionChoiceBase {
 
 export interface SelectFoodFromFeederPrompt extends DecisionPromptBase {
   kind: "selectFoodFromFeeder";
-  // Current feeder availability for each type of food
-  availableFood: FoodByType;
+  // Current feeder availability by die face (includes SEED_INVERTEBRATE)
+  availableDice: FoodByDice;
 }
 
 export interface SelectFoodFromFeederChoice extends DecisionChoiceBase {
   kind: "selectFoodFromFeeder";
-  // Choose food from birdfeeder or reroll the feeder instead
-  // food counts chosen must match SelectFoodFromFeederPrompt.availableFood
-  foodOrReroll: FoodByType | "reroll";
+  // Array of individual die selections, or reroll the feeder
+  // Each DieSelection specifies which die to take
+  // For SEED_INVERTEBRATE dice, asFoodType must specify SEED or INVERTEBRATE
+  diceOrReroll: DieSelection[] | "reroll";
 }
 
 export interface SelectFoodFromSupplyPrompt extends DecisionPromptBase {
@@ -307,7 +327,7 @@ export interface PlayBirdChoice extends DecisionChoiceBase {
 export interface DiscardFoodPrompt extends DecisionPromptBase {
   kind: "discardFood";
   foodCost: FoodByType;
-  tuckedCardsReward: number;
+  tuckedCardsReward?: number;
 }
 
 export interface DiscardFoodChoice extends DecisionChoiceBase {

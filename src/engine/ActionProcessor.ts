@@ -15,11 +15,10 @@
 import type { Event, PinkPowerTriggerEvent } from "../types/events.js";
 import type { Effect } from "../types/effects.js";
 import type {
-  BirdInstance,
   Habitat,
   PlayerId,
 } from "../types/core.js";
-import type { GameState } from "./GameEngine.js";
+import type { GameState } from "./GameState.js";
 import type {
   ActionExecutionContext,
   PowerActivationResult,
@@ -31,7 +30,9 @@ import type {
   TurnActionHandlerRegistry,
 } from "../types/power.js";
 import { isPromptRequest, isDeferredContinuation, isEventYield } from "../types/power.js";
-import type { TurnActionKind } from "../types/prompts.js";
+import type { TurnActionKind, OptionPrompt, OptionChoice } from "../types/prompts.js";
+import { validateChoice } from "./ChoiceValidators.js";
+import { AgentForfeitError } from "./errors.js";
 import {
   // Power handlers
   gainFoodFromSupply,
@@ -92,6 +93,7 @@ export interface PinkPowerTrigger {
   ownerId: PlayerId;
   habitat: Habitat;
   handlerId: string;
+  triggeringEvent: PinkPowerTriggerEvent;
 }
 
 export class ActionProcessor {
@@ -210,7 +212,7 @@ export class ActionProcessor {
     const state = execCtx.getState();
 
     // Find the bird instance
-    const bird = this.findBirdInstance(state, birdInstanceId);
+    const bird = state.findBirdInstance(birdInstanceId);
     if (!bird) {
       throw new Error(
         `Bird instance ${birdInstanceId} not found on any player's board`
@@ -224,7 +226,7 @@ export class ActionProcessor {
         birdInstanceId,
         handlerId: "none",
         activated: false,
-        skipReason: "CONDITION_NOT_MET",
+        skipReason: "NO_POWER",
         effects: [],
         events: [],
       };
@@ -232,15 +234,7 @@ export class ActionProcessor {
     const handler = this.handlers.get(power.handlerId);
     if (!handler) {
       // No handler registered for this power yet
-      console.error(`No handler registered for power ${power.handlerId}`);
-      return {
-        birdInstanceId,
-        handlerId: power.handlerId,
-        activated: false,
-        skipReason: "CONDITION_NOT_MET",
-        effects: [],
-        events: [],
-      };
+      throw new Error(`No handler registered for power ${power.handlerId}`);
     }
 
     // Build the power context
@@ -252,12 +246,9 @@ export class ActionProcessor {
         // Look up bird's current habitat from live state (safe for continuations)
         const currentState = execCtx.getState();
         for (const player of currentState.players) {
-          for (const h of ["FOREST", "GRASSLAND", "WETLAND"] as Habitat[]) {
-            for (const b of player.board[h]) {
-              if (b?.id === bird.id) {
-                return h;
-              }
-            }
+          const habitat = player.board.getBirdHabitat(bird.id);
+          if (habitat) {
+            return habitat;
           }
         }
         throw new Error(`Bird ${bird.id} not found on any board`);
@@ -275,26 +266,14 @@ export class ActionProcessor {
           sourceBirdId: bird.id,
           habitat: ctx.getHabitat(),
         }),
+      getTriggeringEvent: () => execCtx.triggeringEvent,
     };
 
     // Execute the generator
     const gen = handler(ctx, power.params);
     let result: { effects: Effect[]; events: Event[] };
 
-    try {
-      result = await this.runGenerator(gen, ownerId, execCtx);
-    } catch (error) {
-      console.error(`Error executing power handler ${power.handlerId}:`, error);
-      return {
-        birdInstanceId,
-        handlerId: power.handlerId,
-        activated: false,
-        skipReason: "CONDITION_NOT_MET",
-        effects: [],
-        events: [],
-      };
-    }
-
+    result = await this.runGenerator(gen, ownerId, execCtx);
     const activateEffect = result.effects.find(
       (e) => e.type === "ACTIVATE_POWER"
     );
@@ -347,19 +326,47 @@ export class ActionProcessor {
       const yielded = iterResult.value;
 
       if (isPromptRequest(yielded)) {
-        // Pause and get agent decision
-        const promptPlayerId = yielded.prompt.playerId;
-        const agent = execCtx.getAgent(promptPlayerId);
-        const choice = await agent.chooseOption(yielded.prompt);
-        iterResult = gen.next(choice);
+        // Pause and get agent decision with validation loop
+        const MAX_ATTEMPTS = 3;
+        let attempts = 0;
+        let currentPrompt = yielded.prompt as OptionPrompt;
+
+        while (true) {
+          const promptPlayerId = currentPrompt.playerId;
+          const agent = execCtx.getAgent(promptPlayerId);
+          const choice = await agent.chooseOption(currentPrompt);
+
+          // Validate choice before resuming generator
+          const error = validateChoice(currentPrompt, choice as OptionChoice, execCtx.getState() as GameState);
+
+          if (!error) {
+            // Valid choice - resume generator
+            iterResult = gen.next(choice);
+            break;
+          }
+
+          // Invalid choice - reprompt or forfeit
+          attempts++;
+          if (attempts >= MAX_ATTEMPTS) {
+            throw new AgentForfeitError(
+              promptPlayerId,
+              currentPrompt.promptId,
+              attempts,
+              error
+            );
+          }
+
+          // Reprompt with error context
+          currentPrompt = { ...yielded.prompt, previousError: error } as OptionPrompt;
+        }
       } else if (isDeferredContinuation(yielded)) {
         // Store continuation for end-of-turn execution
         execCtx.deferContinuation(playerId, yielded.continuation);
-        iterResult = gen.next(undefined);
+        iterResult = gen.next();
       } else if (isEventYield(yielded)) {
         // Collect event for later processing
         events.push(yielded.event);
-        iterResult = gen.next(undefined);
+        iterResult = gen.next();
       } else {
         // It's an Effect - apply immediately and collect
         const effect = yielded as Effect;
@@ -384,29 +391,27 @@ export class ActionProcessor {
     const triggers: PinkPowerTrigger[] = [];
     const activePlayerId = state.players[state.activePlayerIndex].id;
 
-    // Get players in clockwise order starting left of active
-    const orderedPlayers = this.getClockwisePlayerOrder(state, activePlayerId);
+    // Get players in clockwise order starting left of active (excludes active player)
+    const orderedPlayers = state.getClockwisePlayerOrder(activePlayerId);
 
     orderedPlayers.forEach((player) => {
-      if (player.id === activePlayerId) return; // Skip active player
+      player.board.getAllBirds().forEach((bird) => {
+        const power = bird.card.power;
+        if (power?.trigger !== "ONCE_BETWEEN_TURNS") return;
 
-      Object.entries(player.board).forEach(([habitat, birds]) => {
-        birds.forEach((bird) => {
-          if (!bird) return; // skip empty slots
-
-          const power = bird.card.power;
-          if (power?.trigger !== "ONCE_BETWEEN_TURNS") return;
-
-          // Check if this pink power triggers on this event type
-          if (this.pinkPowerTriggersOnEvent(power.handlerId, event)) {
+        // Check if this pink power triggers on this event type
+        if (this.pinkPowerTriggersOnEvent(power.handlerId, event)) {
+          const habitat = player.board.getBirdHabitat(bird.id);
+          if (habitat) {
             triggers.push({
               birdInstanceId: bird.id,
               ownerId: player.id,
-              habitat: habitat as Habitat,
+              habitat,
               handlerId: power.handlerId,
+              triggeringEvent: event,
             });
           }
-        });
+        }
       });
     });
 
@@ -442,45 +447,5 @@ export class ActionProcessor {
 
     const triggers = triggerMap[handlerId];
     return triggers ? triggers.includes(event.type) : false;
-  }
-
-  /**
-   * Get players in clockwise order starting from player left of active.
-   */
-  private getClockwisePlayerOrder(
-    state: GameState,
-    activePlayerId: PlayerId
-  ): typeof state.players {
-    const activeIndex = state.players.findIndex((p) => p.id === activePlayerId);
-    const result = [];
-
-    // Start from player after active, wrap around
-    for (let i = 1; i < state.players.length; i++) {
-      const idx = (activeIndex + i) % state.players.length;
-      result.push(state.players[idx]);
-    }
-
-    return result;
-  }
-
-  /**
-   * Find a bird instance in the game state.
-   */
-  private findBirdInstance(
-    state: GameState,
-    birdInstanceId: string
-  ): BirdInstance {
-    for (const player of state.players) {
-      for (const birds of Object.values(player.board)) {
-        for (const bird of birds) {
-          if (bird?.id === birdInstanceId) {
-            return bird;
-          }
-        }
-      }
-    }
-    throw new Error(
-      `Bird instance ${birdInstanceId} not found on any player's board`
-    );
   }
 }

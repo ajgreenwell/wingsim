@@ -20,6 +20,7 @@ import type {
   Habitat,
   FoodType,
   FoodByType,
+  DieFace,
 } from "./core.ts";
 
 /**
@@ -38,6 +39,7 @@ export type LifecycleEvent =
   | RoundEndedEvent
   | TurnStartedEvent
   | TurnEndedEvent
+  | PlayerForfeitedEvent
   | GameEndedEvent;
 
 /**
@@ -120,6 +122,21 @@ export interface GameEndedEvent extends EventBase {
   type: "GAME_ENDED";
   finalScores: Record<PlayerId, number>;
   winnerId: PlayerId;
+}
+
+/**
+ * Emitted when a player forfeits due to repeated invalid choices.
+ * In 2-player games, this ends the game.
+ * In 3+ player games, the game continues with remaining players.
+ */
+export interface PlayerForfeitedEvent extends EventBase {
+  type: "PLAYER_FORFEITED";
+  /** The player who forfeited */
+  playerId: PlayerId;
+  /** The reason for forfeit (from the validation error) */
+  reason: string;
+  /** Number of active players remaining after this forfeit */
+  remainingPlayerCount: number;
 }
 
 /**
@@ -280,9 +297,9 @@ export interface PredatorPowerResolvedEvent extends EventBase {
    */
   diceRoll?: {
     /**
-     * The dice that were rolled (food types on each die).
+     * The dice that were rolled (die faces showing on each die).
      */
-    diceRolled: FoodType[];
+    diceRolled: DieFace[];
 
     /**
      * The food type the predator was looking for.

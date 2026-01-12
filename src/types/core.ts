@@ -10,7 +10,6 @@ export type FoodType =
   | "FRUIT"
   | "RODENT"
   | "WILD";
-export type FoodSource = "BIRDFEEDER" | "SUPPLY" | "CACHE";
 export type Habitat = "FOREST" | "GRASSLAND" | "WETLAND";
 export type NestType =
   | "BOWL"
@@ -20,7 +19,6 @@ export type NestType =
   | "WILD"
   | "NONE";
 export type CardSource = "DECK" | "TRAY" | "HAND";
-
 export type DieFace =
   | "INVERTEBRATE"
   | "SEED"
@@ -30,6 +28,16 @@ export type DieFace =
   | "SEED_INVERTEBRATE";
 
 export type FoodByType = Partial<Record<FoodType, number>>;
+
+/** Maps die faces to counts (for representing dice in feeder) */
+export type FoodByDice = Partial<Record<DieFace, number>>;
+
+/** A single die selection from the birdfeeder */
+export interface DieSelection {
+  die: DieFace;
+  /** Required when die is SEED_INVERTEBRATE - which food type to take */
+  asFoodType?: "SEED" | "INVERTEBRATE";
+}
 export type EggsByBird = Partial<Record<BirdInstanceId, number>>;
 export type EggCostByHabitat = Partial<Record<Habitat, number>>;
 
@@ -94,17 +102,8 @@ export interface BirdInstance {
   eggs: number;
 }
 
-/**
- * The state of a single player in the game.
- */
-export interface PlayerState {
-  id: PlayerId;
-  board: Record<Habitat, Array<BirdInstance | null>>;
-  hand: BirdCard[];
-  bonusCards: BonusCard[];
-  food: FoodByType;
-  turnsRemaining: number;
-}
+// Re-export PlayerState from engine for backward compatibility
+export { PlayerState, type PlayerStateInit } from '../engine/PlayerState.js';
 
 /**
  * Bonus reward configuration for habitat columns.

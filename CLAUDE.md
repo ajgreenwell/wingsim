@@ -24,7 +24,7 @@ The codebase follows the specification in `WingsimSpec.md` and implementation pl
 **Core Components** (to be implemented in `src/engine/`):
 
 - `GameEngine` - Authoritative state owner, applies rules, maintains FIFO event queue
-- `PowerProcessor` - Resolves bird powers via handlers, returns typed Effects (never mutates state)
+- `ActionProcessor` - Resolves turn actions and bird powers via handlers, returns typed Events + Effects (never mutates state)
 - `ViewBuilder` - Constructs per-player views enforcing hidden information
 - `MatchOrchestrator` - Match lifecycle, creates per-match engine/agents/RNG instances
 
@@ -38,9 +38,8 @@ The codebase follows the specification in `WingsimSpec.md` and implementation pl
 **Data Flow**:
 
 1. Engine emits events (e.g., `HabitatActivatedEvent`, `BirdPlayedEvent`)
-2. `PowerProcessor` resolves powers and returns `Effect`s
-3. Engine applies effects and may generate more events
-4. Queue empties before next action proceeds
+2. `ActionProcessor` resolves powers and returns `Effect`s (and sometimes `Event`s)
+3. Engine applies effects and handles subsequent events as needed
 
 **ID Conventions**:
 
@@ -57,13 +56,13 @@ The codebase follows the specification in `WingsimSpec.md` and implementation pl
 
 ## Orchestration Tips
 
-- When possible, use subagents in parallel for exploring files and gathering context about existing code.
-- When possible, use subagents in parallel for implementing independent TODOs.
-- When possible, use the TypeScript LSP as much as possible for exploring the codebase, falling back to tools like ripgrep as needed.
+- Use subagents in parallel for exploring files and gathering context about existing code.
+- Make sure not to let subagent outputs overwhelm your context window.
+- Use the TypeScript LSP as much as possible for exploring the codebase, falling back to tools like ripgrep as needed.
 
 ## Implementation Notes
 
-- Power handlers live in `PowerProcessor.powerHandlersById` registry; JSON stores `PowerSpec` with `powerHandlerId` referencing code
+- Turn + power handlers live in `ActionProcessor` registry, but are defined in ActionHandlers; JSON stores `PowerSpec` with `powerHandlerId` referencing handler functions by name in code
 - Pink power triggers must resolve synchronously before continuing the brown power chain
 - Effects are granular (e.g., `GainFoodEffect`, `DiscardCardsEffect`); events are semantic
 - `AgentProxy` pattern handles timeouts/retries with 3-strike forfeit rule
@@ -72,6 +71,7 @@ The codebase follows the specification in `WingsimSpec.md` and implementation pl
 ## Testing
 
 - Always run unit tests for each unit of code added, to verify it works before claiming task completion.
+- Always add a code comment above each unit test clearly explaining the reasoning for its existence. Why do we need it? How does it ensure quality for the system as a whole?
 - If a test begins failing after you make some changes, assume it is YOUR RESPONSIBILITY to fix it now. Do not wait or delay fixing broken tests, even if they don't appear to be your fault.
 
 ## Style Preferences

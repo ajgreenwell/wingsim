@@ -1,6 +1,6 @@
 import type { GameState } from "./GameEngine.js";
 import type { PlayerView } from "../types/prompts.js";
-import type { PlayerId, BirdInstance, Habitat, FoodType } from "../types/core.js";
+import type { PlayerId, FoodType, DieFace } from "../types/core.js";
 
 const FOOD_TYPES: FoodType[] = ["INVERTEBRATE", "SEED", "FISH", "FRUIT", "RODENT", "WILD"];
 
@@ -17,11 +17,7 @@ export function buildPlayerView(state: GameState, playerId: PlayerId): PlayerVie
   const player = state.players[playerIndex];
 
   // Player's board uses BirdInstance directly
-  const playerBoard: Record<Habitat, Array<BirdInstance | null>> = {
-    FOREST: [...player.board.FOREST],
-    GRASSLAND: [...player.board.GRASSLAND],
-    WETLAND: [...player.board.WETLAND],
-  };
+  const playerBoard = player.board.toRecord();
 
   // Build complete food record
   const food: Record<FoodType, number> = {
@@ -54,24 +50,15 @@ export function buildPlayerView(state: GameState, playerId: PlayerId): PlayerVie
 
       return {
         playerId: opponent.id,
-        board: {
-          FOREST: [...opponent.board.FOREST],
-          GRASSLAND: [...opponent.board.GRASSLAND],
-          WETLAND: [...opponent.board.WETLAND],
-        },
+        board: opponent.board.toRecord(),
         food: opponentFood,
         actionCubes: opponent.turnsRemaining,
         handSize: opponent.hand.length,
       };
     });
 
-  // Get birdfeeder dice as FoodType array (convert DieFace to FoodType)
-  const birdfeederDice = state.birdfeeder.getDiceInFeeder();
-  const birdfeederFood: FoodType[] = birdfeederDice.map(die => {
-    // SEED_INVERTEBRATE becomes SEED for display (player must choose)
-    if (die === "SEED_INVERTEBRATE") return "SEED";
-    return die as FoodType;
-  });
+  // Get birdfeeder dice as DieFace array (preserving SEED_INVERTEBRATE)
+  const birdfeederDice: DieFace[] = [...state.birdfeeder.getDiceInFeeder()];
 
   // Get bird tray cards
   const birdTray = state.birdCardSupply.getTray()
@@ -87,7 +74,7 @@ export function buildPlayerView(state: GameState, playerId: PlayerId): PlayerVie
     round: state.round,
     turn: state.turn,
     activePlayerId: state.players[state.activePlayerIndex].id,
-    birdfeeder: birdfeederFood,
+    birdfeeder: birdfeederDice,
     birdTray,
     deckSize: state.birdCardSupply.getDeckSize(),
     opponents,

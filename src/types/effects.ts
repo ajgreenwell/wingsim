@@ -9,12 +9,12 @@ import type {
   PlayerId,
   BirdInstanceId,
   BonusCardId,
-  FoodType,
   Habitat,
   FoodByType,
   CardSource,
-  FoodSource,
   BirdCardId,
+  DieSelection,
+  DieFace,
 } from "./core.ts";
 
 export type Effect =
@@ -70,7 +70,7 @@ export interface ActivatePowerEffect extends EffectBase {
   birdInstanceId: BirdInstanceId;
   handlerId: string;
   activated: boolean;
-  skipReason?: "AGENT_DECLINED" | "CONDITION_NOT_MET" | "RESOURCE_UNAVAILABLE";
+  skipReason?: "AGENT_DECLINED" | "RESOURCE_UNAVAILABLE";
 }
 
 export interface RepeatBrownPowerEffect extends EffectBase {
@@ -84,7 +84,9 @@ export interface GainFoodEffect extends EffectBase {
   type: "GAIN_FOOD";
   playerId: PlayerId;
   food: FoodByType;
-  source: FoodSource;
+  source: "BIRDFEEDER" | "SUPPLY";
+  /** When source is BIRDFEEDER, track which dice were taken to correctly remove them */
+  diceTaken?: DieSelection[];
 }
 export interface DrawCardsEffect extends EffectBase {
   type: "DRAW_CARDS";
@@ -149,7 +151,8 @@ export interface CacheFoodEffect extends EffectBase {
   playerId: PlayerId;
   birdInstanceId: BirdInstanceId;
   food: FoodByType;
-  source: FoodSource;
+  source: "BIRDFEEDER" | "SUPPLY";
+  diceTaken?: DieSelection[];
 }
 export interface PlayBirdEffect extends EffectBase {
   type: "PLAY_BIRD";
@@ -171,8 +174,6 @@ export interface MoveBirdEffect extends EffectBase {
 export interface AllPlayersGainFoodEffect extends EffectBase {
   type: "ALL_PLAYERS_GAIN_FOOD";
   gains: Record<PlayerId, FoodByType>;
-  source: FoodSource;
-  selectionOrder?: PlayerId[];
 }
 export interface AllPlayersDrawCardsEffect extends EffectBase {
   type: "ALL_PLAYERS_DRAW_CARDS";
@@ -187,17 +188,17 @@ export interface AllPlayersLayEggsEffect extends EffectBase {
 export interface RollDiceEffect extends EffectBase {
   type: "ROLL_DICE";
   playerId: PlayerId;
-  rolledDice: FoodType[];
+  rolledDice: DieFace[];
 }
 export interface RerollBirdfeederEffect extends EffectBase {
   type: "REROLL_BIRDFEEDER";
   playerId: PlayerId;
-  previousDice: FoodType[];
-  newDice: FoodType[];
+  previousDice: DieFace[];
+  newDice: DieFace[];
 }
 export interface RefillBirdfeederEffect extends EffectBase {
   type: "REFILL_BIRDFEEDER";
-  addedDice: FoodType[];
+  addedDice: DieFace[];
 }
 
 export interface RemoveCardsFromTrayEffect extends EffectBase {

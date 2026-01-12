@@ -1,18 +1,20 @@
 import {
   BirdCard,
-  BirdInstance,
+  DieFace,
+  DieSelection,
+  FoodByDice,
   FoodByType,
   FoodType,
   Habitat,
   NestType,
   PlayerId,
-  PlayerState,
   PowerSpec,
 } from "../types/core.js";
 import {
   ActionReceive,
   ActionYield,
   DeferredContinuation,
+  EventYield,
   PowerContext,
   PowerHandler,
   PowerReceive,
@@ -33,8 +35,8 @@ import {
   SelectCardsPrompt,
   SelectFoodFromFeederPrompt,
 } from "../types/prompts.js";
+import { Event } from "../types/events.js";
 import { Effect } from "../types/effects.js";
-import { event } from "./HandlerHelpers.js";
 
 const HABITATS: Habitat[] = ["FOREST", "GRASSLAND", "WETLAND"];
 const HABITAT_SIZE = 5;
@@ -95,11 +97,11 @@ export const gainFoodFromFeederWithCache: PowerHandler = function* (
 
   // Check invariant: food must be available in feeder BEFORE prompting
   let view = ctx.buildOwnerView();
-  const availableFood = countFoodInFeeder(view, foodType);
+  const availableFood = countFoodInFeederByType(view, foodType);
 
   if (availableFood === 0) {
     // Food not available, skip without prompting
-    yield* skipPowerDueToCondition(ctx, power);
+    yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
 
@@ -107,20 +109,20 @@ export const gainFoodFromFeederWithCache: PowerHandler = function* (
   if (!shouldActivate) return;
 
   // Loop to handle reroll scenario - player may reroll then select food
-  let selectedFood: FoodByType | undefined;
+  let selectedDice: DieSelection[] | undefined;
 
-  while (!selectedFood) {
+  while (!selectedDice) {
     view = ctx.buildOwnerView();
 
     const foodChoice = yield* prompt(ctx, {
       kind: "selectFoodFromFeeder",
       view,
-      availableFood: buildAvailableFoodFromFeeder(view, foodType, count),
+      availableDice: buildAvailableDiceForFoodType(view.birdfeeder, foodType, count),
     });
 
-    if (foodChoice.foodOrReroll === "reroll") {
+    if (foodChoice.diceOrReroll === "reroll") {
       // Validate that reroll is allowed: all dice must show the same face
-      if (!canRerollBirdfeeder(view.birdfeeder)) {
+      if (!canRerollBirdfeederDice(view.birdfeeder)) {
         // Invalid reroll request - agent asked for reroll when not allowed
         // Re-prompt by continuing the loop
         continue;
@@ -136,7 +138,7 @@ export const gainFoodFromFeederWithCache: PowerHandler = function* (
 
       // After reroll, check if the desired food is now available
       const newView = ctx.buildOwnerView();
-      if (countFoodInFeeder(newView, foodType) === 0) {
+      if (countFoodInFeederByType(newView, foodType) === 0) {
         // Still no matching food after reroll, power ends
         return;
       }
@@ -144,9 +146,11 @@ export const gainFoodFromFeederWithCache: PowerHandler = function* (
       continue;
     }
 
-    // Player selected food
-    selectedFood = foodChoice.foodOrReroll;
+    // Player selected dice
+    selectedDice = foodChoice.diceOrReroll;
   }
+
+  const selectedFood = convertDieSelectionsToFood(selectedDice);
 
   const destChoice = yield* prompt(ctx, {
     kind: "selectFoodDestination",
@@ -162,6 +166,7 @@ export const gainFoodFromFeederWithCache: PowerHandler = function* (
       birdInstanceId: ctx.birdInstanceId,
       food: selectedFood,
       source: "BIRDFEEDER",
+      diceTaken: selectedDice,
     });
   } else {
     yield* effect({
@@ -169,6 +174,7 @@ export const gainFoodFromFeederWithCache: PowerHandler = function* (
       playerId: ctx.ownerId,
       food: selectedFood,
       source: "BIRDFEEDER",
+      diceTaken: selectedDice,
     });
   }
 };
@@ -194,9 +200,9 @@ export const whenOpponentLaysEggsLayEggOnNestType: PowerHandler = function* (
   const count = (params.count as number) || 1;
 
   // Check invariant: must have eligible birds with remaining capacity BEFORE prompting
-  const view = ctx.buildOwnerView();
-  const eligibleBirds = findBirdsWithNestType(
-    view,
+  const state = ctx.getState();
+  const player = state.players.find((p) => p.id === ctx.ownerId)!;
+  const eligibleBirds = player.board.getBirdsWithNestType(
     nestType,
     ctx.birdInstanceId
   );
@@ -212,7 +218,7 @@ export const whenOpponentLaysEggsLayEggOnNestType: PowerHandler = function* (
 
   if (Object.keys(remainingCapacities).length === 0) {
     // No eligible birds or all at capacity, skip without prompting
-    yield* skipPowerDueToCondition(ctx, power);
+    yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
 
@@ -225,14 +231,12 @@ export const whenOpponentLaysEggsLayEggOnNestType: PowerHandler = function* (
     remainingCapacitiesByEligibleBird: remainingCapacities,
   });
 
-  // Validate the choice matches the prompt constraints
-  const placements = eggChoice.placements as Record<string, number>;
-  validatePlaceEggsChoice(placements, count, remainingCapacities);
+  // Note: Validation is now done in ActionProcessor.runGenerator() before resuming the generator
 
   yield* effect({
     type: "LAY_EGGS",
     playerId: ctx.ownerId,
-    placements,
+    placements: eggChoice.placements as Record<string, number>,
   });
 };
 
@@ -264,9 +268,7 @@ export const playersWithFewestInHabitatDrawCard: PowerHandler = function* (
   const birdCounts: Record<PlayerId, number> = {};
 
   for (const player of state.players) {
-    const birdsInHabitat = player.board[habitat].filter(
-      (b) => b !== null
-    ).length;
+    const birdsInHabitat = player.board.countBirdsInHabitat(habitat);
     birdCounts[player.id] = birdsInHabitat;
   }
 
@@ -338,7 +340,7 @@ export const tuckAndDraw: PowerHandler = function* (
   const view = ctx.buildOwnerView();
   if (view.hand.length === 0) {
     // No cards to tuck, skip without prompting
-    yield* skipPowerDueToCondition(ctx, power);
+    yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
 
@@ -419,7 +421,7 @@ export const discardEggToGainFood: PowerHandler = function* (
 
   if (Object.keys(eggsByBird).length === 0) {
     // No eggs to discard, skip without prompting
-    yield* skipPowerDueToCondition(ctx, power);
+    yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
 
@@ -509,7 +511,7 @@ export const rollDiceAndCacheIfMatch: PowerHandler = function* (
 
   if (diceToRoll === 0) {
     // All dice are in feeder, skip without prompting
-    yield* skipPowerDueToCondition(ctx, power);
+    yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
 
@@ -663,37 +665,27 @@ export const gainFoodFromFeeder: PowerHandler = function* (
   const birdCard = ctx.getRegistry().getBirdById(ctx.birdCardId);
   const power = birdCard.power!;
 
-  // Check invariant: must have dice in feeder BEFORE prompting
   let view = ctx.buildOwnerView();
-
-  if (view.birdfeeder.length === 0) {
-    // No dice in feeder, skip without prompting
-    yield* skipPowerDueToCondition(ctx, power);
-    return;
-  }
 
   const shouldActivate = yield* withActivationPrompt(ctx, power);
   if (!shouldActivate) return;
 
   // Loop to handle reroll scenario - player may reroll then select food
-  let selectedFood: FoodByType | undefined;
+  let selectedDice: DieSelection[] | undefined;
 
-  while (!selectedFood) {
+  while (!selectedDice) {
     view = ctx.buildOwnerView();
 
-    const availableFood: FoodByType = {};
-    for (const food of view.birdfeeder) {
-      availableFood[food] = (availableFood[food] || 0) + 1;
-    }
+    const availableDice = buildAvailableDiceFromBirdfeeder(view.birdfeeder);
 
     const foodChoice = yield* prompt(ctx, {
       kind: "selectFoodFromFeeder",
-      availableFood,
+      availableDice,
     });
 
-    if (foodChoice.foodOrReroll === "reroll") {
+    if (foodChoice.diceOrReroll === "reroll") {
       // Validate that reroll is allowed: all dice must show the same face
-      if (!canRerollBirdfeeder(view.birdfeeder)) {
+      if (!canRerollBirdfeederDice(view.birdfeeder)) {
         // Invalid reroll request - re-prompt
         continue;
       }
@@ -715,15 +707,18 @@ export const gainFoodFromFeeder: PowerHandler = function* (
       continue;
     }
 
-    // Player selected food
-    selectedFood = foodChoice.foodOrReroll;
+    // Player selected dice
+    selectedDice = foodChoice.diceOrReroll;
   }
+
+  const selectedFood = convertDieSelectionsToFood(selectedDice);
 
   yield* effect({
     type: "GAIN_FOOD",
     playerId: ctx.ownerId,
     food: selectedFood,
     source: "BIRDFEEDER",
+    diceTaken: selectedDice,
   });
 };
 
@@ -754,7 +749,7 @@ export const discardFoodToTuckFromDeck: PowerHandler = function* (
 
   if (foodAvailable === 0) {
     // No food to discard, skip without prompting
-    yield* skipPowerDueToCondition(ctx, power);
+    yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
 
@@ -801,12 +796,7 @@ export const eachPlayerGainsFoodFromFeeder: PowerHandler = function* (
   const power = birdCard.power!;
   const count = (params.count as number) || 1;
 
-  // Check invariant: must have dice in feeder BEFORE prompting
   let view = ctx.buildOwnerView();
-  if (view.birdfeeder.length === 0) {
-    yield* skipPowerDueToCondition(ctx, power);
-    return;
-  }
 
   const shouldActivate = yield* withActivationPrompt(ctx, power);
   if (!shouldActivate) return;
@@ -830,66 +820,59 @@ export const eachPlayerGainsFoodFromFeeder: PowerHandler = function* (
   }
 
   // Each player gains food from feeder in order, with individual prompts
-  for (const playerId of playerOrder) {
-    // Get current feeder state (may change as players take food)
+  // Use a while loop with explicit index to avoid mutating array during iteration
+  let playerIndex = 0;
+  while (playerIndex < playerOrder.length) {
+    const playerId = playerOrder[playerIndex];
+
+    // Refresh view to get current birdfeeder state
     view = ctx.buildOwnerView();
 
-    // Check if feeder has food - if empty, remaining players get nothing
+    // Check if feeder is empty - if so, remaining players get nothing
     if (view.birdfeeder.length === 0) {
       break;
     }
 
-    // Build available food for this player's selection
-    const availableFood: FoodByType = {};
-    for (const food of view.birdfeeder) {
-      availableFood[food] = (availableFood[food] || 0) + 1;
-    }
-
-    // Limit to count items
-    const limitedAvailableFood: FoodByType = {};
-    let remaining = count;
-    for (const [foodType, foodCount] of Object.entries(availableFood)) {
-      if (remaining <= 0) break;
-      const toTake = Math.min(remaining, foodCount || 0);
-      if (toTake > 0) {
-        limitedAvailableFood[foodType as FoodType] = toTake;
-        remaining -= toTake;
-      }
-    }
-
+    // Build available dice for this player's selection (limited to count)
+    const availableDice = buildLimitedAvailableDice(view.birdfeeder, count);
     const playerView = ctx.buildPlayerView(playerId);
-
     const foodChoice = yield* prompt(ctx, {
       kind: "selectFoodFromFeeder",
       playerId,
       view: playerView,
-      availableFood: limitedAvailableFood,
+      availableDice,
     });
 
     // Handle reroll option
-    if (foodChoice.foodOrReroll === "reroll") {
-      if (canRerollBirdfeeder(view.birdfeeder)) {
+    if (foodChoice.diceOrReroll === "reroll") {
+      if (canRerollBirdfeederDice(view.birdfeeder)) {
         yield* effect({
           type: "REROLL_BIRDFEEDER",
           playerId,
           previousDice: view.birdfeeder,
           newDice: [],
         });
-        // After reroll, re-prompt this same player
-        // Decrement loop counter to retry this player
-        const currentIdx = playerOrder.indexOf(playerId);
-        playerOrder.splice(currentIdx, 0, playerId);
+        // Don't increment playerIndex - re-prompt same player after reroll
+        continue;
       }
+      // Invalid reroll attempt - re-prompt same player
       continue;
     }
 
-    // Player selected food
+    // Player selected dice
+    const selectedDice = foodChoice.diceOrReroll;
+    const selectedFood = convertDieSelectionsToFood(selectedDice);
+
     yield* effect({
       type: "GAIN_FOOD",
       playerId,
-      food: foodChoice.foodOrReroll,
+      food: selectedFood,
       source: "BIRDFEEDER",
+      diceTaken: selectedDice,
     });
+
+    // Only advance to next player after successful food selection
+    playerIndex++;
   }
 };
 
@@ -931,7 +914,7 @@ export const layEggOnBirdsWithNestType: PowerHandler = function* (
 
   // Check invariant: must have eligible birds BEFORE prompting
   if (Object.keys(placements).length === 0) {
-    yield* skipPowerDueToCondition(ctx, power);
+    yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
 
@@ -963,13 +946,7 @@ export const drawBonusCardsAndKeep: PowerHandler = function* (
   const drawCount = (params.drawCount as number) || 2;
   const keepCount = (params.keepCount as number) || 1;
 
-  // Check invariant: must have bonus cards in deck BEFORE prompting
   const bonusCardDeck = ctx.getState().bonusCardDeck;
-  if (bonusCardDeck.getDeckSize() === 0) {
-    yield* skipPowerDueToCondition(ctx, power);
-    return;
-  }
-
   const shouldActivate = yield* withActivationPrompt(ctx, power);
   if (!shouldActivate) return;
 
@@ -1042,7 +1019,7 @@ export const layEggsOnBird: PowerHandler = function* (
 
   // Check invariant: must have birds with remaining capacity BEFORE prompting
   if (Object.keys(remainingCapacities).length === 0) {
-    yield* skipPowerDueToCondition(ctx, power);
+    yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
 
@@ -1080,21 +1057,50 @@ export const gainAllFoodTypeFromFeeder: PowerHandler = function* (
 
   // Check invariant: must have matching food in feeder BEFORE prompting
   const view = ctx.buildOwnerView();
-  const matchingCount = view.birdfeeder.filter((f) => f === foodType).length;
 
-  if (matchingCount === 0) {
-    yield* skipPowerDueToCondition(ctx, power);
+  // Find all exact matches
+  const exactMatches: Array<{ die: DieFace; index: number }> = [];
+  view.birdfeeder.forEach((die, index) => {
+    if (die === foodType) {
+      exactMatches.push({ die, index });
+    }
+  });
+
+  // For SEED or INVERTEBRATE, also check for SEED_INVERTEBRATE dual dice
+  const dualDiceMatches: Array<{ die: DieFace; index: number }> = [];
+  if (foodType === "SEED" || foodType === "INVERTEBRATE") {
+    view.birdfeeder.forEach((die, index) => {
+      if (die === "SEED_INVERTEBRATE") {
+        dualDiceMatches.push({ die, index });
+      }
+    });
+  }
+
+  const totalMatchCount = exactMatches.length + dualDiceMatches.length;
+
+  if (totalMatchCount === 0) {
+    yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
 
   const shouldActivate = yield* withActivationPrompt(ctx, power);
   if (!shouldActivate) return;
 
+  // Build dice selections - exact matches don't need asFoodType, dual dice do
+  const diceTaken: DieSelection[] = [
+    ...exactMatches.map(({ die }) => ({ die })),
+    ...dualDiceMatches.map(({ die }) => ({
+      die,
+      asFoodType: foodType as "SEED" | "INVERTEBRATE",
+    })),
+  ];
+
   yield* effect({
     type: "GAIN_FOOD",
     playerId: ctx.ownerId,
-    food: { [foodType]: matchingCount },
+    food: { [foodType]: totalMatchCount },
     source: "BIRDFEEDER",
+    diceTaken,
   });
 };
 
@@ -1129,7 +1135,6 @@ export const allPlayersGainFoodFromSupply: PowerHandler = function* (
   yield* effect({
     type: "ALL_PLAYERS_GAIN_FOOD",
     gains,
-    source: "SUPPLY",
   });
 };
 
@@ -1154,7 +1159,7 @@ export const lookAtCardAndTuckIfWingspanUnder: PowerHandler = function* (
   // Check invariant: must have cards in deck BEFORE prompting
   const state = ctx.getState();
   if (state.birdCardSupply.getDeckSize() === 0) {
-    yield* skipPowerDueToCondition(ctx, power);
+    yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
 
@@ -1171,7 +1176,7 @@ export const lookAtCardAndTuckIfWingspanUnder: PowerHandler = function* (
 
   const revealedCards = revealCardEffect.revealedCards;
   if (!revealedCards || revealedCards.length === 0) {
-    yield* skipPowerDueToCondition(ctx, power);
+    yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
 
@@ -1230,9 +1235,24 @@ export const whenOpponentPlaysBirdInHabitatGainFood: PowerHandler = function* (
   const power = birdCard.power!;
   const foodType = params.foodType as FoodType;
   const count = (params.count as number) || 1;
+  const requiredHabitat = params.habitat as Habitat;
 
-  // This is a pink power - it only triggers on opponents' turns
-  // The trigger condition is already verified by the event system
+  // Check if the triggering event matches the required habitat
+  const triggeringEvent = ctx.getTriggeringEvent();
+  if (triggeringEvent?.type === "BIRD_PLAYED") {
+    if (triggeringEvent.habitat !== requiredHabitat) {
+      // Bird was played in wrong habitat, silently skip (no activation prompt)
+      yield* effect({
+        type: "ACTIVATE_POWER",
+        playerId: ctx.ownerId,
+        birdInstanceId: ctx.birdInstanceId,
+        handlerId: power.handlerId,
+        activated: false,
+      });
+      return;
+    }
+  }
+
   const shouldActivate = yield* withActivationPrompt(ctx, power);
   if (!shouldActivate) return;
 
@@ -1264,16 +1284,11 @@ export const moveToAnotherHabitatIfRightmost: PowerHandler = function* (
   const currentHabitat = ctx.getHabitat();
   const birdsInHabitat = view.board[currentHabitat].filter((b) => b !== null);
 
-  if (birdsInHabitat.length === 0) {
-    yield* skipPowerDueToCondition(ctx, power);
-    return;
-  }
-
   // Find the rightmost bird (last non-null slot)
   const rightmostBird = birdsInHabitat[birdsInHabitat.length - 1];
   if (!rightmostBird || rightmostBird.id !== ctx.birdInstanceId) {
     // This bird is not the rightmost, skip
-    yield* skipPowerDueToCondition(ctx, power);
+    yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
 
@@ -1290,7 +1305,7 @@ export const moveToAnotherHabitatIfRightmost: PowerHandler = function* (
   });
 
   if (eligibleHabitats.length === 0) {
-    yield* skipPowerDueToCondition(ctx, power);
+    yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
 
@@ -1333,7 +1348,7 @@ export const drawCardsWithDelayedDiscard: PowerHandler = function* (
   // Check invariant: must have cards in deck BEFORE prompting
   const state = ctx.getState();
   if (state.birdCardSupply.getDeckSize() === 0) {
-    yield* skipPowerDueToCondition(ctx, power);
+    yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
 
@@ -1462,6 +1477,26 @@ function* prompt<K extends OptionChoice["kind"]>(
 }
 
 /**
+ * Helper to yield an event from a handler.
+ *
+ * Events are collected by the runner and processed after the generator completes.
+ * Unlike effects (which are applied immediately), events are queued for later
+ * processing to ensure proper ordering of power triggers.
+ *
+ * Usage:
+ * ```typescript
+ * yield* event({
+ *   type: "PREDATOR_POWER_RESOLVED",
+ *   playerId: ctx.ownerId,
+ *   // ... other event fields
+ * });
+ * ```
+ */
+export function* event(evt: Event): Generator<EventYield, void, unknown> {
+  yield { type: "EVENT", event: evt };
+}
+
+/**
  * Defer a continuation to be executed at end of turn.
  * The continuation can yield effects and prompts just like a normal power handler.
  *
@@ -1494,14 +1529,14 @@ function* deferToEndOfTurn(
  * ```typescript
  * const myHandler: PowerHandler = function* (ctx, params) {
  *   if (!someInvariant) {
- *     yield* skipPowerDueToCondition(ctx, power);
+ *     yield* skipPowerDueToResourceUnavailable(ctx, power);
  *     return;
  *   }
  *   // ... rest of handler
  * };
  * ```
  */
-function* skipPowerDueToCondition(
+function* skipPowerDueToResourceUnavailable(
   ctx: PowerContext,
   power: PowerSpec
 ): Generator<PowerYield, void, OptionChoice | Effect | undefined> {
@@ -1511,7 +1546,7 @@ function* skipPowerDueToCondition(
     birdInstanceId: ctx.birdInstanceId,
     handlerId: power.handlerId,
     activated: false,
-    skipReason: "CONDITION_NOT_MET",
+    skipReason: "RESOURCE_UNAVAILABLE",
   });
 }
 
@@ -1528,7 +1563,7 @@ function* skipPowerDueToCondition(
  *   const birdCard = ctx.getRegistry().getBirdById(ctx.birdCardId);
  *   // Check invariants first!
  *   if (!canExecute) {
- *     yield* skipPowerDueToCondition(ctx, birdCard.power!);
+ *     yield* skipPowerDueToResourceUnavailable(ctx, birdCard.power!);
  *     return;
  *   }
  *   const shouldActivate = yield* withActivationPrompt(ctx, birdCard.power!);
@@ -1552,7 +1587,6 @@ function* withActivationPrompt(
 
   const shouldActivate = choice.activate;
 
-  // Always emit ACTIVATE_POWER to record the decision
   yield* effect({
     type: "ACTIVATE_POWER",
     playerId: ctx.ownerId,
@@ -1566,93 +1600,53 @@ function* withActivationPrompt(
 }
 
 /**
- * Count how many of a specific food type are in the birdfeeder.
+ * Count how many dice can produce a specific food type.
+ * SEED_INVERTEBRATE dice can produce either SEED or INVERTEBRATE.
  */
-function countFoodInFeeder(view: PlayerView, foodType: FoodType): number {
-  return view.birdfeeder.filter((f) => f === foodType).length;
+function countFoodInFeederByType(view: PlayerView, foodType: FoodType): number {
+  return view.birdfeeder.filter((die) => {
+    if (die === foodType) return true;
+    if (die === "SEED_INVERTEBRATE" && (foodType === "SEED" || foodType === "INVERTEBRATE")) {
+      return true;
+    }
+    return false;
+  }).length;
 }
 
 /**
  * Check if the birdfeeder can be rerolled.
  * Per Wingspan rules, you can only reroll if all dice in the feeder show the same face.
  */
-function canRerollBirdfeeder(birdfeeder: FoodType[]): boolean {
+function canRerollBirdfeederDice(birdfeeder: DieFace[]): boolean {
   if (birdfeeder.length === 0) return false;
-  const firstFood = birdfeeder[0];
-  return birdfeeder.every((f) => f === firstFood);
+  const firstDie = birdfeeder[0];
+  return birdfeeder.every((die) => die === firstDie);
 }
 
 /**
- * Validate that a PlaceEggsChoice matches the constraints from the prompt.
- * Throws an error if validation fails.
+ * Build a FoodByDice representing available dice in the feeder
+ * that can produce a specific food type, limited by count.
+ * SEED_INVERTEBRATE dice are included when looking for SEED or INVERTEBRATE.
  */
-function validatePlaceEggsChoice(
-  placements: Record<string, number>,
-  expectedCount: number,
-  remainingCapacities: Record<string, number>
-): void {
-  // Validate total eggs match expected count
-  const totalEggs = Object.values(placements).reduce(
-    (sum, count) => sum + (count || 0),
-    0
-  );
-  if (totalEggs !== expectedCount) {
-    throw new Error(
-      `Invalid PlaceEggsChoice: total eggs ${totalEggs} does not match expected count ${expectedCount}`
-    );
-  }
-
-  // Validate each placement doesn't exceed the bird's remaining capacity
-  for (const [birdId, eggCount] of Object.entries(placements)) {
-    if (eggCount <= 0) continue;
-
-    const capacity = remainingCapacities[birdId];
-    if (capacity === undefined) {
-      throw new Error(
-        `Invalid PlaceEggsChoice: bird ${birdId} is not eligible for egg placement`
-      );
-    }
-    if (eggCount > capacity) {
-      throw new Error(
-        `Invalid PlaceEggsChoice: ${eggCount} eggs on bird ${birdId} exceeds remaining capacity ${capacity}`
-      );
-    }
-  }
-}
-
-/**
- * Build a FoodByType representing available food in the feeder,
- * filtered to a specific type and limited by count.
- */
-function buildAvailableFoodFromFeeder(
-  view: PlayerView,
+function buildAvailableDiceForFoodType(
+  birdfeeder: readonly DieFace[],
   foodType: FoodType,
   maxCount: number
-): FoodByType {
-  const available = countFoodInFeeder(view, foodType);
-  return { [foodType]: Math.min(available, maxCount) };
-}
+): FoodByDice {
+  const result: FoodByDice = {};
+  let remaining = maxCount;
 
-/**
- * Find all birds on the owner's board with a specific nest type.
- * Optionally exclude a specific bird instance.
- * Filters by nest type using the embedded card (WILD nest type matches any).
- */
-function findBirdsWithNestType(
-  view: PlayerView,
-  nestType: NestType,
-  excludeBirdId?: string
-): BirdInstance[] {
-  const result: BirdInstance[] = [];
+  for (const die of birdfeeder) {
+    if (remaining <= 0) break;
 
-  for (const habitat of ["FOREST", "GRASSLAND", "WETLAND"] as Habitat[]) {
-    for (const bird of view.board[habitat]) {
-      if (bird && bird.id !== excludeBirdId) {
-        // Match if bird has the required nest type or WILD nest type
-        if (bird.card.nestType === nestType || bird.card.nestType === "WILD") {
-          result.push(bird);
-        }
-      }
+    // Check if this die can produce the desired food type
+    const canProduce =
+      die === foodType ||
+      (die === "SEED_INVERTEBRATE" && (foodType === "SEED" || foodType === "INVERTEBRATE"));
+
+    if (canProduce) {
+      result[die] = (result[die] ?? 0) + 1;
+      remaining--;
     }
   }
 
@@ -1691,131 +1685,54 @@ function* turnActionPrompt<K extends OptionChoice["kind"]>(
 }
 
 /**
- * Get the leftmost empty column in a habitat (0-4), or 5 if full.
+ * Build FoodByDice from birdfeeder state.
+ * Preserves SEED_INVERTEBRATE as a distinct die face.
  */
-export function getLeftmostEmptyColumn(
-  player: Readonly<PlayerState>,
-  habitat: Habitat
-): number {
-  const row = player.board[habitat];
-  for (let i = 0; i < row.length; i++) {
-    if (row[i] === null) {
-      return i;
-    }
-  }
-  return HABITAT_SIZE; // Full habitat
-}
-
-/**
- * Get bird instance IDs with brown powers in a habitat, in right-to-left order.
- */
-function getBirdsWithBrownPowers(
-  player: Readonly<PlayerState>,
-  habitat: Habitat
-): string[] {
-  const birds: string[] = [];
-  const row = player.board[habitat];
-  // Right to left order
-  for (let i = row.length - 1; i >= 0; i--) {
-    const bird = row[i];
-    if (bird && bird.card.power?.trigger === "WHEN_ACTIVATED") {
-      birds.push(bird.id);
-    }
-  }
-  return birds;
-}
-
-/**
- * Get remaining egg capacities for all birds on a player's board.
- */
-function getRemainingEggCapacities(
-  player: Readonly<PlayerState>
-): Record<string, number> {
-  const capacities: Record<string, number> = {};
-  for (const habitat of HABITATS) {
-    for (const bird of player.board[habitat]) {
-      if (bird) {
-        const remaining = bird.card.eggCapacity - bird.eggs;
-        if (remaining > 0) {
-          capacities[bird.id] = remaining;
-        }
-      }
-    }
-  }
-  return capacities;
-}
-
-/**
- * Get eggs on each bird that has any eggs.
- */
-function getEggsOnBirds(
-  player: Readonly<PlayerState>
-): Record<string, number> {
-  const eggs: Record<string, number> = {};
-  for (const habitat of HABITATS) {
-    for (const bird of player.board[habitat]) {
-      if (bird && bird.eggs > 0) {
-        eggs[bird.id] = bird.eggs;
-      }
-    }
-  }
-  return eggs;
-}
-
-/**
- * Get birds from hand that the player can afford to play.
- */
-function getEligibleBirdsToPlay(player: Readonly<PlayerState>): BirdCard[] {
-  return player.hand.filter((card) => {
-    // Check if player can afford the food cost
-    if (card.foodCostMode === "NONE") {
-      return true;
-    }
-
-    if (card.foodCostMode === "AND") {
-      // Must have all food types
-      for (const [foodType, required] of Object.entries(card.foodCost)) {
-        if (required && required > 0) {
-          const available = player.food[foodType as FoodType] ?? 0;
-          if (available < required) {
-            return false;
-          }
-        }
-      }
-      return true;
-    }
-
-    if (card.foodCostMode === "OR") {
-      // Must have at least one of the required food types
-      const totalRequired = Object.values(card.foodCost).reduce(
-        (sum, v) => sum + (v ?? 0),
-        0
-      );
-      if (totalRequired === 0) return true;
-
-      let totalAvailable = 0;
-      for (const [foodType, required] of Object.entries(card.foodCost)) {
-        if (required && required > 0) {
-          totalAvailable += player.food[foodType as FoodType] ?? 0;
-        }
-      }
-      return totalAvailable >= 1;
-    }
-
-    return false;
-  });
-}
-
-/**
- * Build FoodByType from birdfeeder state.
- * Note: SEED_INVERTEBRATE dice are represented as SEED in the available food.
- */
-function buildAvailableFoodFromBirdfeeder(
-  birdfeeder: ReadonlyArray<FoodType>
-): FoodByType {
-  const food: FoodByType = {};
+function buildAvailableDiceFromBirdfeeder(
+  birdfeeder: ReadonlyArray<DieFace>
+): FoodByDice {
+  const dice: FoodByDice = {};
   for (const die of birdfeeder) {
-    food[die] = (food[die] ?? 0) + 1;
+    dice[die] = (dice[die] ?? 0) + 1;
+  }
+  return dice;
+}
+
+/**
+ * Build FoodByDice from birdfeeder, limited to a max count of dice.
+ */
+function buildLimitedAvailableDice(
+  birdfeeder: readonly DieFace[],
+  maxCount: number
+): FoodByDice {
+  const result: FoodByDice = {};
+  let remaining = maxCount;
+
+  for (const die of birdfeeder) {
+    if (remaining <= 0) break;
+    result[die] = (result[die] ?? 0) + 1;
+    remaining--;
+  }
+
+  return result;
+}
+
+/**
+ * Convert array of DieSelection to actual FoodByType gained.
+ * Handles SEED_INVERTEBRATE dice using the asFoodType field.
+ */
+function convertDieSelectionsToFood(selections: DieSelection[]): FoodByType {
+  const food: FoodByType = {};
+  for (const selection of selections) {
+    let foodType: FoodType;
+    if (selection.die === "SEED_INVERTEBRATE") {
+      // For SEED_INVERTEBRATE, use the asFoodType (required), default to SEED if missing
+      foodType = selection.asFoodType ?? "SEED";
+    } else {
+      // For other dice, the die face is the food type
+      foodType = selection.die as FoodType;
+    }
+    food[foodType] = (food[foodType] ?? 0) + 1;
   }
   return food;
 }
@@ -1830,7 +1747,7 @@ export const gainFoodHandler: TurnActionHandler = function* (ctx, params) {
   const registry = ctx.getRegistry();
   const board = registry.getPlayerBoard();
 
-  const leftmostEmpty = getLeftmostEmptyColumn(player, "FOREST");
+  const leftmostEmpty = player.board.getLeftmostEmptyColumn("FOREST");
   const baseReward = board.forest.baseRewards[leftmostEmpty];
   const bonus = board.forest.bonusRewards[leftmostEmpty];
 
@@ -1876,7 +1793,7 @@ export const gainFoodHandler: TurnActionHandler = function* (ctx, params) {
       break; // No food available
     }
 
-    const availableFood = buildAvailableFoodFromBirdfeeder(currentBirdfeeder as FoodType[]);
+    const availableDice = buildLimitedAvailableDice(currentBirdfeeder, 1);
 
     const foodPrompt: SelectFoodFromFeederPrompt = {
       promptId: ctx.generatePromptId(),
@@ -1884,19 +1801,19 @@ export const gainFoodHandler: TurnActionHandler = function* (ctx, params) {
       kind: "selectFoodFromFeeder",
       view: ctx.buildPlayerView(),
       context: ctx.buildPromptContext(),
-      availableFood,
+      availableDice,
     };
 
     const choice = yield* turnActionPrompt(ctx, foodPrompt);
 
-    if (choice.foodOrReroll === "reroll") {
+    if (choice.diceOrReroll === "reroll") {
       // Check if reroll is allowed (all dice show same face)
       const uniqueFaces = new Set(currentBirdfeeder);
       if (uniqueFaces.size <= 1) {
         yield* turnActionEffect({
           type: "REROLL_BIRDFEEDER",
           playerId: ctx.playerId,
-          previousDice: currentBirdfeeder as FoodType[],
+          previousDice: [...currentBirdfeeder],
           newDice: [], // Engine fills this
         });
       }
@@ -1904,40 +1821,43 @@ export const gainFoodHandler: TurnActionHandler = function* (ctx, params) {
       continue;
     }
 
-    // Take food from feeder - the GAIN_FOOD effect with source: "BIRDFEEDER"
-    // will cause GameEngine.applyGainFood() to remove the die from the feeder
-    for (const [foodType, count] of Object.entries(choice.foodOrReroll)) {
-      if (count && count > 0) {
-        const ft = foodType as FoodType;
-        gainedFood[ft] = (gainedFood[ft] ?? 0) + 1;
-        // Yield individual GAIN_FOOD effect per food item so birdfeeder is updated
-        yield* turnActionEffect({
-          type: "GAIN_FOOD",
-          playerId: ctx.playerId,
-          food: { [ft]: 1 },
-          source: "BIRDFEEDER",
-        });
-        break; // One food per iteration
+    // Take food from feeder - process the die selections
+    const selectedDice = choice.diceOrReroll;
+    if (selectedDice.length > 0) {
+      const selectedFood = convertDieSelectionsToFood(selectedDice);
+      // Add to accumulated food
+      for (const [ft, count] of Object.entries(selectedFood)) {
+        if (count && count > 0) {
+          gainedFood[ft as FoodType] = (gainedFood[ft as FoodType] ?? 0) + count;
+        }
       }
+      // Yield GAIN_FOOD effect with diceTaken so engine removes the correct die
+      yield* turnActionEffect({
+        type: "GAIN_FOOD",
+        playerId: ctx.playerId,
+        food: selectedFood,
+        source: "BIRDFEEDER",
+        diceTaken: selectedDice,
+      });
     }
   }
 
-  // Yield food gained event for pink power triggers
-  yield* event({
-    type: "FOOD_GAINED_FROM_HABITAT_ACTIVATION",
-    playerId: ctx.playerId,
-    food: gainedFood,
-  });
-
   // Get birds with brown powers in forest for activation
   const updatedPlayer = ctx.getState().players.find((p) => p.id === ctx.playerId)!;
-  const forestBirds = getBirdsWithBrownPowers(updatedPlayer, "FOREST");
+  const forestBirds = updatedPlayer.board.getBirdsWithBrownPowers("FOREST");
 
   yield* event({
     type: "HABITAT_ACTIVATED",
     playerId: ctx.playerId,
     habitat: "FOREST",
     birdInstanceIds: forestBirds,
+  });
+
+  // Yield food gained event for pink power triggers
+  yield* event({
+    type: "FOOD_GAINED_FROM_HABITAT_ACTIVATION",
+    playerId: ctx.playerId,
+    food: gainedFood,
   });
 };
 
@@ -1951,7 +1871,7 @@ export const layEggsHandler: TurnActionHandler = function* (ctx, params) {
   const registry = ctx.getRegistry();
   const board = registry.getPlayerBoard();
 
-  const leftmostEmpty = getLeftmostEmptyColumn(player, "GRASSLAND");
+  const leftmostEmpty = player.board.getLeftmostEmptyColumn("GRASSLAND");
   let eggsToLay = board.grassland.baseRewards[leftmostEmpty];
   const bonus = board.grassland.bonusRewards[leftmostEmpty];
 
@@ -1990,7 +1910,7 @@ export const layEggsHandler: TurnActionHandler = function* (ctx, params) {
   }
 
   // Find birds with remaining egg capacity
-  const capacities = getRemainingEggCapacities(player);
+  const capacities = player.board.getRemainingEggCapacities();
 
   const placements: Array<{ birdInstanceId: string; count: number }> = [];
 
@@ -2026,7 +1946,7 @@ export const layEggsHandler: TurnActionHandler = function* (ctx, params) {
 
   // Get birds with brown powers in grassland for activation
   const updatedPlayer = ctx.getState().players.find((p) => p.id === ctx.playerId)!;
-  const grasslandBirds = getBirdsWithBrownPowers(updatedPlayer, "GRASSLAND");
+  const grasslandBirds = updatedPlayer.board.getBirdsWithBrownPowers("GRASSLAND");
 
   yield* event({
     type: "HABITAT_ACTIVATED",
@@ -2052,7 +1972,7 @@ export const drawCardsHandler: TurnActionHandler = function* (ctx, params) {
   const registry = ctx.getRegistry();
   const board = registry.getPlayerBoard();
 
-  const leftmostEmpty = getLeftmostEmptyColumn(player, "WETLAND");
+  const leftmostEmpty = player.board.getLeftmostEmptyColumn("WETLAND");
   let cardsToDraw = board.wetland.baseRewards[leftmostEmpty];
   const bonus = board.wetland.bonusRewards[leftmostEmpty];
 
@@ -2060,7 +1980,7 @@ export const drawCardsHandler: TurnActionHandler = function* (ctx, params) {
   let bonusApplied = false;
   if (params.takeBonus && bonus) {
     // Get eggs on birds
-    const eggsOnBirds = getEggsOnBirds(player);
+    const eggsOnBirds = player.board.getEggsOnBirds();
     let totalEggs = 0;
     for (const count of Object.values(eggsOnBirds)) {
       totalEggs += count ?? 0;
@@ -2154,7 +2074,7 @@ export const drawCardsHandler: TurnActionHandler = function* (ctx, params) {
   }
 
   const updatedPlayer = ctx.getState().players.find((p) => p.id === ctx.playerId)!;
-  const wetlandBirds = getBirdsWithBrownPowers(updatedPlayer, "WETLAND");
+  const wetlandBirds = updatedPlayer.board.getBirdsWithBrownPowers("WETLAND");
 
   yield* event({
     type: "HABITAT_ACTIVATED",
@@ -2175,7 +2095,7 @@ export const playBirdHandler: TurnActionHandler = function* (ctx, _params) {
   const boardConfig = registry.getPlayerBoard();
 
   // Find eligible birds (cards in hand player can afford)
-  const eligibleBirds = getEligibleBirdsToPlay(player);
+  const eligibleBirds = player.getEligibleBirdsToPlay();
 
   if (eligibleBirds.length === 0) {
     return; // No birds can be played
@@ -2184,7 +2104,7 @@ export const playBirdHandler: TurnActionHandler = function* (ctx, _params) {
   // Calculate egg costs for each habitat
   const eggCostByHabitat: Partial<Record<Habitat, number>> = {};
   for (const habitat of HABITATS) {
-    const leftmostEmpty = getLeftmostEmptyColumn(player, habitat);
+    const leftmostEmpty = player.board.getLeftmostEmptyColumn(habitat);
     if (leftmostEmpty < HABITAT_SIZE) {
       eggCostByHabitat[habitat] = boardConfig.playBirdCosts[leftmostEmpty];
     }
@@ -2210,7 +2130,7 @@ export const playBirdHandler: TurnActionHandler = function* (ctx, _params) {
 
   // Find leftmost empty slot in chosen habitat
   const habitat = choice.habitat;
-  const column = getLeftmostEmptyColumn(player, habitat);
+  const column = player.board.getLeftmostEmptyColumn(habitat);
 
   // Create bird instance ID
   const birdInstanceId = `${ctx.playerId}_${habitat}_${column}_${birdCard.id}`;

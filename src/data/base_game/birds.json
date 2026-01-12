@@ -2503,10 +2503,8 @@
     "habitats": ["FOREST"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
+      "params": {},
       "trigger": "WHEN_PLAYED",
-      "params": {
-        "habitat": "FOREST"
-      },
       "text": "Play an additional bird in your [forest]. Pay its normal cost."
     },
     "victoryPoints": 3,
@@ -2538,10 +2536,8 @@
     "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
+      "params": {},
       "trigger": "WHEN_PLAYED",
-      "params": {
-        "habitat": "GRASSLAND"
-      },
       "text": "Play an additional bird in your [grassland]. Pay its normal cost."
     },
     "victoryPoints": 4,
@@ -2921,10 +2917,8 @@
     "habitats": ["WETLAND"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
+      "params": {},
       "trigger": "WHEN_PLAYED",
-      "params": {
-        "habitat": "WETLAND"
-      },
       "text": "Play an additional bird in your [wetland]. Pay its normal cost."
     },
     "victoryPoints": 5,
@@ -2988,10 +2982,8 @@
     "habitats": ["WETLAND"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
+      "params": {},
       "trigger": "WHEN_PLAYED",
-      "params": {
-        "habitat": "WETLAND"
-      },
       "text": "Play an additional bird in your [wetland]. Pay its normal cost."
     },
     "victoryPoints": 7,
@@ -3317,7 +3309,7 @@
     "scientificName": "Troglodytes aedon",
     "habitats": ["FOREST", "GRASSLAND"],
     "power": {
-      "handlerId": "playAdditionalBirdInThisHabitat",
+      "handlerId": "playAdditionalBirdInHabitat",
       "trigger": "WHEN_PLAYED",
       "params": {},
       "text": "Play an additional bird in this bird's habitat. Pay its normal cost."
@@ -3687,10 +3679,8 @@
     "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
+      "params": {},
       "trigger": "WHEN_PLAYED",
-      "params": {
-        "habitat": "GRASSLAND"
-      },
       "text": "Play an additional bird in your [grassland]. Pay its normal cost."
     },
     "victoryPoints": 4,
@@ -4547,10 +4537,8 @@
     "habitats": ["FOREST"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
+      "params": {},
       "trigger": "WHEN_PLAYED",
-      "params": {
-        "habitat": "FOREST"
-      },
       "text": "Play an additional bird in your [forest]. Pay its normal cost."
     },
     "victoryPoints": 3,
@@ -4831,10 +4819,8 @@
     "habitats": ["FOREST"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
+      "params": {},
       "trigger": "WHEN_PLAYED",
-      "params": {
-        "habitat": "FOREST"
-      },
       "text": "Play an additional bird in your [forest]. Pay its normal cost."
     },
     "victoryPoints": 2,
@@ -4969,10 +4955,8 @@
     "habitats": ["GRASSLAND"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
+      "params": {},
       "trigger": "WHEN_PLAYED",
-      "params": {
-        "habitat": "GRASSLAND"
-      },
       "text": "Play an additional bird in your [grassland]. Pay its normal cost."
     },
     "victoryPoints": 2,
@@ -5423,10 +5407,8 @@
     "habitats": ["FOREST"],
     "power": {
       "handlerId": "playAdditionalBirdInHabitat",
+      "params": {},
       "trigger": "WHEN_PLAYED",
-      "params": {
-        "habitat": "FOREST"
-      },
       "text": "Play an additional bird in your [forest]. Pay its normal cost."
     },
     "victoryPoints": 2,

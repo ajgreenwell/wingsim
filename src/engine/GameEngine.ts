@@ -10,6 +10,11 @@ import {
 } from "./ActionProcessor.js";
 import { buildPlayerView } from "./ViewBuilder.js";
 import type { PlayerAgent } from "../agents/PlayerAgent.js";
+import { GameState, DeferredContinuationEntry } from "./GameState.js";
+export { GameState, DeferredContinuationEntry } from "./GameState.js";
+import { PlayerState } from "./PlayerState.js";
+import { PlayerBoard } from "./PlayerBoard.js";
+import { AgentForfeitError } from "./errors.js";
 import type {
   BirdCard,
   BirdInstance,
@@ -19,7 +24,6 @@ import type {
   FoodType,
   Habitat,
   PlayerId,
-  PlayerState,
   RoundGoalId,
 } from "../types/core.js";
 import type {
@@ -59,36 +63,10 @@ export interface GameResult {
   scores: Record<PlayerId, number>;
   roundsPlayed: number;
   totalTurns: number;
+  /** Players who forfeited during the game (if any) */
+  forfeitedPlayers?: PlayerId[];
 }
 
-/**
- * The complete game state for a Wingspan match.
- * This is the authoritative state owned by the GameEngine.
- */
-export interface GameState {
-  players: PlayerState[];
-  activePlayerIndex: number;
-  birdfeeder: Birdfeeder;
-  birdCardSupply: BirdCardSupply;
-  bonusCardDeck: DiscardableDeck<BonusCard>;
-  roundGoals: RoundGoalId[];
-  round: number;
-  turn: number;
-
-  /**
-   * Deferred continuations to execute at end of current turn.
-   * Cleared after resolution.
-   */
-  endOfTurnContinuations: DeferredContinuationEntry[];
-}
-
-/**
- * Entry in the end-of-turn continuation queue.
- */
-export interface DeferredContinuationEntry {
-  playerId: PlayerId;
-  continuation: () => Generator<PowerYield, void, PowerReceive>;
-}
 
 /**
  * Configuration for creating a GameEngine instance.
@@ -187,27 +165,19 @@ export class GameEngine {
         RODENT: 1,
       };
 
-      // Initialize empty board
-      const board: Record<Habitat, Array<null>> = {
-        FOREST: Array(HABITAT_SIZE).fill(null),
-        GRASSLAND: Array(HABITAT_SIZE).fill(null),
-        WETLAND: Array(HABITAT_SIZE).fill(null),
-      };
-
-      return {
-        id: agent.playerId,
-        board,
+      return PlayerState.from(agent.playerId, {
         hand,
         bonusCards,
         food,
         turnsRemaining: INITIAL_TURNS_PER_ROUND,
-      };
+        board: PlayerBoard.empty(),
+      });
     });
 
     // Fill the bird tray AFTER dealing starting hands to all players
     birdCardSupply.refillTray();
 
-    return {
+    return new GameState({
       players,
       activePlayerIndex: 0,
       birdfeeder,
@@ -216,14 +186,15 @@ export class GameEngine {
       roundGoals,
       round: 1,
       turn: 1,
-      endOfTurnContinuations: [],
-    };
+    });
   }
 
   /**
    * Run a complete game from start to finish.
    */
   async playGame(): Promise<GameResult> {
+    const forfeitedPlayers: PlayerId[] = [];
+
     // 1. Starting hand selection (simultaneous)
     await this.handleStartingHandSelection();
 
@@ -234,9 +205,22 @@ export class GameEngine {
       seed: this.seed,
     });
 
-    // 3. Run 4 rounds
-    for (let round = 1; round <= TOTAL_ROUNDS; round++) {
-      await this.runRound(round);
+    // 3. Run 4 rounds (with forfeit handling)
+    try {
+      for (let round = 1; round <= TOTAL_ROUNDS; round++) {
+        const shouldContinue = await this.runRoundWithForfeitHandling(round, forfeitedPlayers);
+        if (!shouldContinue) {
+          break; // Game ended due to forfeit (only 1 player remaining)
+        }
+      }
+    } catch (error) {
+      // Re-throw unexpected errors
+      if (!(error instanceof AgentForfeitError)) {
+        throw error;
+      }
+      // This shouldn't happen as runRoundWithForfeitHandling handles forfeits,
+      // but handle it just in case
+      await this.handleForfeit(error, forfeitedPlayers);
     }
 
     // 4. Calculate final scores
@@ -249,9 +233,115 @@ export class GameEngine {
     return {
       winnerId,
       scores,
-      roundsPlayed: TOTAL_ROUNDS,
+      roundsPlayed: this.gameState.round,
       totalTurns: this.gameState.turn - 1,
+      ...(forfeitedPlayers.length > 0 && { forfeitedPlayers }),
     };
+  }
+
+  /**
+   * Handle a player forfeit.
+   * Marks the player as forfeited and emits the PLAYER_FORFEITED event.
+   * @returns true if the game should continue, false if only 1 player remains
+   */
+  private async handleForfeit(
+    error: AgentForfeitError,
+    forfeitedPlayers: PlayerId[]
+  ): Promise<boolean> {
+    const player = this.gameState.findPlayer(error.playerId);
+    player.forfeited = true;
+    player.turnsRemaining = 0;
+    forfeitedPlayers.push(error.playerId);
+
+    const remainingCount = this.getActivePlayerCount();
+
+    await this.processEvent({
+      type: "PLAYER_FORFEITED",
+      playerId: error.playerId,
+      reason: error.lastError.message,
+      remainingPlayerCount: remainingCount,
+    });
+
+    // Game continues if more than 1 active player remains
+    return remainingCount > 1;
+  }
+
+  /**
+   * Get the count of players who haven't forfeited.
+   */
+  private getActivePlayerCount(): number {
+    return this.gameState.players.filter((p) => !p.forfeited).length;
+  }
+
+  /**
+   * Run a round with forfeit handling.
+   * @returns true if the game should continue, false if only 1 player remains
+   */
+  private async runRoundWithForfeitHandling(
+    round: number,
+    forfeitedPlayers: PlayerId[]
+  ): Promise<boolean> {
+    this.gameState.round = round;
+
+    // Set turns remaining for all non-forfeited players based on round
+    const turnsThisRound = TURNS_BY_ROUND[round - 1];
+    for (const player of this.gameState.players) {
+      if (!player.forfeited) {
+        player.turnsRemaining = turnsThisRound;
+      }
+    }
+
+    await this.processEvent({ type: "ROUND_STARTED", round });
+
+    // Round-robin turns until all players exhausted
+    let currentPlayerIndex = 0;
+    while (this.anyActivePlayerHasTurns()) {
+      // Find next active player with turns remaining
+      let attempts = 0;
+      while (attempts < this.gameState.players.length) {
+        const player = this.gameState.players[currentPlayerIndex];
+        if (!player.forfeited && player.turnsRemaining > 0) {
+          break;
+        }
+        currentPlayerIndex =
+          (currentPlayerIndex + 1) % this.gameState.players.length;
+        attempts++;
+      }
+
+      const currentPlayer = this.gameState.players[currentPlayerIndex];
+      if (!currentPlayer.forfeited && currentPlayer.turnsRemaining > 0) {
+        try {
+          await this.runTurn(currentPlayerIndex);
+        } catch (error) {
+          if (error instanceof AgentForfeitError) {
+            const shouldContinue = await this.handleForfeit(error, forfeitedPlayers);
+            if (!shouldContinue) {
+              // Only 1 player remaining, end the game
+              await this.processEvent({ type: "ROUND_ENDED", round });
+              return false;
+            }
+            // Continue with next player
+          } else {
+            throw error;
+          }
+        }
+      }
+
+      currentPlayerIndex =
+        (currentPlayerIndex + 1) % this.gameState.players.length;
+    }
+
+    await this.processEvent({ type: "ROUND_ENDED", round });
+    return true;
+  }
+
+  /**
+   * Check if any active (non-forfeited) player has turns remaining.
+   */
+  private anyActivePlayerHasTurns(): boolean {
+    return this.gameState.players.some(
+      (p) => !p.forfeited && p.turnsRemaining > 0
+    );
   }
 
   /**
@@ -324,43 +414,6 @@ export class GameEngine {
     }
   }
 
-  /**
-   * Run a single round of the game.
-   */
-  private async runRound(round: number): Promise<void> {
-    this.gameState.round = round;
-
-    // Set turns remaining for all players based on round
-    const turnsThisRound = TURNS_BY_ROUND[round - 1];
-    for (const player of this.gameState.players) {
-      player.turnsRemaining = turnsThisRound;
-    }
-
-    await this.processEvent({ type: "ROUND_STARTED", round });
-
-    // Round-robin turns until all players exhausted
-    let currentPlayerIndex = 0;
-    while (this.anyPlayerHasTurns()) {
-      // Find next player with turns remaining
-      let attempts = 0;
-      while (
-        this.gameState.players[currentPlayerIndex].turnsRemaining === 0 &&
-        attempts < this.gameState.players.length
-      ) {
-        currentPlayerIndex =
-          (currentPlayerIndex + 1) % this.gameState.players.length;
-        attempts++;
-      }
-
-      if (this.gameState.players[currentPlayerIndex].turnsRemaining > 0) {
-        await this.runTurn(currentPlayerIndex);
-        currentPlayerIndex =
-          (currentPlayerIndex + 1) % this.gameState.players.length;
-      }
-    }
-
-    await this.processEvent({ type: "ROUND_ENDED", round });
-  }
 
   /**
    * Run a single turn for a player.
@@ -517,11 +570,15 @@ export class GameEngine {
 
     // Execute each pink power (effects are applied immediately within via execCtx.applyEffect())
     for (const trigger of triggers) {
+      // Set the triggering event on the context so the handler can access it
+      execCtx.triggeringEvent = trigger.triggeringEvent;
       await this.actionProcessor.executeSinglePower(
         trigger.birdInstanceId,
         trigger.ownerId,
         execCtx
       );
+      // Clear the triggering event after execution
+      execCtx.triggeringEvent = undefined;
       // Pink power effects don't generate further events (no cascading)
     }
   }
@@ -579,7 +636,7 @@ export class GameEngine {
    * Apply an effect to the game state.
    * This is the ONLY method that mutates GameState.
    */
-  private applyEffect(effect: Effect): void {
+  applyEffect(effect: Effect): void {
     // TODO: Notify observers of effect application
 
     switch (effect.type) {
@@ -639,58 +696,91 @@ export class GameEngine {
         this.applyRemoveCardsFromTray(effect);
         break;
 
+      case "ROLL_DICE":
+        this.applyRollDice(effect);
+        break;
+
+      case "REVEAL_CARDS":
+        this.applyRevealCards(effect);
+        break;
+
+      case "REVEAL_BONUS_CARDS":
+        this.applyRevealBonusCards(effect);
+        break;
+
+      case "DRAW_BONUS_CARDS":
+        this.applyDrawBonusCards(effect);
+        break;
+
+      case "MOVE_BIRD":
+        this.applyMoveBird(effect);
+        break;
+
+      case "ALL_PLAYERS_GAIN_FOOD":
+        this.applyAllPlayersGainFood(effect);
+        break;
+
       default:
         console.warn(`Unhandled effect type: ${(effect as Effect).type}`);
     }
   }
 
-  private applyGainFood(effect: Effect & { type: "GAIN_FOOD" }): void {
-    const player = this.findPlayer(effect.playerId);
+  applyGainFood(effect: Effect & { type: "GAIN_FOOD" }): void {
+    const player = this.gameState.findPlayer(effect.playerId);
+
+    // Add food to player's supply
     for (const [foodType, count] of Object.entries(effect.food)) {
       if (count && count > 0) {
         const ft = foodType as keyof typeof player.food;
         player.food[ft] = (player.food[ft] ?? 0) + count;
+      }
+    }
 
-        // Remove dice from birdfeeder when source is BIRDFEEDER
-        // Note: WILD is not a valid die face, so skip it
-        if (effect.source === "BIRDFEEDER" && foodType !== "WILD") {
-          for (let i = 0; i < count; i++) {
-            try {
-              this.gameState.birdfeeder.takeDie(foodType as DieFace);
-            } catch {
-              // Die may not be available (e.g., already taken or SEED_INVERTEBRATE)
-            }
-          }
-        }
+    // Remove dice from birdfeeder when source is BIRDFEEDER
+    if (effect.source === "BIRDFEEDER" && effect.diceTaken) {
+      for (const dieSelection of effect.diceTaken) {
+        this.gameState.birdfeeder.takeDie(dieSelection.die);
       }
     }
   }
 
-  private applyLayEggs(effect: Effect & { type: "LAY_EGGS" }): void {
-    const player = this.findPlayer(effect.playerId);
+  applyLayEggs(effect: Effect & { type: "LAY_EGGS" }): void {
+    const player = this.gameState.findPlayer(effect.playerId);
     for (const [birdId, count] of Object.entries(effect.placements)) {
       if (count && count > 0) {
-        const bird = this.findBirdOnBoard(player, birdId);
-        if (bird) {
-          bird.eggs += count;
+        const bird = player.board.findBirdInstance(birdId);
+        if (!bird) {
+          throw new Error(
+            `Cannot lay eggs: bird instance "${birdId}" not found on player "${effect.playerId}"'s board`
+          );
         }
+        const newTotal = bird.eggs + count;
+        if (newTotal > bird.card.eggCapacity) {
+          throw new Error(
+            `Cannot lay ${count} egg(s) on bird "${birdId}": would exceed egg capacity of ${bird.card.eggCapacity} (current: ${bird.eggs})`
+          );
+        }
+        bird.eggs = newTotal;
       }
     }
   }
 
-  private applyDrawCards(effect: Effect & { type: "DRAW_CARDS" }): void {
-    const player = this.findPlayer(effect.playerId);
+  applyDrawCards(effect: Effect & { type: "DRAW_CARDS" }): void {
+    const player = this.gameState.findPlayer(effect.playerId);
     const drawnCardIds: string[] = [];
 
     // Draw from tray
     for (const cardId of effect.fromTray) {
       const tray = this.gameState.birdCardSupply.getTray();
       const trayIndex = tray.findIndex((c) => c?.id === cardId);
-      if (trayIndex !== -1) {
-        const card = this.gameState.birdCardSupply.takeFromTray(trayIndex);
-        player.hand.push(card);
-        drawnCardIds.push(card.id);
+      if (trayIndex === -1) {
+        throw new Error(
+          `Cannot draw card: card "${cardId}" not found in bird tray`
+        );
       }
+      const card = this.gameState.birdCardSupply.takeFromTray(trayIndex);
+      player.hand.push(card);
+      drawnCardIds.push(card.id);
     }
 
     // Draw from deck
@@ -707,30 +797,55 @@ export class GameEngine {
     this.gameState.birdCardSupply.refillTray();
   }
 
-  private applyDiscardFood(effect: Effect & { type: "DISCARD_FOOD" }): void {
-    const player = this.findPlayer(effect.playerId);
+  applyDiscardFood(effect: Effect & { type: "DISCARD_FOOD" }): void {
+    const player = this.gameState.findPlayer(effect.playerId);
     for (const [foodType, count] of Object.entries(effect.food)) {
       if (count && count > 0) {
         const ft = foodType as keyof typeof player.food;
-        player.food[ft] = Math.max(0, (player.food[ft] ?? 0) - count);
+        const available = player.food[ft] ?? 0;
+        if (count > available) {
+          throw new Error(
+            `Cannot discard ${count} ${foodType}: player "${effect.playerId}" only has ${available}`
+          );
+        }
+        player.food[ft] = available - count;
       }
     }
   }
 
-  private applyDiscardEggs(effect: Effect & { type: "DISCARD_EGGS" }): void {
-    const player = this.findPlayer(effect.playerId);
+  applyDiscardEggs(effect: Effect & { type: "DISCARD_EGGS" }): void {
+    const player = this.gameState.findPlayer(effect.playerId);
     for (const [birdId, count] of Object.entries(effect.sources)) {
       if (count && count > 0) {
-        const bird = this.findBirdOnBoard(player, birdId);
-        if (bird) {
-          bird.eggs = Math.max(0, bird.eggs - count);
+        const bird = player.board.findBirdInstance(birdId);
+        if (!bird) {
+          throw new Error(
+            `Cannot discard eggs: bird instance "${birdId}" not found on player "${effect.playerId}"'s board`
+          );
         }
+        if (count > bird.eggs) {
+          throw new Error(
+            `Cannot discard ${count} egg(s) from bird "${birdId}": only has ${bird.eggs} egg(s)`
+          );
+        }
+        bird.eggs -= count;
       }
     }
   }
 
-  private applyDiscardCards(effect: Effect & { type: "DISCARD_CARDS" }): void {
-    const player = this.findPlayer(effect.playerId);
+  applyDiscardCards(effect: Effect & { type: "DISCARD_CARDS" }): void {
+    const player = this.gameState.findPlayer(effect.playerId);
+
+    // Validate all cards are in hand
+    const handCardIds = new Set(player.hand.map((c) => c.id));
+    for (const cardId of effect.cards) {
+      if (!handCardIds.has(cardId)) {
+        throw new Error(
+          `Cannot discard card: card "${cardId}" not found in player "${effect.playerId}"'s hand`
+        );
+      }
+    }
+
     const discardedCards = player.hand.filter((c) =>
       effect.cards.includes(c.id)
     );
@@ -738,18 +853,25 @@ export class GameEngine {
     this.gameState.birdCardSupply.discardCards(discardedCards);
   }
 
-  private applyTuckCards(effect: Effect & { type: "TUCK_CARDS" }): void {
-    const player = this.findPlayer(effect.playerId);
-    const bird = this.findBirdOnBoard(player, effect.targetBirdInstanceId);
-    if (!bird) return;
+  applyTuckCards(effect: Effect & { type: "TUCK_CARDS" }): void {
+    const player = this.gameState.findPlayer(effect.playerId);
+    const bird = player.board.findBirdInstance(effect.targetBirdInstanceId);
+    if (!bird) {
+      throw new Error(
+        `Cannot tuck cards: target bird "${effect.targetBirdInstanceId}" not found on player "${effect.playerId}"'s board`
+      );
+    }
 
     // Tuck from hand
     for (const cardId of effect.fromHand) {
       const cardIndex = player.hand.findIndex((c) => c.id === cardId);
-      if (cardIndex !== -1) {
-        player.hand.splice(cardIndex, 1);
-        bird.tuckedCards.push(cardId);
+      if (cardIndex === -1) {
+        throw new Error(
+          `Cannot tuck card: card "${cardId}" not found in player "${effect.playerId}"'s hand`
+        );
       }
+      player.hand.splice(cardIndex, 1);
+      bird.tuckedCards.push(cardId);
     }
 
     // Tuck from deck
@@ -765,10 +887,14 @@ export class GameEngine {
     }
   }
 
-  private applyCacheFood(effect: Effect & { type: "CACHE_FOOD" }): void {
-    const player = this.findPlayer(effect.playerId);
-    const bird = this.findBirdOnBoard(player, effect.birdInstanceId);
-    if (!bird) return;
+  applyCacheFood(effect: Effect & { type: "CACHE_FOOD" }): void {
+    const player = this.gameState.findPlayer(effect.playerId);
+    const bird = player.board.findBirdInstance(effect.birdInstanceId);
+    if (!bird) {
+      throw new Error(
+        `Cannot cache food: bird "${effect.birdInstanceId}" not found on player "${effect.playerId}"'s board`
+      );
+    }
 
     for (const [foodType, count] of Object.entries(effect.food)) {
       if (count && count > 0) {
@@ -778,16 +904,60 @@ export class GameEngine {
     }
   }
 
-  private applyPlayBird(effect: Effect & { type: "PLAY_BIRD" }): void {
-    const player = this.findPlayer(effect.playerId);
+  applyPlayBird(effect: Effect & { type: "PLAY_BIRD" }): void {
+    const player = this.gameState.findPlayer(effect.playerId);
 
     // Find the card in hand
-    const cardIndex = player.hand.findIndex(
-      (c) => c.id === effect.birdInstanceId.split("_").pop()
-    );
-    if (cardIndex === -1) return;
+    // birdInstanceId format: {playerId}_{habitat}_{column}_{cardId}
+    // cardId can contain underscores, so we join everything after the third underscore
+    const parts = effect.birdInstanceId.split("_");
+    const cardId = parts.slice(3).join("_");
+    const cardIndex = player.hand.findIndex((c) => c.id === cardId);
+    if (cardIndex === -1) {
+      throw new Error(
+        `Cannot play bird: card "${cardId}" not found in player "${effect.playerId}"'s hand`
+      );
+    }
 
     const card = player.hand[cardIndex];
+
+    // Check if slot is already occupied
+    const existingBird = player.board.getSlot(effect.habitat, effect.column);
+    if (existingBird !== null) {
+      throw new Error(
+        `Cannot play bird: slot ${effect.habitat}[${effect.column}] is already occupied by "${existingBird.id}"`
+      );
+    }
+
+    // Validate food cost
+    for (const [foodType, count] of Object.entries(effect.foodPaid)) {
+      if (count && count > 0) {
+        const ft = foodType as keyof typeof player.food;
+        const available = player.food[ft] ?? 0;
+        if (count > available) {
+          throw new Error(
+            `Cannot play bird: insufficient ${foodType} (need ${count}, have ${available})`
+          );
+        }
+      }
+    }
+
+    // Validate egg cost
+    for (const [birdId, eggCount] of Object.entries(effect.eggsPaid)) {
+      if (eggCount && eggCount > 0) {
+        const sourceBird = player.board.findBirdInstance(birdId);
+        if (!sourceBird) {
+          throw new Error(
+            `Cannot play bird: source bird "${birdId}" for egg payment not found`
+          );
+        }
+        if (eggCount > sourceBird.eggs) {
+          throw new Error(
+            `Cannot play bird: bird "${birdId}" has ${sourceBird.eggs} egg(s), need ${eggCount}`
+          );
+        }
+      }
+    }
 
     // Create bird instance
     const birdInstance: BirdInstance = {
@@ -799,7 +969,7 @@ export class GameEngine {
     };
 
     // Place on board
-    player.board[effect.habitat][effect.column] = birdInstance;
+    player.board.setSlot(effect.habitat, effect.column, birdInstance);
 
     // Remove from hand
     player.hand.splice(cardIndex, 1);
@@ -808,130 +978,111 @@ export class GameEngine {
     for (const [foodType, count] of Object.entries(effect.foodPaid)) {
       if (count && count > 0) {
         const ft = foodType as keyof typeof player.food;
-        player.food[ft] = Math.max(0, (player.food[ft] ?? 0) - count);
+        player.food[ft] = (player.food[ft] ?? 0) - count;
       }
     }
 
     // Deduct egg cost
     for (const [birdId, eggCount] of Object.entries(effect.eggsPaid)) {
       if (eggCount && eggCount > 0) {
-        const sourceBird = this.findBirdOnBoard(player, birdId);
+        const sourceBird = player.board.findBirdInstance(birdId);
         if (sourceBird) {
-          sourceBird.eggs = Math.max(0, sourceBird.eggs - eggCount);
+          sourceBird.eggs -= eggCount;
         }
       }
     }
   }
 
-  private applyRerollBirdfeeder(
-    effect: Effect & { type: "REROLL_BIRDFEEDER" }
-  ): void {
+  applyRerollBirdfeeder(effect: Effect & { type: "REROLL_BIRDFEEDER" }): void {
     this.gameState.birdfeeder.rerollAll();
     // Populate result field so handlers can see the new dice
     const newDice = this.gameState.birdfeeder.getDiceInFeeder();
-    effect.newDice = [...newDice] as FoodType[];
+    effect.newDice = [...newDice];
   }
 
-  private applyRefillBirdfeeder(
-    effect: Effect & { type: "REFILL_BIRDFEEDER" }
-  ): void {
-    // Birdfeeder auto-refills when empty via rerollAll
-    this.gameState.birdfeeder.rerollAll();
+  applyRefillBirdfeeder(effect: Effect & { type: "REFILL_BIRDFEEDER" }): void {
+    // Unconditionally roll all dice (for refill scenarios)
+    this.gameState.birdfeeder.rollAll();
     const addedDice = this.gameState.birdfeeder.getDiceInFeeder();
-    effect.addedDice = [...addedDice] as FoodType[];
+    effect.addedDice = [...addedDice];
   }
 
-  private applyRefillBirdTray(
-    _effect: Effect & { type: "REFILL_BIRD_TRAY" }
-  ): void {
+  applyRefillBirdTray(_effect: Effect & { type: "REFILL_BIRD_TRAY" }): void {
     // Refill the bird card tray
     this.gameState.birdCardSupply.refillTray();
   }
 
-  private applyRemoveCardsFromTray(
+  applyRemoveCardsFromTray(
     effect: Effect & { type: "REMOVE_CARDS_FROM_TRAY" }
   ): void {
     for (const cardId of effect.cards) {
       const tray = this.gameState.birdCardSupply.getTray();
       const trayIndex = tray.findIndex((c) => c?.id === cardId);
-      if (trayIndex !== -1) {
-        this.gameState.birdCardSupply.takeFromTray(trayIndex);
+      if (trayIndex === -1) {
+        throw new Error(
+          `Cannot remove card from tray: card "${cardId}" not found in bird tray`
+        );
       }
+      this.gameState.birdCardSupply.takeFromTray(trayIndex);
     }
   }
 
-  /**
-   * Find a player by ID.
-   */
-  private findPlayer(playerId: PlayerId): PlayerState {
-    const player = this.gameState.players.find((p) => p.id === playerId);
-    if (!player) {
-      throw new Error(`Player not found: ${playerId}`);
-    }
-    return player;
+  applyRollDice(effect: Effect & { type: "ROLL_DICE" }): void {
+    const diceInFeeder = this.gameState.birdfeeder.getDiceInFeeder().length;
+    const diceToRoll = 5 - diceInFeeder;
+    const results = this.gameState.birdfeeder.rollOutsideFeeder(diceToRoll);
+    effect.rolledDice = results;
   }
 
-  /**
-   * Find a bird on a player's board by instance ID.
-   */
-  private findBirdOnBoard(
-    player: PlayerState,
-    birdInstanceId: string
-  ): BirdInstance | null {
-    for (const habitat of HABITATS) {
-      for (const bird of player.board[habitat]) {
-        if (bird?.id === birdInstanceId) {
-          return bird;
+  applyRevealCards(effect: Effect & { type: "REVEAL_CARDS" }): void {
+    const cards = this.gameState.birdCardSupply.drawFromDeck(effect.count);
+    effect.revealedCards = cards.map((c) => c.id);
+  }
+
+  applyRevealBonusCards(effect: Effect & { type: "REVEAL_BONUS_CARDS" }): void {
+    const cards = this.gameState.bonusCardDeck.draw(effect.count);
+    effect.revealedCards = cards.map((c) => c.id);
+  }
+
+  applyDrawBonusCards(effect: Effect & { type: "DRAW_BONUS_CARDS" }): void {
+    const player = this.gameState.findPlayer(effect.playerId);
+    // Add kept cards to player
+    for (const cardId of effect.keptCards) {
+      const card = this.registry.getBonusCardById(cardId);
+      player.bonusCards.push(card);
+    }
+    // Discard others
+    const discarded = effect.discardedCards.map((id) =>
+      this.registry.getBonusCardById(id)
+    );
+    this.gameState.bonusCardDeck.discardItems(discarded);
+  }
+
+  applyMoveBird(effect: Effect & { type: "MOVE_BIRD" }): void {
+    const player = this.gameState.findPlayer(effect.playerId);
+    // Remove bird from source habitat
+    const bird = player.board.removeBird(effect.birdInstanceId, effect.fromHabitat);
+    // Place in destination habitat at next available slot
+    const column = player.board.getLeftmostEmptyColumn(effect.toHabitat);
+    if (column >= 5) {
+      throw new Error(
+        `Cannot move bird to ${effect.toHabitat}: habitat is full`
+      );
+    }
+    player.board.setSlot(effect.toHabitat, column, bird);
+  }
+
+  applyAllPlayersGainFood(effect: Effect & { type: "ALL_PLAYERS_GAIN_FOOD" }): void {
+    for (const [playerId, food] of Object.entries(effect.gains)) {
+      const player = this.gameState.findPlayer(playerId);
+      for (const [foodType, count] of Object.entries(food)) {
+        if (count && count > 0) {
+          const ft = foodType as FoodType;
+          player.food[ft] = (player.food[ft] ?? 0) + count;
         }
       }
     }
-    return null;
   }
-
-  // ============================================================================
-  // Board Query Utilities
-  // ============================================================================
-
-  /**
-   * Get the leftmost empty column in a habitat (0-4), or 5 if full.
-   * This is a static utility method that can be used by other components.
-   */
-  static getLeftmostEmptyColumn(
-    player: Readonly<PlayerState>,
-    habitat: Habitat
-  ): number {
-    const row = player.board[habitat];
-    for (let i = 0; i < row.length; i++) {
-      if (row[i] === null) {
-        return i;
-      }
-    }
-    return HABITAT_SIZE;
-  }
-
-  /**
-   * Get bird instance IDs with brown powers in a habitat, in right-to-left order.
-   * This is the activation order for brown powers when a habitat is activated.
-   */
-  static getBirdsWithBrownPowers(
-    player: Readonly<PlayerState>,
-    habitat: Habitat
-  ): string[] {
-    const birds: string[] = [];
-    const row = player.board[habitat];
-    // Right to left order (rightmost bird activates first)
-    for (let i = row.length - 1; i >= 0; i--) {
-      const bird = row[i];
-      if (bird && bird.card.power?.trigger === "WHEN_ACTIVATED") {
-        birds.push(bird.id);
-      }
-    }
-    return birds;
-  }
-
-  // ============================================================================
-  // Scoring
-  // ============================================================================
 
   /**
    * Calculate final scores for all players.
@@ -943,20 +1094,16 @@ export class GameEngine {
       let score = 0;
 
       // Bird VP
-      for (const habitat of HABITATS) {
-        for (const bird of player.board[habitat]) {
-          if (bird) {
-            score += bird.card.victoryPoints;
-            // Eggs on birds
-            score += bird.eggs;
-            // Cached food on birds
-            for (const count of Object.values(bird.cachedFood)) {
-              score += count ?? 0;
-            }
-            // Tucked cards
-            score += bird.tuckedCards.length;
-          }
+      for (const bird of player.board.getAllBirds()) {
+        score += bird.card.victoryPoints;
+        // Eggs on birds
+        score += bird.eggs;
+        // Cached food on birds
+        for (const count of Object.values(bird.cachedFood)) {
+          score += count ?? 0;
         }
+        // Tucked cards
+        score += bird.tuckedCards.length;
       }
 
       // Bonus card VP (simplified - just count qualifying birds)
@@ -1027,15 +1174,7 @@ export class GameEngine {
    * Count birds that have at least minEggs eggs on them.
    */
   countBirdsWithMinEggs(player: PlayerState, minEggs: number): number {
-    let count = 0;
-    for (const habitat of HABITATS) {
-      for (const bird of player.board[habitat]) {
-        if (bird && bird.eggs >= minEggs) {
-          count++;
-        }
-      }
-    }
-    return count;
+    return player.board.getAllBirds().filter((bird) => bird.eggs >= minEggs).length;
   }
 
   /**
@@ -1044,7 +1183,7 @@ export class GameEngine {
   countBirdsInSmallestHabitat(player: PlayerState): number {
     let smallest = Infinity;
     for (const habitat of HABITATS) {
-      const birdCount = player.board[habitat].filter((b) => b !== null).length;
+      const birdCount = player.board.countBirdsInHabitat(habitat);
       if (birdCount < smallest) {
         smallest = birdCount;
       }
@@ -1059,25 +1198,21 @@ export class GameEngine {
     player: PlayerState,
     bonusCardId: string
   ): number {
-    let count = 0;
-    for (const habitat of HABITATS) {
-      for (const bird of player.board[habitat]) {
-        if (bird && bird.card.bonusCards.includes(bonusCardId)) {
-          count++;
-        }
-      }
-    }
-    return count;
+    return player.board.getAllBirds().filter((bird) => bird.card.bonusCards.includes(bonusCardId)).length;
   }
 
   private determineWinner(scores: Record<PlayerId, number>): PlayerId {
-    let winnerId = this.gameState.players[0].id;
+    // Find the first non-forfeited player as default winner
+    const activePlayers = this.gameState.players.filter((p) => !p.forfeited);
+    let winnerId = activePlayers[0]?.id ?? this.gameState.players[0].id;
     let highScore = scores[winnerId] ?? 0;
 
-    for (const [playerId, score] of Object.entries(scores)) {
+    // Only consider non-forfeited players for winning
+    for (const player of activePlayers) {
+      const score = scores[player.id] ?? 0;
       if (score > highScore) {
         highScore = score;
-        winnerId = playerId;
+        winnerId = player.id;
       }
     }
 
@@ -1097,16 +1232,12 @@ export class GameEngine {
     };
   }
 
-  private anyPlayerHasTurns(): boolean {
-    return this.gameState.players.some((p) => p.turnsRemaining > 0);
-  }
-
   private buildRewardsByAction(player: PlayerState): RewardsByAction {
     const board = this.registry.getPlayerBoard();
 
-    const forestColumn = GameEngine.getLeftmostEmptyColumn(player, "FOREST");
-    const grasslandColumn = GameEngine.getLeftmostEmptyColumn(player, "GRASSLAND");
-    const wetlandColumn = GameEngine.getLeftmostEmptyColumn(player, "WETLAND");
+    const forestColumn = player.board.getLeftmostEmptyColumn("FOREST");
+    const grasslandColumn = player.board.getLeftmostEmptyColumn("GRASSLAND");
+    const wetlandColumn = player.board.getLeftmostEmptyColumn("WETLAND");
 
     const forestBonus = board.forest.bonusRewards[forestColumn];
     const grasslandBonus = board.grassland.bonusRewards[grasslandColumn];

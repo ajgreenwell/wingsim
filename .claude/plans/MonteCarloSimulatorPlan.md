@@ -6,7 +6,7 @@ This document breaks down [MonteCarloSimulatorSpec.md](MonteCarloSimulatorSpec.m
 
 ## Tasks
 
-### [ ] 1. AgentRegistry
+### [x] 1. AgentRegistry
 
 **File**: `src/agents/AgentRegistry.ts`
 

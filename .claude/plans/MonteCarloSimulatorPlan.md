@@ -205,7 +205,7 @@ Update prompt generation so agents only see eligible options, eliminating the ne
 
 ---
 
-### [ ] 9. Simulator
+### [x] 9. Simulator
 
 **File**: `src/sim/Simulator.ts`
 

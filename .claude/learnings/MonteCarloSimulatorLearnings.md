@@ -145,3 +145,42 @@ With eligibility pre-filtering, the SmartRandomAgent can now:
 
 - Integration tests verify both turn action and power handler callbacks fire during actual gameplay.
 - Backwards compatibility test confirms engine works without callback (optional parameter).
+
+## Simulator Implementation (Task 9)
+
+### Module Design
+
+- **SmartRandomAgent Side-Effect Import**: The Simulator imports SmartRandomAgent using `import "../agents/SmartRandomAgent.js"` to ensure the agent self-registers in the AgentRegistry before any simulation runs. This is a side-effect import pattern.
+- **DataRegistry Instance**: Each Simulator creates its own DataRegistry instance. This is stateless and immutable, so there's no issue with multiple Simulators.
+
+### Seed Management
+
+- **Three-Tier Priority**: Explicit seeds > baseSeed > Date.now(). This provides maximum flexibility for reproducibility while having sensible defaults.
+- **Seed Generation from baseSeed**: Uses the Rng's shuffle method to progress the RNG state and generate varied seeds. A simple approach that produces sufficiently random seeds for each game.
+- **Agent Seed Derivation**: Uses `gameSeed ^ (playerIndex * 0x9e3779b9)` where `0x9e3779b9` is the golden ratio constant (used in hash functions). This ensures different players get different seeds while maintaining determinism.
+
+### Configuration Validation
+
+- Validates numGames >= 1, numPlayers in 2-5 range, agentTypes length matches numPlayers.
+- Validates all agent types are registered before running (fail-fast).
+- Validates explicit seeds length matches numGames if provided.
+
+### Error Handling
+
+- Catches errors from individual games and continues with remaining games.
+- Logs errors to console but doesn't abort the entire simulation batch.
+- Returns both successCount and errorCount in summary for visibility.
+
+### Coverage Integration
+
+- Creates HandlerCoverageTracker if trackCoverage is enabled.
+- Passes `recordInvocation` callback to each GameEngine.
+- Tracker accumulates coverage across all games in the batch.
+- Provides `getCoverageTracker()` accessor for detailed report generation (used by CLI).
+
+### Testing Approach
+
+- 17 unit/integration tests covering configuration validation, game execution, seed management, and coverage tracking.
+- Tests verify 2-5 player games all work correctly.
+- Replay capability verified by running same seed twice and comparing results.
+- All tests pass in ~50ms (games are fast with SmartRandomAgent).

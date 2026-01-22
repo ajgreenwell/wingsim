@@ -594,3 +594,41 @@ The power text says "lay 1 egg on **another** bird with a [nest type] nest" - th
 
 ### trumpeter_swan Has GROUND Nest
 Despite being a water bird, `trumpeter_swan` has a GROUND nest type (not PLATFORM as one might assume). This is important when testing GROUND nest matching - trumpeter_swan counts as eligible.
+
+## Task 20: Pink Power - Predator Triggers
+
+### Birds with whenOpponentPredatorSucceedsGainFood Power
+Three birds have this pink power:
+- `black_vulture` - FOREST only
+- `black_billed_magpie` - GRASSLAND only
+- `turkey_vulture` - FOREST, GRASSLAND, WETLAND (most versatile for testing)
+
+All have the same handler with `count: 1` parameter (gain 1 food from birdfeeder).
+
+### Controlling Predator Outcomes for Testing
+The `lookAtCardAndTuckIfWingspanUnder` predator power outcome can be controlled by stacking `deckTopCards`:
+- Bird with wingspan < threshold → predator succeeds (card tucked)
+- Bird with wingspan >= threshold → predator fails (card discarded)
+
+Example thresholds:
+- Golden Eagle: 100cm threshold
+- Barred Owl: 75cm threshold
+- Greater Roadrunner: 50cm threshold
+
+Useful test birds:
+- `american_goldfinch` (23cm) - will succeed for all predators
+- `trumpeter_swan` (203cm) - will fail for all predators
+
+### Golden Eagle Capacity Limitation Requires Extra Bird
+Golden Eagle has egg capacity of 1. When testing with LAY_EGGS in GRASSLAND:
+- Column 0 base reward is 2 eggs
+- Column 2 base reward is 3 eggs (with 2 birds)
+- Must add a second bird (like `wild_turkey` with capacity 5) to absorb extra eggs from base reward
+
+If you don't add a second bird, the `placeEggs` validation will fail (total eggs != base reward) and cause `ScriptMismatchError`.
+
+### Pink Power Does NOT Trigger for Own Predator
+Pink powers (ONCE_BETWEEN_TURNS) only trigger when OTHER players perform the triggering action. When the owner's predator succeeds, their own pink power vulture does NOT trigger. The engine's `processPinkPowerTriggers()` only checks non-active players' boards.
+
+### Pink Power Silent Skip on Predator Failure
+When the predator fails (success: false in PREDATOR_POWER_RESOLVED event), the handler emits an `ACTIVATE_POWER` effect with `activated: false` but no `skipReason`. This is a "silent skip" - no activation prompt is shown to the player.

@@ -354,16 +354,19 @@ Create scenario tests for pink powers triggered by EGGS_LAID events.
 
 ---
 
-### [ ] Task 20: Pink Power Scenarios - Predator Triggers
+### [x] Task 20: Pink Power Scenarios - Predator Triggers
 
 **File:** `src/engine/__integration__/scenarios/pinkPowers/predatorTriggers.test.ts`
 
 Create scenario tests for pink powers triggered by PREDATOR_POWER_RESOLVED events.
 
 **Scope:**
-- `whenOpponentPredatorSucceedsGainFood`: Test food gain on opponent predator success
-- Test that pink power does NOT trigger on predator failure
-- Test that pink power does NOT trigger for self predator
+- `whenOpponentPredatorSucceedsGainFood`: Test food gain on opponent predator success ✓
+- Test that pink power does NOT trigger on predator failure ✓
+- Test that pink power does NOT trigger for self predator ✓
+- Test player can decline activation ✓
+- Test multiple players' pink powers trigger on same event ✓
+- Test different pink power birds (Turkey Vulture, Black Vulture, Black-Billed Magpie) ✓
 
 **Dependencies:** Task 4 (Assertion Helpers)
 

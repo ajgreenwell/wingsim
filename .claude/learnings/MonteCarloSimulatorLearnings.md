@@ -86,3 +86,24 @@ With eligibility pre-filtering, the SmartRandomAgent can now:
 - Simply picks from `eligibleActions` (pre-filtered by Task 2 work).
 - Bonus decision is random (50/50) when a bonus is available for the chosen action.
 - No affordability checking needed - the prompt guarantees all options are valid.
+
+## SmartRandomAgent Complex Prompts (Task 6)
+
+### playBird Handler
+
+- **Helper Functions**: Implemented `generateFoodPayment()` and `generateEggPayment()` as private methods for cleaner code organization.
+- **OR Mode Critical Bug Fix**: Must filter food options to only those the player can actually afford. The prompt's `eligibleBirds` are pre-filtered for overall affordability, but for OR mode, the agent might randomly pick an option the player can't specifically afford.
+- **WILD Cost Resolution**: For AND mode with WILD costs (e.g., `{ SEED: 1, WILD: 1 }`), first pay specific costs, then pick randomly from remaining player supply to satisfy WILD.
+- **Egg Payment**: Shuffle birds with eggs and distribute cost across them to avoid bias.
+
+### startingHand Handler
+
+- **Bird Count Clamping**: Must clamp `numBirdsToKeep` to `Math.min(eligibleBirds.length, 5)` since the prompt might have fewer than 5 eligible birds.
+- **Food Prioritization**: Calculates which food types are needed by kept birds, then prefers discarding unneeded food. This is a "smarter" random that makes the agent more competitive.
+- **Set<FoodType> Constraint**: The `foodToDiscard` field is a `Set<FoodType>` (unique food types only), which works because Wingspan starting hand gives 1 of each food type (5 unique).
+
+### Integration Testing
+
+- Full game integration tests verify SmartRandomAgent can complete games without errors.
+- Determinism tests confirm same seed produces identical results.
+- Tests for 2-player, 3-player configurations all pass.

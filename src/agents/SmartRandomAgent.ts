@@ -1,4 +1,14 @@
-import type { PlayerId, BirdCardId } from "../types/core.js";
+import type {
+  PlayerId,
+  BirdCardId,
+  BirdCard,
+  BirdInstance,
+  BirdInstanceId,
+  FoodType,
+  FoodByType,
+  Habitat,
+  EggsByBird,
+} from "../types/core.js";
 import type {
   StartingHandPrompt,
   StartingHandChoice,
@@ -59,24 +69,24 @@ export class SmartRandomAgent implements PlayerAgent {
   async chooseStartingHand(
     prompt: StartingHandPrompt
   ): Promise<StartingHandChoice> {
-    // Task 6: Full implementation with food prioritization
-    // For now, simple random implementation
-    const birdsToKeep = this.rng.pickMany(
-      prompt.eligibleBirds,
-      this.rng.pickMany([0, 1, 2, 3, 4, 5], 1)[0]
-    );
+    // Randomly keep 0-5 birds (clamped by available birds)
+    const maxBirds = Math.min(prompt.eligibleBirds.length, 5);
+    const possibleCounts = Array.from({ length: maxBirds + 1 }, (_, i) => i);
+    const numBirdsToKeep = this.rng.pickMany(possibleCounts, 1)[0];
+    const birdsToKeep = this.rng.pickMany(prompt.eligibleBirds, numBirdsToKeep);
     const birdIds = new Set<BirdCardId>(birdsToKeep.map((b) => b.id));
 
+    // Pick 1 bonus card
     const bonusCards = this.rng.pickMany(prompt.eligibleBonusCards, 1);
     const bonusCardId = bonusCards[0].id;
 
     // Discard food matching the number of kept birds
-    const foodTypes = prompt.view.food;
-    const availableFood = Object.entries(foodTypes)
-      .filter(([_, count]) => count && count > 0)
-      .flatMap(([type, count]) => Array(count).fill(type));
-    const foodToDiscard = new Set(
-      this.rng.pickMany(availableFood, birdIds.size)
+    // Prioritize discarding food NOT needed by kept birds
+    const neededFood = this.calculateNeededFood(birdsToKeep);
+    const foodToDiscard = this.selectFoodToDiscard(
+      prompt.view.food,
+      neededFood,
+      numBirdsToKeep
     );
 
     return {
@@ -86,6 +96,95 @@ export class SmartRandomAgent implements PlayerAgent {
       bonusCard: bonusCardId,
       foodToDiscard,
     };
+  }
+
+  /**
+   * Calculates the food types needed to play the given birds.
+   * For OR mode birds, includes all possible food types.
+   * For AND mode birds, includes all required food types (including WILD as any type).
+   */
+  private calculateNeededFood(birds: BirdCard[]): Set<FoodType> {
+    const neededFood = new Set<FoodType>();
+    const allFoodTypes: FoodType[] = [
+      "INVERTEBRATE",
+      "SEED",
+      "FISH",
+      "FRUIT",
+      "RODENT",
+    ];
+
+    for (const bird of birds) {
+      if (bird.foodCostMode === "NONE") {
+        continue;
+      }
+
+      for (const [foodType, count] of Object.entries(bird.foodCost)) {
+        if (count && count > 0) {
+          if (foodType === "WILD") {
+            // WILD can be satisfied by any food, so all types are "needed"
+            for (const ft of allFoodTypes) {
+              neededFood.add(ft);
+            }
+          } else {
+            neededFood.add(foodType as FoodType);
+          }
+        }
+      }
+    }
+
+    return neededFood;
+  }
+
+  /**
+   * Selects food to discard, prioritizing food that isn't needed by kept birds.
+   */
+  private selectFoodToDiscard(
+    playerFood: FoodByType,
+    neededFood: Set<FoodType>,
+    discardCount: number
+  ): Set<FoodType> {
+    const unneededFood: FoodType[] = [];
+    const neededFoodList: FoodType[] = [];
+
+    // Split available food into needed and unneeded
+    for (const [foodType, count] of Object.entries(playerFood)) {
+      if (count && count > 0) {
+        const ft = foodType as FoodType;
+        if (neededFood.has(ft)) {
+          for (let i = 0; i < count; i++) {
+            neededFoodList.push(ft);
+          }
+        } else {
+          for (let i = 0; i < count; i++) {
+            unneededFood.push(ft);
+          }
+        }
+      }
+    }
+
+    // Shuffle both lists
+    const shuffledUnneeded = this.rng.shuffle(unneededFood);
+    const shuffledNeeded = this.rng.shuffle(neededFoodList);
+
+    // Prefer discarding unneeded food first
+    const toDiscard: FoodType[] = [];
+    let remaining = discardCount;
+
+    // Take from unneeded first
+    for (const food of shuffledUnneeded) {
+      if (remaining <= 0) break;
+      toDiscard.push(food);
+      remaining--;
+    }
+
+    // If still need more, take from needed
+    for (const food of shuffledNeeded) {
+      if (remaining <= 0) break;
+      toDiscard.push(food);
+      remaining--;
+    }
+
+    return new Set(toDiscard);
   }
 
   async chooseTurnAction(prompt: TurnActionPrompt): Promise<TurnActionChoice> {
@@ -386,11 +485,9 @@ export class SmartRandomAgent implements PlayerAgent {
     };
   }
 
-  // Complex prompt handlers (Task 6 - stubs for now)
+  // Complex prompt handlers (Task 6)
 
   private handlePlayBird(prompt: PlayBirdPrompt): PlayBirdChoice {
-    // Task 6: Full implementation with food/egg payment generation
-    // For now, pick random bird and habitat, generate simple payment
     const bird = this.rng.pickMany(prompt.eligibleBirds, 1)[0];
 
     // Get eligible habitats for this bird (intersection of bird's habitats and prompt's eligible habitats)
@@ -399,44 +496,12 @@ export class SmartRandomAgent implements PlayerAgent {
     );
     const habitat = this.rng.pickMany(eligibleHabitats, 1)[0];
 
-    // Generate food payment matching bird's food cost
-    const foodToSpend: Record<string, number> = {};
-    if (bird.foodCostMode !== "NONE") {
-      for (const [foodType, count] of Object.entries(bird.foodCost)) {
-        if (count && count > 0) {
-          foodToSpend[foodType] = count;
-        }
-      }
-    }
+    // Generate food payment using helper
+    const foodToSpend = this.generateFoodPayment(bird, prompt.view.food);
 
-    // Generate egg payment for habitat's egg cost
+    // Generate egg payment using helper
     const eggCost = prompt.eggCostByEligibleHabitat[habitat] || 0;
-    const eggsToSpend: Record<string, number> = {};
-
-    if (eggCost > 0) {
-      // Find birds with eggs from player's board
-      const birdsWithEggs: Array<{ birdId: string; eggs: number }> = [];
-      for (const birds of Object.values(prompt.view.board)) {
-        for (const birdInstance of birds) {
-          if (birdInstance && birdInstance.eggs > 0) {
-            birdsWithEggs.push({
-              birdId: birdInstance.id,
-              eggs: birdInstance.eggs,
-            });
-          }
-        }
-      }
-
-      // Distribute egg cost across birds with eggs
-      let remaining = eggCost;
-      const shuffled = this.rng.shuffle(birdsWithEggs);
-      for (const { birdId, eggs } of shuffled) {
-        if (remaining <= 0) break;
-        const toSpend = Math.min(remaining, eggs);
-        eggsToSpend[birdId] = toSpend;
-        remaining -= toSpend;
-      }
-    }
+    const eggsToSpend = this.generateEggPayment(eggCost, prompt.view.board);
 
     return {
       promptId: prompt.promptId,
@@ -446,6 +511,115 @@ export class SmartRandomAgent implements PlayerAgent {
       foodToSpend,
       eggsToSpend,
     };
+  }
+
+  /**
+   * Generates a valid food payment for a bird's food cost.
+   * Handles AND mode (pay all foods, resolve WILD to actual types),
+   * OR mode (pick one food type from options), and NONE mode (no cost).
+   */
+  private generateFoodPayment(
+    bird: BirdCard,
+    playerFood: FoodByType
+  ): FoodByType {
+    if (bird.foodCostMode === "NONE") {
+      return {};
+    }
+
+    const foodToSpend: FoodByType = {};
+
+    if (bird.foodCostMode === "OR") {
+      // OR mode: pick one random food type from options the player can actually afford
+      const foodOptions = Object.entries(bird.foodCost)
+        .filter(([foodType, count]) => {
+          if (!count || count <= 0) return false;
+          // Only include options the player can afford
+          const available = playerFood[foodType as FoodType] ?? 0;
+          return available >= count;
+        })
+        .map(([foodType]) => foodType as FoodType);
+
+      if (foodOptions.length > 0) {
+        const chosenFood = this.rng.pickMany(foodOptions, 1)[0];
+        foodToSpend[chosenFood] = bird.foodCost[chosenFood]!;
+      }
+    } else {
+      // AND mode: pay all specific foods, resolve WILD to actual food types
+      // Build pool of available food for WILD costs (after paying specific costs)
+      const availableForWild: FoodType[] = [];
+      const usedFood: FoodByType = {};
+
+      // First, handle specific food types (non-WILD)
+      for (const [foodType, count] of Object.entries(bird.foodCost)) {
+        if (foodType !== "WILD" && count && count > 0) {
+          foodToSpend[foodType as FoodType] = count;
+          usedFood[foodType as FoodType] = count;
+        }
+      }
+
+      // Build available pool for WILD (player's food minus what we're already paying)
+      for (const [foodType, count] of Object.entries(playerFood)) {
+        if (count && count > 0) {
+          const alreadyUsed = usedFood[foodType as FoodType] || 0;
+          const remaining = count - alreadyUsed;
+          for (let i = 0; i < remaining; i++) {
+            availableForWild.push(foodType as FoodType);
+          }
+        }
+      }
+
+      // Resolve WILD costs to actual food types
+      const wildCount = bird.foodCost.WILD || 0;
+      if (wildCount > 0 && availableForWild.length > 0) {
+        const shuffled = this.rng.shuffle(availableForWild);
+        const wildFood = shuffled.slice(0, wildCount);
+        for (const foodType of wildFood) {
+          foodToSpend[foodType] = (foodToSpend[foodType] || 0) + 1;
+        }
+      }
+    }
+
+    return foodToSpend;
+  }
+
+  /**
+   * Generates a valid egg payment from birds on the player's board.
+   * Distributes eggs randomly across birds with eggs.
+   */
+  private generateEggPayment(
+    eggCost: number,
+    board: Record<Habitat, Array<BirdInstance | null>>
+  ): EggsByBird {
+    const eggsToSpend: EggsByBird = {};
+
+    if (eggCost <= 0) {
+      return eggsToSpend;
+    }
+
+    // Find birds with eggs from player's board
+    const birdsWithEggs: Array<{ birdId: BirdInstanceId; eggs: number }> = [];
+    for (const birds of Object.values(board)) {
+      for (const birdInstance of birds) {
+        if (birdInstance && birdInstance.eggs > 0) {
+          birdsWithEggs.push({
+            birdId: birdInstance.id,
+            eggs: birdInstance.eggs,
+          });
+        }
+      }
+    }
+
+    // Distribute egg cost across birds with eggs
+    let remaining = eggCost;
+    const shuffled = this.rng.shuffle(birdsWithEggs);
+    for (const { birdId, eggs } of shuffled) {
+      if (remaining <= 0) break;
+      const toSpend = Math.min(remaining, eggs);
+      eggsToSpend[birdId] = toSpend;
+      remaining -= toSpend;
+    }
+
+    return eggsToSpend;
   }
 
   private handleDiscardFood(prompt: DiscardFoodPrompt): DiscardFoodChoice {

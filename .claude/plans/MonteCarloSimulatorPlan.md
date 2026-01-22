@@ -128,7 +128,7 @@ Update prompt generation so agents only see eligible options, eliminating the ne
 
 ---
 
-### [ ] 6. SmartRandomAgent - Complex Prompts (playBird, startingHand)
+### [x] 6. SmartRandomAgent - Complex Prompts (playBird, startingHand)
 
 **File**: `src/agents/SmartRandomAgent.ts` (continued)
 

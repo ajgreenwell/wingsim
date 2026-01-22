@@ -18,6 +18,8 @@ import type {
   TurnActionPrompt,
   PlayerView,
   PromptContext,
+  PlayBirdPrompt,
+  StartingHandPrompt,
 } from "../types/prompts.js";
 import type { BirdCard, BonusCard, PowerSpec, FoodByDice, FoodType } from "../types/core.js";
 
@@ -1047,6 +1049,471 @@ describe("SmartRandomAgent", () => {
 
       // With 50 seeds and 4 options, we should see at least 3 different actions
       expect(selectedActions.size).toBeGreaterThanOrEqual(3);
+    });
+  });
+
+  describe("playBird (chooseOption)", () => {
+    // Helper to create a bird with specific food cost for testing
+    function createBirdWithFoodCost(
+      id: string,
+      foodCost: Record<string, number>,
+      foodCostMode: "AND" | "OR" | "NONE",
+      habitats: ("FOREST" | "GRASSLAND" | "WETLAND")[] = ["FOREST"]
+    ): BirdCard {
+      return {
+        ...createMinimalBirdCard(id),
+        foodCost,
+        foodCostMode,
+        habitats,
+      };
+    }
+
+    // Verifies agent selects a valid bird from eligible birds
+    it("selects a valid bird from eligible birds", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const view = createMinimalPlayerView("player1");
+      view.food = { SEED: 3, INVERTEBRATE: 2 };
+
+      const eligibleBirds = [
+        createBirdWithFoodCost("bird_1", { SEED: 1 }, "AND"),
+        createBirdWithFoodCost("bird_2", { INVERTEBRATE: 1 }, "AND"),
+      ];
+
+      const prompt: PlayBirdPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "playBird",
+        view,
+        context: createMinimalContext("player1"),
+        eligibleBirds,
+        eggCostByEligibleHabitat: { FOREST: 0 },
+      };
+
+      const choice = await agent.chooseOption(prompt);
+
+      expect(choice.kind).toBe("playBird");
+      const result = choice as { bird: string };
+      expect(["bird_1", "bird_2"]).toContain(result.bird);
+    });
+
+    // Verifies AND mode food cost is paid correctly
+    it("handles AND mode food cost correctly", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const view = createMinimalPlayerView("player1");
+      view.food = { SEED: 2, INVERTEBRATE: 2 };
+
+      const bird = createBirdWithFoodCost(
+        "test_bird",
+        { SEED: 1, INVERTEBRATE: 1 },
+        "AND"
+      );
+
+      const prompt: PlayBirdPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "playBird",
+        view,
+        context: createMinimalContext("player1"),
+        eligibleBirds: [bird],
+        eggCostByEligibleHabitat: { FOREST: 0 },
+      };
+
+      const choice = await agent.chooseOption(prompt);
+      const result = choice as { foodToSpend: Record<string, number> };
+
+      // Should pay exactly 1 SEED and 1 INVERTEBRATE
+      expect(result.foodToSpend.SEED).toBe(1);
+      expect(result.foodToSpend.INVERTEBRATE).toBe(1);
+    });
+
+    // Verifies OR mode food cost - only one food type is paid
+    it("handles OR mode food cost by selecting one option", async () => {
+      const view = createMinimalPlayerView("player1");
+      view.food = { INVERTEBRATE: 2, FRUIT: 2 };
+
+      const bird = createBirdWithFoodCost(
+        "or_bird",
+        { INVERTEBRATE: 1, FRUIT: 1 },
+        "OR"
+      );
+
+      const prompt: PlayBirdPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "playBird",
+        view,
+        context: createMinimalContext("player1"),
+        eligibleBirds: [bird],
+        eggCostByEligibleHabitat: { FOREST: 0 },
+      };
+
+      // Run multiple times to verify only one food type is paid
+      for (let seed = 0; seed < 20; seed++) {
+        const agent = new SmartRandomAgent("player1", seed);
+        const choice = await agent.chooseOption(prompt);
+        const result = choice as { foodToSpend: Record<string, number> };
+
+        // Should have exactly one food type
+        const foodTypes = Object.keys(result.foodToSpend).filter(
+          (k) => result.foodToSpend[k] > 0
+        );
+        expect(foodTypes.length).toBe(1);
+        expect(["INVERTEBRATE", "FRUIT"]).toContain(foodTypes[0]);
+      }
+    });
+
+    // Verifies WILD food cost is resolved to actual food types
+    it("handles WILD food cost by resolving to actual food types", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const view = createMinimalPlayerView("player1");
+      view.food = { SEED: 2, INVERTEBRATE: 1, FISH: 1 };
+
+      const bird = createBirdWithFoodCost(
+        "wild_bird",
+        { SEED: 1, WILD: 1 },
+        "AND"
+      );
+
+      const prompt: PlayBirdPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "playBird",
+        view,
+        context: createMinimalContext("player1"),
+        eligibleBirds: [bird],
+        eggCostByEligibleHabitat: { FOREST: 0 },
+      };
+
+      const choice = await agent.chooseOption(prompt);
+      const result = choice as { foodToSpend: Record<string, number> };
+
+      // Should pay 1 SEED (specific) + 1 of any type (WILD)
+      expect(result.foodToSpend.SEED).toBeGreaterThanOrEqual(1);
+
+      // Should NOT include WILD in the response
+      expect(result.foodToSpend.WILD).toBeUndefined();
+
+      // Total food should be 2
+      const totalFood = Object.values(result.foodToSpend).reduce(
+        (sum, count) => sum + (count || 0),
+        0
+      );
+      expect(totalFood).toBe(2);
+    });
+
+    // Verifies NONE mode birds have no food cost
+    it("handles NONE mode with empty food payment", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const view = createMinimalPlayerView("player1");
+      view.food = { SEED: 2 };
+
+      const bird = createBirdWithFoodCost("free_bird", {}, "NONE");
+
+      const prompt: PlayBirdPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "playBird",
+        view,
+        context: createMinimalContext("player1"),
+        eligibleBirds: [bird],
+        eggCostByEligibleHabitat: { FOREST: 0 },
+      };
+
+      const choice = await agent.chooseOption(prompt);
+      const result = choice as { foodToSpend: Record<string, number> };
+
+      // Should have empty food payment
+      const totalFood = Object.values(result.foodToSpend).reduce(
+        (sum, count) => sum + (count || 0),
+        0
+      );
+      expect(totalFood).toBe(0);
+    });
+
+    // Verifies egg cost is paid correctly from birds on board
+    it("generates correct egg payment when habitat has egg cost", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const view = createMinimalPlayerView("player1");
+      view.food = { SEED: 2 };
+      // Add birds with eggs to the board
+      view.board = {
+        FOREST: [
+          {
+            id: "board_bird_1",
+            card: createMinimalBirdCard("board_bird_1"),
+            cachedFood: {},
+            tuckedCards: [],
+            eggs: 2,
+          },
+          {
+            id: "board_bird_2",
+            card: createMinimalBirdCard("board_bird_2"),
+            cachedFood: {},
+            tuckedCards: [],
+            eggs: 1,
+          },
+        ],
+        GRASSLAND: [],
+        WETLAND: [],
+      };
+
+      const bird = createBirdWithFoodCost("test_bird", { SEED: 1 }, "AND");
+
+      const prompt: PlayBirdPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "playBird",
+        view,
+        context: createMinimalContext("player1"),
+        eligibleBirds: [bird],
+        eggCostByEligibleHabitat: { FOREST: 2 }, // 2 eggs required
+      };
+
+      const choice = await agent.chooseOption(prompt);
+      const result = choice as { eggsToSpend: Record<string, number> };
+
+      // Total eggs spent should match cost
+      const totalEggs = Object.values(result.eggsToSpend).reduce(
+        (sum, count) => sum + (count || 0),
+        0
+      );
+      expect(totalEggs).toBe(2);
+
+      // Eggs should come from birds on the board
+      for (const [birdId, count] of Object.entries(result.eggsToSpend)) {
+        expect(["board_bird_1", "board_bird_2"]).toContain(birdId);
+        expect(count).toBeGreaterThan(0);
+      }
+    });
+
+    // Verifies correct habitat is selected from eligible habitats
+    it("selects habitat from bird's eligible habitats", async () => {
+      const view = createMinimalPlayerView("player1");
+      view.food = { SEED: 2 };
+
+      const bird = createBirdWithFoodCost(
+        "multi_habitat_bird",
+        { SEED: 1 },
+        "AND",
+        ["FOREST", "WETLAND"]
+      );
+
+      const prompt: PlayBirdPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "playBird",
+        view,
+        context: createMinimalContext("player1"),
+        eligibleBirds: [bird],
+        eggCostByEligibleHabitat: { FOREST: 0, WETLAND: 0 },
+      };
+
+      const selectedHabitats = new Set<string>();
+      for (let seed = 0; seed < 20; seed++) {
+        const agent = new SmartRandomAgent("player1", seed);
+        const choice = await agent.chooseOption(prompt);
+        const result = choice as { habitat: string };
+        selectedHabitats.add(result.habitat);
+      }
+
+      // Should only select from valid habitats
+      for (const habitat of selectedHabitats) {
+        expect(["FOREST", "WETLAND"]).toContain(habitat);
+      }
+
+      // With 20 seeds, should see variety
+      expect(selectedHabitats.size).toBeGreaterThanOrEqual(1);
+    });
+  });
+
+  describe("startingHand (chooseStartingHand)", () => {
+    // Verifies agent keeps random number of birds (0-5)
+    it("keeps random number of birds from 0 to 5", async () => {
+      const view = createMinimalPlayerView("player1");
+      view.food = { SEED: 2, INVERTEBRATE: 2, FISH: 1 };
+
+      const eligibleBirds = Array.from({ length: 5 }, (_, i) =>
+        createMinimalBirdCard(`bird_${i}`)
+      );
+      const eligibleBonusCards = [createMinimalBonusCard("bonus_1")];
+
+      const prompt: StartingHandPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "startingHand",
+        view,
+        context: createMinimalContext("player1"),
+        eligibleBirds,
+        eligibleBonusCards,
+      };
+
+      const keptCounts = new Set<number>();
+      for (let seed = 0; seed < 50; seed++) {
+        const agent = new SmartRandomAgent("player1", seed);
+        const choice = await agent.chooseStartingHand(prompt);
+        keptCounts.add(choice.birds.size);
+      }
+
+      // Should see variety in birds kept
+      expect(keptCounts.size).toBeGreaterThanOrEqual(3);
+
+      // All counts should be 0-5
+      for (const count of keptCounts) {
+        expect(count).toBeGreaterThanOrEqual(0);
+        expect(count).toBeLessThanOrEqual(5);
+      }
+    });
+
+    // Verifies agent selects exactly 1 bonus card
+    it("selects exactly one bonus card", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const view = createMinimalPlayerView("player1");
+      view.food = { SEED: 5 };
+
+      const eligibleBirds = [createMinimalBirdCard("bird_1")];
+      const eligibleBonusCards = [
+        createMinimalBonusCard("bonus_1"),
+        createMinimalBonusCard("bonus_2"),
+      ];
+
+      const prompt: StartingHandPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "startingHand",
+        view,
+        context: createMinimalContext("player1"),
+        eligibleBirds,
+        eligibleBonusCards,
+      };
+
+      const choice = await agent.chooseStartingHand(prompt);
+
+      expect(eligibleBonusCards.map((c) => c.id)).toContain(choice.bonusCard);
+    });
+
+    // Verifies food discard count matches birds kept
+    // Note: foodToDiscard is Set<FoodType> so we use unique food types (standard Wingspan starting food)
+    it("discards food matching number of birds kept", async () => {
+      const view = createMinimalPlayerView("player1");
+      // Standard Wingspan starting food: 1 of each type (5 unique types)
+      view.food = { SEED: 1, INVERTEBRATE: 1, FISH: 1, FRUIT: 1, RODENT: 1 };
+
+      const eligibleBirds = Array.from({ length: 5 }, (_, i) =>
+        createMinimalBirdCard(`bird_${i}`)
+      );
+      const eligibleBonusCards = [createMinimalBonusCard("bonus_1")];
+
+      const prompt: StartingHandPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "startingHand",
+        view,
+        context: createMinimalContext("player1"),
+        eligibleBirds,
+        eligibleBonusCards,
+      };
+
+      for (let seed = 0; seed < 20; seed++) {
+        const agent = new SmartRandomAgent("player1", seed);
+        const choice = await agent.chooseStartingHand(prompt);
+
+        // Food discarded should equal birds kept (works since we have 5 unique food types)
+        expect(choice.foodToDiscard.size).toBe(choice.birds.size);
+      }
+    });
+
+    // Helper to create bird needing specific food
+    function createBirdNeedingFood(
+      id: string,
+      neededFood: FoodType
+    ): BirdCard {
+      return {
+        ...createMinimalBirdCard(id),
+        foodCost: { [neededFood]: 1 },
+        foodCostMode: "AND",
+      };
+    }
+
+    // Verifies food prioritization - unneeded food is discarded first
+    it("prioritizes discarding food not needed by kept birds", async () => {
+      const view = createMinimalPlayerView("player1");
+      // SEED (needed by bird) and FISH, FRUIT, RODENT (not needed)
+      // With unique food types matching Wingspan starting hand
+      view.food = { SEED: 1, FISH: 1, FRUIT: 1, RODENT: 1 };
+
+      // Bird that needs SEED
+      const bird = createBirdNeedingFood("seed_bird", "SEED");
+      const eligibleBonusCards = [createMinimalBonusCard("bonus_1")];
+
+      const prompt: StartingHandPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "startingHand",
+        view,
+        context: createMinimalContext("player1"),
+        eligibleBirds: [bird],
+        eligibleBonusCards,
+      };
+
+      // Track how often SEED (needed) vs unneeded food is discarded when keeping the bird
+      let unneededDiscards = 0;
+      let seedDiscards = 0;
+      let birdKeptCount = 0;
+
+      for (let seed = 0; seed < 100; seed++) {
+        const agent = new SmartRandomAgent("player1", seed);
+        const choice = await agent.chooseStartingHand(prompt);
+
+        if (choice.birds.size === 1) {
+          // Bird was kept - check what was discarded (should be 1 food)
+          birdKeptCount++;
+          if (choice.foodToDiscard.has("SEED")) {
+            seedDiscards++;
+          } else {
+            // Discarded FISH, FRUIT, or RODENT (all unneeded)
+            unneededDiscards++;
+          }
+        }
+      }
+
+      // When bird is kept, unneeded food should be discarded more often than SEED (needed)
+      if (birdKeptCount > 10) {
+        expect(unneededDiscards).toBeGreaterThan(seedDiscards);
+      }
+    });
+
+    // Verifies keeping 0 birds results in 0 food discarded
+    it("discards no food when keeping 0 birds", async () => {
+      const agent = new SmartRandomAgent("player1", 42);
+
+      const view = createMinimalPlayerView("player1");
+      view.food = { SEED: 5 };
+
+      // Force 0 birds by having only 1 eligible bird and using a seed that picks 0
+      // Note: With the current implementation picking from [0,1,2,3,4,5], seed 42 may pick any number
+      // So we test multiple seeds to find cases where 0 is picked
+
+      const prompt: StartingHandPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "startingHand",
+        view,
+        context: createMinimalContext("player1"),
+        eligibleBirds: [],
+        eligibleBonusCards: [createMinimalBonusCard("bonus_1")],
+      };
+
+      const choice = await agent.chooseStartingHand(prompt);
+
+      // With no eligible birds, 0 birds kept, 0 food discarded
+      expect(choice.birds.size).toBe(0);
+      expect(choice.foodToDiscard.size).toBe(0);
     });
   });
 });

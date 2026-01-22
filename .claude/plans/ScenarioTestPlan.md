@@ -6,7 +6,7 @@ This plan breaks down the implementation of the scenario-based integration testi
 
 ## Core Infrastructure Tasks
 
-### [ ] Task 1: Implement ScriptedAgent
+### [x] Task 1: Implement ScriptedAgent
 
 **File:** `src/engine/__integration__/ScriptedAgent.ts`
 

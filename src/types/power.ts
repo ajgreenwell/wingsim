@@ -272,8 +272,11 @@ export interface ActionExecutionContext {
    * Apply an effect immediately to game state.
    * Populates result fields on the effect (e.g., drawnCards for DrawCardsEffect).
    * This enables handlers to see the results of their effects for subsequent prompts.
+   *
+   * Returns a Promise to support effects that require async execution,
+   * such as REPEAT_BROWN_POWER which triggers another power handler.
    */
-  applyEffect(effect: Effect): void;
+  applyEffect(effect: Effect): Promise<void>;
 
   /**
    * Defer a continuation to be executed at end of turn.

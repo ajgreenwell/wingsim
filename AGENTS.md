@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to coding agents when working with code in this repository.
 
 ## Project Overview
 
@@ -44,7 +44,7 @@ The codebase follows the specification in `WingsimSpec.md` and implementation pl
 **ID Conventions**:
 
 - `BirdCardId` (e.g., `"barn_owl"`) - Static JSON definition ID
-- `BirdInstanceId` (e.g., `"alice_forest_0_barn_owl"`) - Runtime instance on a board
+- `BirdInstanceId` (e.g., `"alice_barn_owl"`) - Runtime instance on a board
 
 ## Key Files and Directories
 

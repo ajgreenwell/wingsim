@@ -160,7 +160,7 @@ export interface HabitatActivatedEvent extends EventBase {
    * The bird instances in this habitat that have brown powers, in activation order (right-to-left).
    * This allows the PowerProcessor to activate them in sequence.
    */
-  birdInstanceIds: BirdInstanceId[];
+  brownPowerBirdInstanceIds: BirdInstanceId[];
 }
 
 /**

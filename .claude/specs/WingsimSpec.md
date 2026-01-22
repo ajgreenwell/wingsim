@@ -136,7 +136,7 @@ interface BirdInstance {
 
 - `BirdCardId` (e.g., `"barn_owl"`): a static ID from the JSON data registry, identifying a bird species.
 
-- `BirdInstanceId` (e.g., `"alice_forest_0_barn_owl"`): a runtime ID for a specific bird played on a board. This is necessary because multiple players can play the same bird species.
+- `BirdInstanceId` (e.g., `"alice_barn_owl"`): a runtime ID for a specific bird played on a board. This is necessary because multiple players can play the same bird species.
 
 ---
 

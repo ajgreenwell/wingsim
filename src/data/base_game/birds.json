@@ -2779,7 +2779,7 @@
       "handlerId": "discardEggToDrawCards",
       "trigger": "WHEN_ACTIVATED",
       "params": {
-        "drawCount": 1,
+        "drawCount": 2,
         "eggCount": 1
       },
       "text": "Discard 1 [egg] to draw 2 [card]."
@@ -3444,7 +3444,7 @@
       "handlerId": "discardEggToDrawCards",
       "trigger": "WHEN_ACTIVATED",
       "params": {
-        "drawCount": 1,
+        "drawCount": 2,
         "eggCount": 1
       },
       "text": "Discard 1 [egg] to draw 2 [card]."

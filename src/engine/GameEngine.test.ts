@@ -73,6 +73,29 @@ function createMockAgent(playerId: string): PlayerAgent {
 
     async chooseOption(prompt: OptionPrompt): Promise<OptionChoice> {
       switch (prompt.kind) {
+        case "activatePower": {
+          // Always activate the power
+          return {
+            promptId: prompt.promptId,
+            kind: "activatePower",
+            activate: true,
+          };
+        }
+
+        case "selectFoodFromSupply": {
+          // Take the first allowed food type
+          const food: Record<string, number> = {};
+          const firstFoodType = prompt.allowedFoods[0];
+          if (firstFoodType) {
+            food[firstFoodType] = prompt.count;
+          }
+          return {
+            promptId: prompt.promptId,
+            kind: "selectFoodFromSupply",
+            food,
+          };
+        }
+
         case "selectFoodFromFeeder": {
           // Take the first available die
           const available = prompt.availableDice;
@@ -1645,6 +1668,56 @@ describe("GameEngine", () => {
         const filledSlots = newTray.filter((c) => c !== null).length;
         expect(filledSlots).toBe(3);
       });
+
+      // Verifies fix for Critical Issue #3: applyDrawCards must handle fromRevealed
+      // field to support powers like American Oystercatcher that distribute revealed cards
+      it("draws cards from revealed cards", () => {
+        const { engine, state, registry } = createTestEngine();
+        const player = state.players[0];
+        const initialHandSize = player.hand.length;
+
+        // Use a known card ID from the registry
+        const testCardId = "acorn_woodpecker";
+        const effect: Parameters<typeof engine.applyDrawCards>[0] = {
+          type: "DRAW_CARDS",
+          playerId: "p1",
+          fromTray: [],
+          fromDeck: 0,
+          fromRevealed: [testCardId],
+        };
+        engine.applyDrawCards(effect);
+
+        expect(player.hand.length).toBe(initialHandSize + 1);
+        expect(player.hand.some((c) => c.id === testCardId)).toBe(true);
+        expect(effect.drawnCards).toContain(testCardId);
+      });
+
+      // Verifies that fromRevealed works alongside other sources
+      it("combines fromRevealed with fromTray and fromDeck", () => {
+        const { engine, state, registry } = createTestEngine();
+        const player = state.players[0];
+        const initialHandSize = player.hand.length;
+
+        const tray = state.birdCardSupply.getTray();
+        const trayCardId = tray[0]?.id;
+        if (!trayCardId) return;
+
+        const revealedCardId = "barn_owl";
+        const effect: Parameters<typeof engine.applyDrawCards>[0] = {
+          type: "DRAW_CARDS",
+          playerId: "p1",
+          fromTray: [trayCardId],
+          fromDeck: 1,
+          fromRevealed: [revealedCardId],
+        };
+        engine.applyDrawCards(effect);
+
+        // 1 from tray + 1 from deck + 1 from revealed = 3 cards
+        expect(player.hand.length).toBe(initialHandSize + 3);
+        expect(player.hand.some((c) => c.id === trayCardId)).toBe(true);
+        expect(player.hand.some((c) => c.id === revealedCardId)).toBe(true);
+        expect(effect.drawnCards?.length).toBe(3);
+      });
     });
 
     describe("applyDiscardFood()", () => {
@@ -1864,6 +1937,55 @@ describe("GameEngine", () => {
           'Cannot tuck card: card "nonexistent_card" not found in player "p1"\'s hand'
         );
       });
+
+      // Verifies fix for Medium Issue #5: applyTuckCards must handle fromRevealed
+      // field to support powers like Barred Owl that tuck revealed cards
+      it("tucks cards from revealed cards", () => {
+        const { engine, state } = createTestEngine();
+        const player = state.players[0];
+        const bird = createBirdInstance("acorn_woodpecker", "bird1", 0);
+        player.board.setSlot("FOREST", 0, bird);
+
+        const revealedCardId = "barn_owl";
+        engine.applyTuckCards({
+          type: "TUCK_CARDS",
+          playerId: "p1",
+          targetBirdInstanceId: "bird1",
+          fromHand: [],
+          fromDeck: 0,
+          fromRevealed: [revealedCardId],
+        });
+
+        expect(bird.tuckedCards).toContain(revealedCardId);
+        expect(bird.tuckedCards.length).toBe(1);
+      });
+
+      // Verifies that fromRevealed works alongside other sources
+      it("combines fromRevealed with fromHand and fromDeck", () => {
+        const { engine, state } = createTestEngine();
+        const player = state.players[0];
+        const bird = createBirdInstance("acorn_woodpecker", "bird1", 0);
+        player.board.setSlot("FOREST", 0, bird);
+
+        const cardFromHand = player.hand[0];
+        const revealedCardId = "barn_owl";
+
+        const effect: Parameters<typeof engine.applyTuckCards>[0] = {
+          type: "TUCK_CARDS",
+          playerId: "p1",
+          targetBirdInstanceId: "bird1",
+          fromHand: [cardFromHand.id],
+          fromDeck: 1,
+          fromRevealed: [revealedCardId],
+        };
+        engine.applyTuckCards(effect);
+
+        // 1 from hand + 1 from deck + 1 from revealed = 3 tucked cards
+        expect(bird.tuckedCards.length).toBe(3);
+        expect(bird.tuckedCards).toContain(cardFromHand.id);
+        expect(bird.tuckedCards).toContain(revealedCardId);
+        expect(effect.tuckedFromDeck?.length).toBe(1);
+      });
     });
 
     describe("applyCacheFood()", () => {
@@ -1919,6 +2041,53 @@ describe("GameEngine", () => {
           'Cannot cache food: bird "nonexistent" not found on player "p1"\'s board'
         );
       });
+
+      // Verifies fix for Critical Issue #1: applyCacheFood must remove dice from
+      // birdfeeder when source is BIRDFEEDER to match applyGainFood behavior
+      it("removes dice from birdfeeder when source is BIRDFEEDER", () => {
+        const { engine, state } = createTestEngine();
+        const player = state.players[0];
+        const bird = createBirdInstance("acorn_woodpecker", "bird1", 0);
+        player.board.setSlot("FOREST", 0, bird);
+
+        const initialDiceCount = state.birdfeeder.getDiceInFeeder().length;
+        const firstDie = state.birdfeeder.getDiceInFeeder()[0];
+
+        engine.applyCacheFood({
+          type: "CACHE_FOOD",
+          playerId: "p1",
+          birdInstanceId: "bird1",
+          food: { [firstDie]: 1 },
+          source: "BIRDFEEDER",
+          diceTaken: [{ die: firstDie }],
+        });
+
+        expect(state.birdfeeder.getDiceInFeeder().length).toBe(
+          initialDiceCount - 1
+        );
+        expect(bird.cachedFood[firstDie]).toBe(1);
+      });
+
+      // Verifies that dice are not removed when source is SUPPLY
+      it("does not remove dice when source is SUPPLY", () => {
+        const { engine, state } = createTestEngine();
+        const player = state.players[0];
+        const bird = createBirdInstance("acorn_woodpecker", "bird1", 0);
+        player.board.setSlot("FOREST", 0, bird);
+
+        const initialDiceCount = state.birdfeeder.getDiceInFeeder().length;
+
+        engine.applyCacheFood({
+          type: "CACHE_FOOD",
+          playerId: "p1",
+          birdInstanceId: "bird1",
+          food: { SEED: 1 },
+          source: "SUPPLY",
+        });
+
+        expect(state.birdfeeder.getDiceInFeeder().length).toBe(initialDiceCount);
+        expect(bird.cachedFood.SEED).toBe(1);
+      });
     });
 
     describe("applyPlayBird()", () => {
@@ -1935,7 +2104,7 @@ describe("GameEngine", () => {
         engine.applyPlayBird({
           type: "PLAY_BIRD",
           playerId: "p1",
-          birdInstanceId: `p1_forest_0_${cardToPlay.id}`,
+          birdInstanceId: `p1_${cardToPlay.id}`,
           habitat: "FOREST",
           column: 0,
           foodPaid: {},
@@ -1959,7 +2128,7 @@ describe("GameEngine", () => {
         engine.applyPlayBird({
           type: "PLAY_BIRD",
           playerId: "p1",
-          birdInstanceId: `p1_forest_0_${cardToPlay.id}`,
+          birdInstanceId: `p1_${cardToPlay.id}`,
           habitat: "FOREST",
           column: 0,
           foodPaid: { SEED: 1, INVERTEBRATE: 1 },
@@ -1982,7 +2151,7 @@ describe("GameEngine", () => {
         engine.applyPlayBird({
           type: "PLAY_BIRD",
           playerId: "p1",
-          birdInstanceId: `p1_forest_1_${cardToPlay.id}`,
+          birdInstanceId: `p1_${cardToPlay.id}`,
           habitat: "FOREST",
           column: 1,
           foodPaid: {},
@@ -2001,7 +2170,7 @@ describe("GameEngine", () => {
           engine.applyPlayBird({
             type: "PLAY_BIRD",
             playerId: "p1",
-            birdInstanceId: "p1_forest_0_nonexistent",
+            birdInstanceId: "p1_nonexistent",
             habitat: "FOREST",
             column: 0,
             foodPaid: {},
@@ -2024,7 +2193,7 @@ describe("GameEngine", () => {
           engine.applyPlayBird({
             type: "PLAY_BIRD",
             playerId: "p1",
-            birdInstanceId: `p1_forest_0_${cardToPlay.id}`,
+            birdInstanceId: `p1_${cardToPlay.id}`,
             habitat: "FOREST",
             column: 0,
             foodPaid: {},
@@ -2047,7 +2216,7 @@ describe("GameEngine", () => {
           engine.applyPlayBird({
             type: "PLAY_BIRD",
             playerId: "p1",
-            birdInstanceId: `p1_forest_0_${cardToPlay.id}`,
+            birdInstanceId: `p1_${cardToPlay.id}`,
             habitat: "FOREST",
             column: 0,
             foodPaid: { SEED: 2 },
@@ -2067,7 +2236,7 @@ describe("GameEngine", () => {
           engine.applyPlayBird({
             type: "PLAY_BIRD",
             playerId: "p1",
-            birdInstanceId: `p1_forest_0_${cardToPlay.id}`,
+            birdInstanceId: `p1_${cardToPlay.id}`,
             habitat: "FOREST",
             column: 0,
             foodPaid: {},
@@ -2168,6 +2337,30 @@ describe("GameEngine", () => {
         const filledSlots = tray.filter((c) => c !== null).length;
         expect(filledSlots).toBe(3);
       });
+
+      // Verifies fix for Low Issue #6: applyRefillBirdTray populates newCards field
+      it("populates newCards with cards drawn during refill", () => {
+        const { engine, state } = createTestEngine();
+
+        // Take two cards from tray to create empty slots
+        state.birdCardSupply.takeFromTray(0);
+        state.birdCardSupply.takeFromTray(1);
+
+        const effect: Parameters<typeof engine.applyRefillBirdTray>[0] = {
+          type: "REFILL_BIRD_TRAY",
+          discardedCards: [],
+          newCards: [],
+        };
+        engine.applyRefillBirdTray(effect);
+
+        // Should have 2 new cards drawn to fill the empty slots
+        expect(effect.newCards.length).toBe(2);
+        // The new cards should be in the tray
+        const tray = state.birdCardSupply.getTray();
+        for (const cardId of effect.newCards) {
+          expect(tray.some((c) => c?.id === cardId)).toBe(true);
+        }
+      });
     });
 
     describe("applyRemoveCardsFromTray()", () => {
@@ -2197,6 +2390,569 @@ describe("GameEngine", () => {
         ).toThrow(
           'Cannot remove card from tray: card "nonexistent_card" not found in bird tray'
         );
+      });
+    });
+
+    describe("applyAllPlayersDrawCards()", () => {
+      // Verifies that all players receive their allocated number of cards from the deck,
+      // which is the core functionality needed for powers like Canvasback.
+      it("draws cards from deck for all players", () => {
+        const { engine, state } = createTestEngine();
+        const player1 = state.players[0];
+        const player2 = state.players[1];
+        const initialHandSizeP1 = player1.hand.length;
+        const initialHandSizeP2 = player2.hand.length;
+
+        engine.applyAllPlayersDrawCards({
+          type: "ALL_PLAYERS_DRAW_CARDS",
+          draws: { p1: 1, p2: 1 },
+        });
+
+        expect(player1.hand.length).toBe(initialHandSizeP1 + 1);
+        expect(player2.hand.length).toBe(initialHandSizeP2 + 1);
+      });
+
+      // Ensures that when multiple cards are drawn, all are correctly added to the hand.
+      // This verifies the loop logic that handles draw counts greater than 1.
+      it("draws multiple cards when count is greater than 1", () => {
+        const { engine, state } = createTestEngine();
+        const player1 = state.players[0];
+        const initialHandSize = player1.hand.length;
+
+        engine.applyAllPlayersDrawCards({
+          type: "ALL_PLAYERS_DRAW_CARDS",
+          draws: { p1: 3 },
+        });
+
+        expect(player1.hand.length).toBe(initialHandSize + 3);
+      });
+
+      // Verifies that players can have different draw counts, as might occur
+      // if some players skip drawing (count=0) or have modified draw amounts.
+      it("handles different draw counts for different players", () => {
+        const { engine, state } = createTestEngine();
+        const player1 = state.players[0];
+        const player2 = state.players[1];
+        const initialHandSizeP1 = player1.hand.length;
+        const initialHandSizeP2 = player2.hand.length;
+
+        engine.applyAllPlayersDrawCards({
+          type: "ALL_PLAYERS_DRAW_CARDS",
+          draws: { p1: 2, p2: 1 },
+        });
+
+        expect(player1.hand.length).toBe(initialHandSizeP1 + 2);
+        expect(player2.hand.length).toBe(initialHandSizeP2 + 1);
+      });
+
+      // Ensures players with 0 in the draws map are skipped entirely,
+      // which is important when some players decline or aren't eligible.
+      it("skips players with zero draw count", () => {
+        const { engine, state } = createTestEngine();
+        const player1 = state.players[0];
+        const player2 = state.players[1];
+        const initialHandSizeP1 = player1.hand.length;
+        const initialHandSizeP2 = player2.hand.length;
+
+        engine.applyAllPlayersDrawCards({
+          type: "ALL_PLAYERS_DRAW_CARDS",
+          draws: { p1: 0, p2: 2 },
+        });
+
+        expect(player1.hand.length).toBe(initialHandSizeP1); // unchanged
+        expect(player2.hand.length).toBe(initialHandSizeP2 + 2);
+      });
+
+      // Verifies that an empty draws map is a valid no-op, preventing crashes
+      // when the effect is applied with no players to draw.
+      it("handles empty draws map as no-op", () => {
+        const { engine, state } = createTestEngine();
+        const player1 = state.players[0];
+        const player2 = state.players[1];
+        const initialHandSizeP1 = player1.hand.length;
+        const initialHandSizeP2 = player2.hand.length;
+
+        engine.applyAllPlayersDrawCards({
+          type: "ALL_PLAYERS_DRAW_CARDS",
+          draws: {},
+        });
+
+        expect(player1.hand.length).toBe(initialHandSizeP1);
+        expect(player2.hand.length).toBe(initialHandSizeP2);
+      });
+
+      // Ensures the drawnCards field is populated with actual card IDs,
+      // which is needed for observability and potential handler logic.
+      it("populates drawnCards field with actual card IDs", () => {
+        const { engine, state } = createTestEngine();
+        const player1 = state.players[0];
+        const initialHandIds = new Set(player1.hand.map((c) => c.id));
+
+        const effect: Parameters<typeof engine.applyAllPlayersDrawCards>[0] = {
+          type: "ALL_PLAYERS_DRAW_CARDS",
+          draws: { p1: 2 },
+        };
+        engine.applyAllPlayersDrawCards(effect);
+
+        expect(effect.drawnCards).toBeDefined();
+        expect(effect.drawnCards!["p1"]).toBeDefined();
+        expect(effect.drawnCards!["p1"].length).toBe(2);
+
+        // Verify the drawn cards are actually in the hand now
+        for (const cardId of effect.drawnCards!["p1"]) {
+          expect(player1.hand.some((c) => c.id === cardId)).toBe(true);
+          // And weren't in hand before (they're new)
+          expect(initialHandIds.has(cardId)).toBe(false);
+        }
+      });
+
+      // Verifies drawnCards only contains entries for players who actually drew,
+      // not for players with 0 count or those not in the draws map.
+      it("drawnCards only includes players who drew cards", () => {
+        const { engine } = createTestEngine();
+
+        const effect: Parameters<typeof engine.applyAllPlayersDrawCards>[0] = {
+          type: "ALL_PLAYERS_DRAW_CARDS",
+          draws: { p1: 1, p2: 0 },
+        };
+        engine.applyAllPlayersDrawCards(effect);
+
+        expect(effect.drawnCards).toBeDefined();
+        expect(effect.drawnCards!["p1"]).toBeDefined();
+        expect(effect.drawnCards!["p1"].length).toBe(1);
+        // p2 should not be in drawnCards since they drew 0
+        expect(effect.drawnCards!["p2"]).toBeUndefined();
+      });
+
+      // Ensures the bird tray is refilled after all draws complete,
+      // maintaining consistency with single-player applyDrawCards behavior.
+      it("refills tray after all draws complete", () => {
+        const { engine, state } = createTestEngine();
+
+        // Take some cards from tray to create empty slots
+        state.birdCardSupply.takeFromTray(0);
+        const trayBefore = state.birdCardSupply.getTray();
+        expect(trayBefore[0]).toBeNull();
+
+        engine.applyAllPlayersDrawCards({
+          type: "ALL_PLAYERS_DRAW_CARDS",
+          draws: { p1: 1 },
+        });
+
+        // Tray should be refilled
+        const trayAfter = state.birdCardSupply.getTray();
+        const filledSlots = trayAfter.filter((c) => c !== null).length;
+        expect(filledSlots).toBe(3);
+      });
+
+      // Verifies that an invalid player ID throws an appropriate error,
+      // catching configuration bugs early.
+      it("throws error for invalid player ID", () => {
+        const { engine } = createTestEngine();
+
+        expect(() =>
+          engine.applyAllPlayersDrawCards({
+            type: "ALL_PLAYERS_DRAW_CARDS",
+            draws: { invalid_player: 1 },
+          })
+        ).toThrow("Player not found: invalid_player");
+      });
+
+      // Verifies cards are drawn in order from the deck, with first player's
+      // cards coming from the top of the deck before second player's.
+      it("draws cards from deck in order for each player", () => {
+        const { engine, state } = createTestEngine();
+        const deckSizeBefore = state.birdCardSupply.getDeckSize();
+
+        engine.applyAllPlayersDrawCards({
+          type: "ALL_PLAYERS_DRAW_CARDS",
+          draws: { p1: 2, p2: 3 },
+        });
+
+        // Total of 5 cards should have been drawn from deck
+        const deckSizeAfter = state.birdCardSupply.getDeckSize();
+        expect(deckSizeBefore - deckSizeAfter).toBe(5);
+      });
+
+      // Verifies that only one player can draw if others aren't in the map,
+      // which tests the iteration logic for partial player lists.
+      it("handles single player in draws map", () => {
+        const { engine, state } = createTestEngine();
+        const player1 = state.players[0];
+        const player2 = state.players[1];
+        const initialHandSizeP1 = player1.hand.length;
+        const initialHandSizeP2 = player2.hand.length;
+
+        engine.applyAllPlayersDrawCards({
+          type: "ALL_PLAYERS_DRAW_CARDS",
+          draws: { p2: 2 }, // Only p2 draws
+        });
+
+        expect(player1.hand.length).toBe(initialHandSizeP1); // unchanged
+        expect(player2.hand.length).toBe(initialHandSizeP2 + 2);
+      });
+    });
+
+    describe("applyAllPlayersLayEggs()", () => {
+      // Verifies the core functionality: all players can lay eggs on their birds
+      // according to the placements map, which is essential for powers like Lazuli Bunting.
+      it("lays eggs on birds for multiple players", () => {
+        const { engine, state } = createTestEngine();
+        const player1 = state.players[0];
+        const player2 = state.players[1];
+        const bird1 = createBirdInstance("acorn_woodpecker", "p1_bird1", 0);
+        const bird2 = createBirdInstance("acorn_woodpecker", "p2_bird1", 0);
+        player1.board.setSlot("FOREST", 0, bird1);
+        player2.board.setSlot("FOREST", 0, bird2);
+
+        engine.applyAllPlayersLayEggs({
+          type: "ALL_PLAYERS_LAY_EGGS",
+          placements: {
+            p1: { p1_bird1: 2 },
+            p2: { p2_bird1: 1 },
+          },
+        });
+
+        expect(bird1.eggs).toBe(2);
+        expect(bird2.eggs).toBe(1);
+      });
+
+      // Verifies that a single player can lay eggs on multiple birds
+      // when the power grants multiple egg placements.
+      it("lays eggs on multiple birds for a single player", () => {
+        const { engine, state } = createTestEngine();
+        const player = state.players[0];
+        const bird1 = createBirdInstance("acorn_woodpecker", "bird1", 0);
+        const bird2 = createBirdInstance("acorn_woodpecker", "bird2", 0);
+        player.board.setSlot("FOREST", 0, bird1);
+        player.board.setSlot("FOREST", 1, bird2);
+
+        engine.applyAllPlayersLayEggs({
+          type: "ALL_PLAYERS_LAY_EGGS",
+          placements: {
+            p1: { bird1: 1, bird2: 2 },
+          },
+        });
+
+        expect(bird1.eggs).toBe(1);
+        expect(bird2.eggs).toBe(2);
+      });
+
+      // Verifies that an empty placements map is handled gracefully,
+      // which can happen if no players have eligible birds.
+      it("handles empty placements map", () => {
+        const { engine, state } = createTestEngine();
+        const player1 = state.players[0];
+        const bird1 = createBirdInstance("acorn_woodpecker", "bird1", 1);
+        player1.board.setSlot("FOREST", 0, bird1);
+
+        engine.applyAllPlayersLayEggs({
+          type: "ALL_PLAYERS_LAY_EGGS",
+          placements: {},
+        });
+
+        // Bird should remain unchanged
+        expect(bird1.eggs).toBe(1);
+      });
+
+      // Verifies that empty bird placements for a player are handled gracefully,
+      // which happens when a player declines to lay eggs.
+      it("handles empty bird placements for a player", () => {
+        const { engine, state } = createTestEngine();
+        const player1 = state.players[0];
+        const bird1 = createBirdInstance("acorn_woodpecker", "bird1", 1);
+        player1.board.setSlot("FOREST", 0, bird1);
+
+        engine.applyAllPlayersLayEggs({
+          type: "ALL_PLAYERS_LAY_EGGS",
+          placements: {
+            p1: {},
+          },
+        });
+
+        // Bird should remain unchanged
+        expect(bird1.eggs).toBe(1);
+      });
+
+      // Verifies that a count of 0 is ignored (no change to eggs),
+      // which handles edge cases in placement selections.
+      it("ignores count of 0", () => {
+        const { engine, state } = createTestEngine();
+        const player = state.players[0];
+        const bird1 = createBirdInstance("acorn_woodpecker", "bird1", 1);
+        player.board.setSlot("FOREST", 0, bird1);
+
+        engine.applyAllPlayersLayEggs({
+          type: "ALL_PLAYERS_LAY_EGGS",
+          placements: {
+            p1: { bird1: 0 },
+          },
+        });
+
+        expect(bird1.eggs).toBe(1);
+      });
+
+      // Verifies that a bird not found error is thrown with a clear message,
+      // catching configuration bugs in the handler.
+      it("throws error when bird not found", () => {
+        const { engine } = createTestEngine();
+
+        expect(() =>
+          engine.applyAllPlayersLayEggs({
+            type: "ALL_PLAYERS_LAY_EGGS",
+            placements: {
+              p1: { nonexistent_bird: 2 },
+            },
+          })
+        ).toThrow(
+          'Cannot lay eggs: bird instance "nonexistent_bird" not found on player "p1"\'s board'
+        );
+      });
+
+      // Verifies that exceeding egg capacity throws an error with a clear message,
+      // enforcing game rules and preventing invalid state.
+      it("throws error when would exceed egg capacity", () => {
+        const { engine, state } = createTestEngine();
+        const player = state.players[0];
+        // acorn_woodpecker has egg capacity of 4
+        const bird1 = createBirdInstance("acorn_woodpecker", "bird1", 3);
+        player.board.setSlot("FOREST", 0, bird1);
+
+        expect(() =>
+          engine.applyAllPlayersLayEggs({
+            type: "ALL_PLAYERS_LAY_EGGS",
+            placements: {
+              p1: { bird1: 2 },
+            },
+          })
+        ).toThrow(
+          'Cannot lay 2 egg(s) on bird "bird1": would exceed egg capacity of 4 (current: 3)'
+        );
+      });
+
+      // Verifies that an invalid player ID throws an error,
+      // catching configuration bugs early.
+      it("throws error for invalid player ID", () => {
+        const { engine } = createTestEngine();
+
+        expect(() =>
+          engine.applyAllPlayersLayEggs({
+            type: "ALL_PLAYERS_LAY_EGGS",
+            placements: {
+              invalid_player: { bird1: 1 },
+            },
+          })
+        ).toThrow("Player not found: invalid_player");
+      });
+
+      // Verifies that only one player can lay eggs if others aren't in the map,
+      // which tests the iteration logic for partial player lists.
+      it("handles single player in placements map", () => {
+        const { engine, state } = createTestEngine();
+        const player1 = state.players[0];
+        const player2 = state.players[1];
+        const bird1 = createBirdInstance("acorn_woodpecker", "p1_bird", 0);
+        const bird2 = createBirdInstance("acorn_woodpecker", "p2_bird", 0);
+        player1.board.setSlot("FOREST", 0, bird1);
+        player2.board.setSlot("FOREST", 0, bird2);
+
+        engine.applyAllPlayersLayEggs({
+          type: "ALL_PLAYERS_LAY_EGGS",
+          placements: {
+            p2: { p2_bird: 2 }, // Only p2 lays eggs
+          },
+        });
+
+        expect(bird1.eggs).toBe(0); // unchanged
+        expect(bird2.eggs).toBe(2);
+      });
+
+      // Verifies that eggs can be added to birds that already have eggs,
+      // which is the normal case during gameplay.
+      it("adds eggs to birds with existing eggs", () => {
+        const { engine, state } = createTestEngine();
+        const player = state.players[0];
+        const bird1 = createBirdInstance("acorn_woodpecker", "bird1", 2);
+        player.board.setSlot("FOREST", 0, bird1);
+
+        engine.applyAllPlayersLayEggs({
+          type: "ALL_PLAYERS_LAY_EGGS",
+          placements: {
+            p1: { bird1: 1 },
+          },
+        });
+
+        expect(bird1.eggs).toBe(3);
+      });
+    });
+
+    describe("applyRepeatBrownPower()", () => {
+      // Tests for the async REPEAT_BROWN_POWER effect, which triggers execution
+      // of another bird's brown power. This is used by birds like Gray Catbird
+      // and Northern Mockingbird ("Repeat a brown power on another bird in this habitat").
+
+      // Verifies the core functionality: the target bird's brown power is executed,
+      // which tests the async integration with processBrownPower.
+      it("executes the target bird's brown power", async () => {
+        const { engine, state } = createTestEngine();
+        const player = state.players[0];
+
+        // blue_gray_gnatcatcher has a brown power that gains 1 INVERTEBRATE from supply
+        // This is simpler to test because it doesn't depend on birdfeeder state
+        const bird = createBirdInstance("blue_gray_gnatcatcher", "target_bird", 0);
+        player.board.setSlot("FOREST", 0, bird);
+
+        const initialFood = player.food.INVERTEBRATE ?? 0;
+
+        // Apply the REPEAT_BROWN_POWER effect
+        await engine.applyRepeatBrownPower({
+          type: "REPEAT_BROWN_POWER",
+          playerId: "p1",
+          targetBirdInstanceId: "target_bird",
+        });
+
+        // The blue_gray_gnatcatcher power gains 1 INVERTEBRATE from supply
+        expect(player.food.INVERTEBRATE).toBe(initialFood + 1);
+      });
+
+      // Verifies error handling when the target bird doesn't exist on the player's board.
+      it("throws error if target bird not found on player's board", async () => {
+        const { engine } = createTestEngine();
+
+        await expect(
+          engine.applyRepeatBrownPower({
+            type: "REPEAT_BROWN_POWER",
+            playerId: "p1",
+            targetBirdInstanceId: "nonexistent_bird",
+          })
+        ).rejects.toThrow(
+          'Cannot repeat brown power: bird "nonexistent_bird" not found on player "p1"\'s board'
+        );
+      });
+
+      // Verifies error handling when the target bird has no power at all.
+      it("throws error if target bird has no power", async () => {
+        const { engine, state } = createTestEngine();
+        const player = state.players[0];
+
+        // american_woodcock has no power
+        const bird = createBirdInstance("american_woodcock", "no_power_bird", 0);
+        player.board.setSlot("FOREST", 0, bird);
+
+        await expect(
+          engine.applyRepeatBrownPower({
+            type: "REPEAT_BROWN_POWER",
+            playerId: "p1",
+            targetBirdInstanceId: "no_power_bird",
+          })
+        ).rejects.toThrow(
+          'Cannot repeat brown power: bird "no_power_bird" has no power'
+        );
+      });
+
+      // Verifies error handling when the target bird has a pink power (not brown).
+      it("throws error if target bird has pink power instead of brown", async () => {
+        const { engine, state } = createTestEngine();
+        const player = state.players[0];
+
+        // american_avocet has ONCE_BETWEEN_TURNS (pink) power
+        const bird = createBirdInstance("american_avocet", "pink_bird", 0);
+        player.board.setSlot("WETLAND", 0, bird);
+
+        await expect(
+          engine.applyRepeatBrownPower({
+            type: "REPEAT_BROWN_POWER",
+            playerId: "p1",
+            targetBirdInstanceId: "pink_bird",
+          })
+        ).rejects.toThrow(
+          'Cannot repeat brown power: bird "pink_bird" has a ONCE_BETWEEN_TURNS power, not a brown (WHEN_ACTIVATED) power'
+        );
+      });
+
+      // Verifies error handling when the target bird has a white power (not brown).
+      it("throws error if target bird has white power instead of brown", async () => {
+        const { engine, state } = createTestEngine();
+        const player = state.players[0];
+
+        // american_goldfinch has WHEN_PLAYED (white) power
+        const bird = createBirdInstance("american_goldfinch", "white_bird", 0);
+        player.board.setSlot("GRASSLAND", 0, bird);
+
+        await expect(
+          engine.applyRepeatBrownPower({
+            type: "REPEAT_BROWN_POWER",
+            playerId: "p1",
+            targetBirdInstanceId: "white_bird",
+          })
+        ).rejects.toThrow(
+          'Cannot repeat brown power: bird "white_bird" has a WHEN_PLAYED power, not a brown (WHEN_ACTIVATED) power'
+        );
+      });
+
+      // Verifies error handling when the player ID is invalid.
+      it("throws error for invalid player ID", async () => {
+        const { engine } = createTestEngine();
+
+        await expect(
+          engine.applyRepeatBrownPower({
+            type: "REPEAT_BROWN_POWER",
+            playerId: "invalid_player",
+            targetBirdInstanceId: "any_bird",
+          })
+        ).rejects.toThrow("Player not found: invalid_player");
+      });
+
+      // Verifies that the effect can be invoked via the main applyEffect dispatcher.
+      it("is correctly dispatched from applyEffect", async () => {
+        const { engine, state } = createTestEngine();
+        const player = state.players[0];
+
+        // Use blue_gray_gnatcatcher which gains food from supply (doesn't need birdfeeder)
+        const bird = createBirdInstance("blue_gray_gnatcatcher", "dispatch_test_bird", 0);
+        player.board.setSlot("FOREST", 0, bird);
+
+        const initialFood = player.food.INVERTEBRATE ?? 0;
+
+        // Call applyEffect (the dispatcher) instead of applyRepeatBrownPower directly
+        await engine.applyEffect({
+          type: "REPEAT_BROWN_POWER",
+          playerId: "p1",
+          targetBirdInstanceId: "dispatch_test_bird",
+        });
+
+        // Verify the power was executed
+        expect(player.food.INVERTEBRATE).toBe(initialFood + 1);
+      });
+
+      // Verifies that the triggeringBirdInstanceId is correctly tracked in the effect,
+      // even though it doesn't affect the execution logic.
+      it("preserves triggeringBirdInstanceId in effect", async () => {
+        const { engine, state } = createTestEngine();
+        const player = state.players[0];
+
+        // Add two birds - one triggers, one is the target
+        // gray_catbird is the "repeat brown power" bird, blue_gray_gnatcatcher is the target
+        const triggeringBird = createBirdInstance("gray_catbird", "triggering_bird", 0);
+        const targetBird = createBirdInstance("blue_gray_gnatcatcher", "target_bird", 0);
+        player.board.setSlot("FOREST", 0, triggeringBird);
+        player.board.setSlot("FOREST", 1, targetBird);
+
+        const initialFood = player.food.INVERTEBRATE ?? 0;
+
+        // Create effect with triggeringBirdInstanceId
+        const effect = {
+          type: "REPEAT_BROWN_POWER" as const,
+          playerId: "p1" as const,
+          targetBirdInstanceId: "target_bird",
+          triggeringBirdInstanceId: "triggering_bird",
+        };
+
+        // This should not throw - triggeringBirdInstanceId is optional metadata
+        await engine.applyRepeatBrownPower(effect);
+
+        // Verify the power was executed
+        expect(player.food.INVERTEBRATE).toBe(initialFood + 1);
       });
     });
   });

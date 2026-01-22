@@ -18,6 +18,7 @@ import { AgentForfeitError } from "./errors.js";
 import type {
   BirdCard,
   BirdInstance,
+  BirdInstanceId,
   BonusCard,
   DieFace,
   FoodByType,
@@ -66,7 +67,6 @@ export interface GameResult {
   /** Players who forfeited during the game (if any) */
   forfeitedPlayers?: PlayerId[];
 }
-
 
 /**
  * Configuration for creating a GameEngine instance.
@@ -208,7 +208,10 @@ export class GameEngine {
     // 3. Run 4 rounds (with forfeit handling)
     try {
       for (let round = 1; round <= TOTAL_ROUNDS; round++) {
-        const shouldContinue = await this.runRoundWithForfeitHandling(round, forfeitedPlayers);
+        const shouldContinue = await this.runRoundWithForfeitHandling(
+          round,
+          forfeitedPlayers
+        );
         if (!shouldContinue) {
           break; // Game ended due to forfeit (only 1 player remaining)
         }
@@ -228,7 +231,11 @@ export class GameEngine {
     const winnerId = this.determineWinner(scores);
 
     // 5. Emit GameEndedEvent
-    await this.processEvent({ type: "GAME_ENDED", finalScores: scores, winnerId });
+    await this.processEvent({
+      type: "GAME_ENDED",
+      finalScores: scores,
+      winnerId,
+    });
 
     return {
       winnerId,
@@ -314,7 +321,10 @@ export class GameEngine {
           await this.runTurn(currentPlayerIndex);
         } catch (error) {
           if (error instanceof AgentForfeitError) {
-            const shouldContinue = await this.handleForfeit(error, forfeitedPlayers);
+            const shouldContinue = await this.handleForfeit(
+              error,
+              forfeitedPlayers
+            );
             if (!shouldContinue) {
               // Only 1 player remaining, end the game
               await this.processEvent({ type: "ROUND_ENDED", round });
@@ -414,7 +424,6 @@ export class GameEngine {
     }
   }
 
-
   /**
    * Run a single turn for a player.
    */
@@ -452,12 +461,13 @@ export class GameEngine {
     };
 
     // Build execution context for running the generator
-    const execCtx: TurnActionExecutionContext = {
+    const execCtx: ActionExecutionContext = {
       getState: () => this.gameState,
       getRegistry: () => this.registry,
       getAgent: (playerId: PlayerId) => this.getAgentForPlayer(playerId),
       generatePromptId: () => this.generatePromptId(),
-      buildPlayerView: (playerId: PlayerId) => buildPlayerView(this.gameState, playerId),
+      buildPlayerView: (playerId: PlayerId) =>
+        buildPlayerView(this.gameState, playerId),
       buildPromptContext: () => this.createPromptContext(),
       applyEffect: (effect: Effect) => this.applyEffect(effect),
       deferContinuation: (playerId: PlayerId, continuation) => {
@@ -492,7 +502,9 @@ export class GameEngine {
    * Resolve deferred continuations for a player at end of their turn.
    * Continuations can yield effects and prompts just like power handlers.
    */
-  private async resolveEndOfTurnContinuations(playerId: PlayerId): Promise<void> {
+  private async resolveEndOfTurnContinuations(
+    playerId: PlayerId
+  ): Promise<void> {
     // Get continuations for this player
     const playerConts = this.gameState.endOfTurnContinuations.filter(
       (c) => c.playerId === playerId
@@ -500,12 +512,18 @@ export class GameEngine {
 
     // Clear them from state
     this.gameState.endOfTurnContinuations =
-      this.gameState.endOfTurnContinuations.filter((c) => c.playerId !== playerId);
+      this.gameState.endOfTurnContinuations.filter(
+        (c) => c.playerId !== playerId
+      );
 
     // Execute each continuation using ActionProcessor
     const execCtx = this.createActionExecutionContext();
     for (const { continuation } of playerConts) {
-      await this.actionProcessor.executeContinuation(continuation, playerId, execCtx);
+      await this.actionProcessor.executeContinuation(
+        continuation,
+        playerId,
+        execCtx
+      );
     }
   }
 
@@ -536,19 +554,23 @@ export class GameEngine {
     const execCtx = this.createActionExecutionContext();
 
     // Process each bird's brown power in order (right-to-left, already ordered in event)
-    for (const birdInstanceId of event.birdInstanceIds) {
-      // Execute this bird's brown power (effects are applied immediately within)
-      const result = await this.actionProcessor.executeSinglePower(
-        birdInstanceId,
-        event.playerId,
-        execCtx
-      );
+    for (const birdInstanceId of event.brownPowerBirdInstanceIds) {
+      await this.processBrownPower(birdInstanceId, event.playerId, execCtx);
+    }
+  }
 
-      // Process events yielded by the power handler (e.g., PREDATOR_POWER_RESOLVED)
-      // These can trigger pink powers on other players' boards
-      for (const evt of result.events) {
-        await this.processEvent(evt);
-      }
+  private async processBrownPower(
+    birdInstanceId: BirdInstanceId,
+    ownerId: PlayerId,
+    execCtx: ActionExecutionContext
+  ): Promise<void> {
+    const result = await this.actionProcessor.executeSinglePower(
+      birdInstanceId,
+      ownerId,
+      execCtx
+    );
+    for (const evt of result.events) {
+      await this.processEvent(evt);
     }
   }
 
@@ -612,10 +634,17 @@ export class GameEngine {
         round: this.gameState.round,
         activePlayerId:
           this.gameState.players[this.gameState.activePlayerIndex].id,
-        trigger: trigger ?? { type: "WHEN_ACTIVATED", habitat: "FOREST", sourceBirdId: "" },
+        trigger: trigger ?? {
+          type: "WHEN_ACTIVATED",
+          habitat: "FOREST",
+          sourceBirdId: "",
+        },
       }),
       applyEffect: (effect: Effect) => this.applyEffect(effect),
-      deferContinuation: (playerId: PlayerId, continuation: () => Generator<PowerYield, void, PowerReceive>) => {
+      deferContinuation: (
+        playerId: PlayerId,
+        continuation: () => Generator<PowerYield, void, PowerReceive>
+      ) => {
         this.gameState.endOfTurnContinuations.push({ playerId, continuation });
       },
     };
@@ -635,13 +664,20 @@ export class GameEngine {
   /**
    * Apply an effect to the game state.
    * This is the ONLY method that mutates GameState.
+   *
+   * Most effects are synchronous state mutations, but some (like REPEAT_BROWN_POWER)
+   * require async execution to invoke other power handlers.
    */
-  applyEffect(effect: Effect): void {
+  async applyEffect(effect: Effect): Promise<void> {
     // TODO: Notify observers of effect application
 
     switch (effect.type) {
       case "ACTIVATE_POWER":
         // Tracking effect - no state mutation needed
+        break;
+
+      case "REPEAT_BROWN_POWER":
+        await this.applyRepeatBrownPower(effect);
         break;
 
       case "GAIN_FOOD":
@@ -720,6 +756,14 @@ export class GameEngine {
         this.applyAllPlayersGainFood(effect);
         break;
 
+      case "ALL_PLAYERS_DRAW_CARDS":
+        this.applyAllPlayersDrawCards(effect);
+        break;
+
+      case "ALL_PLAYERS_LAY_EGGS":
+        this.applyAllPlayersLayEggs(effect);
+        break;
+
       default:
         console.warn(`Unhandled effect type: ${(effect as Effect).type}`);
     }
@@ -788,6 +832,15 @@ export class GameEngine {
       const drawn = this.gameState.birdCardSupply.drawFromDeck(effect.fromDeck);
       player.hand.push(...drawn);
       drawnCardIds.push(...drawn.map((c) => c.id));
+    }
+
+    // Draw from revealed cards (used by powers like American Oystercatcher)
+    if (effect.fromRevealed && effect.fromRevealed.length > 0) {
+      for (const cardId of effect.fromRevealed) {
+        const card = this.registry.getBirdById(cardId);
+        player.hand.push(card);
+        drawnCardIds.push(cardId);
+      }
     }
 
     // Populate result field so handlers can see what was drawn
@@ -885,6 +938,11 @@ export class GameEngine {
       // Populate result field so handlers can see what was tucked
       effect.tuckedFromDeck = tuckedIds;
     }
+
+    // Tuck from revealed cards (used by powers like Barred Owl)
+    for (const cardId of effect.fromRevealed) {
+      bird.tuckedCards.push(cardId);
+    }
   }
 
   applyCacheFood(effect: Effect & { type: "CACHE_FOOD" }): void {
@@ -902,16 +960,23 @@ export class GameEngine {
         bird.cachedFood[ft] = (bird.cachedFood[ft] ?? 0) + count;
       }
     }
+
+    // Remove dice from birdfeeder when source is BIRDFEEDER
+    if (effect.source === "BIRDFEEDER" && effect.diceTaken) {
+      for (const dieSelection of effect.diceTaken) {
+        this.gameState.birdfeeder.takeDie(dieSelection.die);
+      }
+    }
   }
 
   applyPlayBird(effect: Effect & { type: "PLAY_BIRD" }): void {
     const player = this.gameState.findPlayer(effect.playerId);
 
     // Find the card in hand
-    // birdInstanceId format: {playerId}_{habitat}_{column}_{cardId}
-    // cardId can contain underscores, so we join everything after the third underscore
+    // birdInstanceId format: {playerId}_{cardId}
+    // cardId can contain underscores, so we join everything after the first underscore
     const parts = effect.birdInstanceId.split("_");
-    const cardId = parts.slice(3).join("_");
+    const cardId = parts.slice(1).join("_");
     const cardIndex = player.hand.findIndex((c) => c.id === cardId);
     if (cardIndex === -1) {
       throw new Error(
@@ -1007,9 +1072,28 @@ export class GameEngine {
     effect.addedDice = [...addedDice];
   }
 
-  applyRefillBirdTray(_effect: Effect & { type: "REFILL_BIRD_TRAY" }): void {
+  applyRefillBirdTray(effect: Effect & { type: "REFILL_BIRD_TRAY" }): void {
+    // Capture tray state before refilling
+    const trayBefore = this.gameState.birdCardSupply
+      .getTray()
+      .map((c) => c?.id)
+      .filter((id): id is string => id !== undefined);
+
     // Refill the bird card tray
     this.gameState.birdCardSupply.refillTray();
+
+    // Capture tray state after refilling
+    const trayAfter = this.gameState.birdCardSupply
+      .getTray()
+      .map((c) => c?.id)
+      .filter((id): id is string => id !== undefined);
+
+    // New cards are those in trayAfter but not in trayBefore
+    const beforeSet = new Set(trayBefore);
+    effect.newCards = trayAfter.filter((id) => !beforeSet.has(id));
+
+    // discardedCards stays empty since refillTray() only fills empty slots
+    effect.discardedCards = [];
   }
 
   applyRemoveCardsFromTray(
@@ -1061,7 +1145,10 @@ export class GameEngine {
   applyMoveBird(effect: Effect & { type: "MOVE_BIRD" }): void {
     const player = this.gameState.findPlayer(effect.playerId);
     // Remove bird from source habitat
-    const bird = player.board.removeBird(effect.birdInstanceId, effect.fromHabitat);
+    const bird = player.board.removeBird(
+      effect.birdInstanceId,
+      effect.fromHabitat
+    );
     // Place in destination habitat at next available slot
     const column = player.board.getLeftmostEmptyColumn(effect.toHabitat);
     if (column >= 5) {
@@ -1072,7 +1159,9 @@ export class GameEngine {
     player.board.setSlot(effect.toHabitat, column, bird);
   }
 
-  applyAllPlayersGainFood(effect: Effect & { type: "ALL_PLAYERS_GAIN_FOOD" }): void {
+  applyAllPlayersGainFood(
+    effect: Effect & { type: "ALL_PLAYERS_GAIN_FOOD" }
+  ): void {
     for (const [playerId, food] of Object.entries(effect.gains)) {
       const player = this.gameState.findPlayer(playerId);
       for (const [foodType, count] of Object.entries(food)) {
@@ -1082,6 +1171,96 @@ export class GameEngine {
         }
       }
     }
+  }
+
+  applyAllPlayersDrawCards(
+    effect: Effect & { type: "ALL_PLAYERS_DRAW_CARDS" }
+  ): void {
+    const drawnCards: Record<PlayerId, string[]> = {};
+
+    for (const [playerId, count] of Object.entries(effect.draws)) {
+      if (count && count > 0) {
+        const player = this.gameState.findPlayer(playerId);
+        const drawn = this.gameState.birdCardSupply.drawFromDeck(count);
+        player.hand.push(...drawn);
+        drawnCards[playerId] = drawn.map((c) => c.id);
+      }
+    }
+
+    // Populate result field so handlers can see what was drawn
+    effect.drawnCards = drawnCards;
+
+    // Refill tray after all draws complete
+    this.gameState.birdCardSupply.refillTray();
+  }
+
+  applyAllPlayersLayEggs(
+    effect: Effect & { type: "ALL_PLAYERS_LAY_EGGS" }
+  ): void {
+    for (const [playerId, birdPlacements] of Object.entries(
+      effect.placements
+    )) {
+      const player = this.gameState.findPlayer(playerId);
+
+      for (const [birdId, count] of Object.entries(birdPlacements)) {
+        if (count && count > 0) {
+          const bird = player.board.findBirdInstance(birdId);
+          if (!bird) {
+            throw new Error(
+              `Cannot lay eggs: bird instance "${birdId}" not found on player "${playerId}"'s board`
+            );
+          }
+          const newTotal = bird.eggs + count;
+          if (newTotal > bird.card.eggCapacity) {
+            throw new Error(
+              `Cannot lay ${count} egg(s) on bird "${birdId}": would exceed egg capacity of ${bird.card.eggCapacity} (current: ${bird.eggs})`
+            );
+          }
+          bird.eggs = newTotal;
+        }
+      }
+    }
+  }
+
+  /**
+   * Apply the REPEAT_BROWN_POWER effect by executing the target bird's brown power.
+   * This triggers the full power execution cycle including any agent prompts.
+   *
+   * Validates that:
+   * - The target bird exists and is on the specified player's board
+   * - The target bird has a brown power (WHEN_ACTIVATED trigger)
+   */
+  async applyRepeatBrownPower(
+    effect: Effect & { type: "REPEAT_BROWN_POWER" }
+  ): Promise<void> {
+    const player = this.gameState.findPlayer(effect.playerId);
+    const bird = player.board.findBirdInstance(effect.targetBirdInstanceId);
+
+    if (!bird) {
+      throw new Error(
+        `Cannot repeat brown power: bird "${effect.targetBirdInstanceId}" not found on player "${effect.playerId}"'s board`
+      );
+    }
+
+    const power = bird.card.power;
+    if (!power) {
+      throw new Error(
+        `Cannot repeat brown power: bird "${effect.targetBirdInstanceId}" has no power`
+      );
+    }
+
+    if (power.trigger !== "WHEN_ACTIVATED") {
+      throw new Error(
+        `Cannot repeat brown power: bird "${effect.targetBirdInstanceId}" has a ${power.trigger} power, not a brown (WHEN_ACTIVATED) power`
+      );
+    }
+
+    const execCtx = this.createActionExecutionContext();
+    await this.processBrownPower(
+      effect.targetBirdInstanceId,
+      effect.playerId,
+      execCtx
+    );
   }
 
   /**
@@ -1174,7 +1353,8 @@ export class GameEngine {
    * Count birds that have at least minEggs eggs on them.
    */
   countBirdsWithMinEggs(player: PlayerState, minEggs: number): number {
-    return player.board.getAllBirds().filter((bird) => bird.eggs >= minEggs).length;
+    return player.board.getAllBirds().filter((bird) => bird.eggs >= minEggs)
+      .length;
   }
 
   /**
@@ -1198,7 +1378,9 @@ export class GameEngine {
     player: PlayerState,
     bonusCardId: string
   ): number {
-    return player.board.getAllBirds().filter((bird) => bird.card.bonusCards.includes(bonusCardId)).length;
+    return player.board
+      .getAllBirds()
+      .filter((bird) => bird.card.bonusCards.includes(bonusCardId)).length;
   }
 
   private determineWinner(scores: Record<PlayerId, number>): PlayerId {

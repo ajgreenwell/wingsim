@@ -36,11 +36,14 @@ import { AgentForfeitError } from "./errors.js";
 import {
   // Power handlers
   gainFoodFromSupply,
+  cacheFoodFromSupply,
   gainFoodFromFeederWithCache,
   whenOpponentLaysEggsLayEggOnNestType,
   playersWithFewestInHabitatDrawCard,
+  playersWithFewestInHabitatGainFood,
   tuckAndDraw,
   discardEggToGainFood,
+  discardEggToDrawCards,
   rollDiceAndCacheIfMatch,
   drawAndDistributeCards,
   gainFoodFromFeeder,
@@ -53,8 +56,23 @@ import {
   allPlayersGainFoodFromSupply,
   lookAtCardAndTuckIfWingspanUnder,
   whenOpponentPlaysBirdInHabitatGainFood,
+  whenOpponentPlaysBirdInHabitatTuckCard,
+  whenOpponentPredatorSucceedsGainFood,
+  whenOpponentGainsFoodCacheIfMatch,
   moveToAnotherHabitatIfRightmost,
   drawCardsWithDelayedDiscard,
+  tuckFromHandAndLay,
+  tuckAndGainFood,
+  tuckAndGainFoodOfChoice,
+  drawFaceUpCardsFromTray,
+  drawCards,
+  allPlayersDrawCardsFromDeck,
+  allPlayersLayEggOnNestType,
+  playAdditionalBirdInHabitat,
+  tradeFoodType,
+  repeatBrownPowerInHabitat,
+  repeatPredatorPowerInHabitat,
+  gainFoodFromFeederIfAvailable,
   // Turn action handlers
   gainFoodHandler,
   layEggsHandler,
@@ -103,6 +121,7 @@ export class ActionProcessor {
   constructor() {
     // Register all power handlers
     this.handlers.set("gainFoodFromSupply", gainFoodFromSupply);
+    this.handlers.set("cacheFoodFromSupply", cacheFoodFromSupply);
     this.handlers.set(
       "gainFoodFromFeederWithCache",
       gainFoodFromFeederWithCache
@@ -115,8 +134,13 @@ export class ActionProcessor {
       "playersWithFewestInHabitatDrawCard",
       playersWithFewestInHabitatDrawCard
     );
+    this.handlers.set(
+      "playersWithFewestInHabitatGainFood",
+      playersWithFewestInHabitatGainFood
+    );
     this.handlers.set("tuckAndDraw", tuckAndDraw);
     this.handlers.set("discardEggToGainFood", discardEggToGainFood);
+    this.handlers.set("discardEggToDrawCards", discardEggToDrawCards);
     this.handlers.set("rollDiceAndCacheIfMatch", rollDiceAndCacheIfMatch);
     this.handlers.set("drawAndDistributeCards", drawAndDistributeCards);
     this.handlers.set("gainFoodFromFeeder", gainFoodFromFeeder);
@@ -142,12 +166,45 @@ export class ActionProcessor {
       whenOpponentPlaysBirdInHabitatGainFood
     );
     this.handlers.set(
+      "whenOpponentPlaysBirdInHabitatTuckCard",
+      whenOpponentPlaysBirdInHabitatTuckCard
+    );
+    this.handlers.set(
+      "whenOpponentPredatorSucceedsGainFood",
+      whenOpponentPredatorSucceedsGainFood
+    );
+    this.handlers.set(
+      "whenOpponentGainsFoodCacheIfMatch",
+      whenOpponentGainsFoodCacheIfMatch
+    );
+    this.handlers.set(
       "moveToAnotherHabitatIfRightmost",
       moveToAnotherHabitatIfRightmost
     );
     this.handlers.set(
       "drawCardsWithDelayedDiscard",
       drawCardsWithDelayedDiscard
+    );
+    this.handlers.set("tuckFromHandAndLay", tuckFromHandAndLay);
+    this.handlers.set("tuckAndGainFood", tuckAndGainFood);
+    this.handlers.set("tuckAndGainFoodOfChoice", tuckAndGainFoodOfChoice);
+    this.handlers.set("drawFaceUpCardsFromTray", drawFaceUpCardsFromTray);
+    this.handlers.set("drawCards", drawCards);
+    this.handlers.set("allPlayersDrawCardsFromDeck", allPlayersDrawCardsFromDeck);
+    this.handlers.set("allPlayersLayEggOnNestType", allPlayersLayEggOnNestType);
+    this.handlers.set(
+      "playAdditionalBirdInHabitat",
+      playAdditionalBirdInHabitat
+    );
+    this.handlers.set("tradeFoodType", tradeFoodType);
+    this.handlers.set("repeatBrownPowerInHabitat", repeatBrownPowerInHabitat);
+    this.handlers.set(
+      "repeatPredatorPowerInHabitat",
+      repeatPredatorPowerInHabitat
+    );
+    this.handlers.set(
+      "gainFoodFromFeederIfAvailable",
+      gainFoodFromFeederIfAvailable
     );
 
     // Register turn action handlers
@@ -370,7 +427,7 @@ export class ActionProcessor {
       } else {
         // It's an Effect - apply immediately and collect
         const effect = yielded as Effect;
-        execCtx.applyEffect(effect);
+        await execCtx.applyEffect(effect);
         effects.push(effect);
         iterResult = gen.next(effect);
       }

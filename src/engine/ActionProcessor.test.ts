@@ -166,7 +166,7 @@ function createMockExecutionContext(
     },
     buildPlayerView: (playerId) => createMockPlayerView(playerId),
     buildPromptContext: () => createMockPromptContext(),
-    applyEffect: () => {
+    applyEffect: async () => {
       // Mock: effects are tracked but not actually applied to state in tests
     },
     deferContinuation: () => {
@@ -298,7 +298,7 @@ function createTestContext(
       activePlayerId: player.id,
       trigger: { type: "WHEN_ACTIVATED" as const, habitat: "FOREST" as const, sourceBirdId: "" },
     }),
-    applyEffect: (effect: Effect) => {
+    applyEffect: async (effect: Effect) => {
       // Apply effects to the mock state for testing
       if (effect.type === "GAIN_FOOD") {
         const p = mockState.players.find((pl) => pl.id === effect.playerId);

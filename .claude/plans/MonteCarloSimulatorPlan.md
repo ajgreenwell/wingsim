@@ -87,7 +87,7 @@ Update prompt generation so agents only see eligible options, eliminating the ne
 
 ---
 
-### [ ] 4. SmartRandomAgent - Food & Egg Prompts
+### [x] 4. SmartRandomAgent - Food & Egg Prompts
 
 **File**: `src/agents/SmartRandomAgent.ts` (continued)
 

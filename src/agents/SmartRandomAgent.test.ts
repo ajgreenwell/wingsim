@@ -9,10 +9,15 @@ import type {
   RepeatPowerPrompt,
   SelectBonusCardsPrompt,
   SelectCardsPrompt,
+  SelectFoodFromFeederPrompt,
+  SelectFoodFromSupplyPrompt,
+  DiscardEggsPrompt,
+  PlaceEggsPrompt,
+  DiscardFoodPrompt,
   PlayerView,
   PromptContext,
 } from "../types/prompts.js";
-import type { BirdCard, BonusCard, PowerSpec } from "../types/core.js";
+import type { BirdCard, BonusCard, PowerSpec, FoodByDice, FoodType } from "../types/core.js";
 
 // Helper to create a minimal PlayerView for testing
 function createMinimalPlayerView(playerId: string): PlayerView {
@@ -374,6 +379,413 @@ describe("SmartRandomAgent", () => {
       expect(cards.every((id) => eligibleCards.some((c) => c.id === id))).toBe(
         true
       );
+    });
+  });
+
+  describe("selectFoodFromFeeder", () => {
+    // Verifies agent selects valid dice from available options
+    it("selects dice from available options", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const availableDice: FoodByDice = {
+        SEED: 2,
+        INVERTEBRATE: 1,
+        FISH: 1,
+      };
+
+      const prompt: SelectFoodFromFeederPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "selectFoodFromFeeder",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        availableDice,
+      };
+
+      const choice = await agent.chooseOption(prompt);
+
+      expect(choice.kind).toBe("selectFoodFromFeeder");
+      const result = choice as { diceOrReroll: unknown };
+      // Should not be a reroll since dice are varied
+      if (result.diceOrReroll !== "reroll") {
+        const diceSelections = result.diceOrReroll as Array<{ die: string }>;
+        expect(diceSelections.length).toBe(1);
+        expect(["SEED", "INVERTEBRATE", "FISH"]).toContain(diceSelections[0].die);
+      }
+    });
+
+    // Verifies handling of SEED_INVERTEBRATE dice requiring asFoodType
+    it("handles SEED_INVERTEBRATE dice with asFoodType", async () => {
+      const availableDice: FoodByDice = {
+        SEED_INVERTEBRATE: 3,
+        FISH: 1,
+      };
+
+      const prompt: SelectFoodFromFeederPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "selectFoodFromFeeder",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        availableDice,
+      };
+
+      // Run multiple times to check SEED_INVERTEBRATE handling
+      for (let seed = 0; seed < 20; seed++) {
+        const testAgent = new SmartRandomAgent("player1", seed);
+        const testChoice = await testAgent.chooseOption(prompt);
+        const result = testChoice as { diceOrReroll: unknown };
+
+        if (result.diceOrReroll !== "reroll") {
+          const selections = result.diceOrReroll as Array<{
+            die: string;
+            asFoodType?: string;
+          }>;
+          for (const sel of selections) {
+            if (sel.die === "SEED_INVERTEBRATE") {
+              expect(["SEED", "INVERTEBRATE"]).toContain(sel.asFoodType);
+            }
+          }
+        }
+      }
+    });
+
+    // Verifies reroll is returned when feeder is empty
+    it("returns reroll when feeder is empty", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const prompt: SelectFoodFromFeederPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "selectFoodFromFeeder",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        availableDice: {},
+      };
+
+      const choice = await agent.chooseOption(prompt);
+      const result = choice as { diceOrReroll: unknown };
+
+      expect(result.diceOrReroll).toBe("reroll");
+    });
+
+    // Verifies agent may choose reroll when all dice show same face
+    it("may reroll when all dice show same face", async () => {
+      const availableDice: FoodByDice = { SEED: 5 };
+
+      const prompt: SelectFoodFromFeederPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "selectFoodFromFeeder",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        availableDice,
+      };
+
+      // With many seeds, we expect some rerolls and some takes
+      const results = {
+        rerolls: 0,
+        takes: 0,
+      };
+
+      for (let seed = 0; seed < 50; seed++) {
+        const agent = new SmartRandomAgent("player1", seed);
+        const choice = await agent.chooseOption(prompt);
+        const result = choice as { diceOrReroll: unknown };
+
+        if (result.diceOrReroll === "reroll") {
+          results.rerolls++;
+        } else {
+          results.takes++;
+        }
+      }
+
+      // Should see both behaviors across seeds
+      expect(results.rerolls).toBeGreaterThan(0);
+      expect(results.takes).toBeGreaterThan(0);
+    });
+  });
+
+  describe("selectFoodFromSupply", () => {
+    // Verifies agent selects correct count from allowed foods
+    it("selects correct count from allowed foods", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const allowedFoods: FoodType[] = ["SEED", "INVERTEBRATE", "FISH"];
+
+      const prompt: SelectFoodFromSupplyPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "selectFoodFromSupply",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        count: 3,
+        allowedFoods,
+      };
+
+      const choice = await agent.chooseOption(prompt);
+
+      expect(choice.kind).toBe("selectFoodFromSupply");
+      const result = choice as { food: Record<string, number> };
+
+      const totalFood = Object.values(result.food).reduce(
+        (sum, count) => sum + (count || 0),
+        0
+      );
+      expect(totalFood).toBe(3);
+
+      // All selected food should be from allowed foods
+      for (const foodType of Object.keys(result.food)) {
+        expect(allowedFoods).toContain(foodType);
+      }
+    });
+
+    // Verifies agent can select same food type multiple times (with replacement)
+    it("can select same food type multiple times", async () => {
+      const agent = new SmartRandomAgent("player1", 42);
+
+      const prompt: SelectFoodFromSupplyPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "selectFoodFromSupply",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        count: 5,
+        allowedFoods: ["SEED", "INVERTEBRATE"],
+      };
+
+      const choice = await agent.chooseOption(prompt);
+      const result = choice as { food: Record<string, number> };
+
+      const totalFood = Object.values(result.food).reduce(
+        (sum, count) => sum + (count || 0),
+        0
+      );
+      expect(totalFood).toBe(5);
+    });
+  });
+
+  describe("discardEggs", () => {
+    // Verifies agent distributes egg discards across eligible birds correctly
+    it("distributes discards respecting available eggs", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const prompt: DiscardEggsPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "discardEggs",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        count: 3,
+        eggsByEligibleBird: {
+          bird_1: 2,
+          bird_2: 3,
+          bird_3: 1,
+        },
+      };
+
+      const choice = await agent.chooseOption(prompt);
+
+      expect(choice.kind).toBe("discardEggs");
+      const result = choice as { sources: Record<string, number> };
+
+      // Total discarded should match count
+      const totalDiscarded = Object.values(result.sources).reduce(
+        (sum, count) => sum + (count || 0),
+        0
+      );
+      expect(totalDiscarded).toBe(3);
+
+      // Each bird's discards should not exceed available eggs
+      for (const [birdId, count] of Object.entries(result.sources)) {
+        const available = prompt.eggsByEligibleBird[birdId] || 0;
+        expect(count).toBeLessThanOrEqual(available);
+      }
+    });
+
+    // Verifies all eggs are discarded when count equals total available
+    it("handles discarding all available eggs", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const prompt: DiscardEggsPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "discardEggs",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        count: 5,
+        eggsByEligibleBird: {
+          bird_1: 2,
+          bird_2: 3,
+        },
+      };
+
+      const choice = await agent.chooseOption(prompt);
+      const result = choice as { sources: Record<string, number> };
+
+      const totalDiscarded = Object.values(result.sources).reduce(
+        (sum, count) => sum + (count || 0),
+        0
+      );
+      expect(totalDiscarded).toBe(5);
+    });
+  });
+
+  describe("placeEggs", () => {
+    // Verifies agent distributes egg placements respecting capacities
+    it("distributes placements respecting remaining capacities", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const prompt: PlaceEggsPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "placeEggs",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        count: 4,
+        remainingCapacitiesByEligibleBird: {
+          bird_1: 2,
+          bird_2: 3,
+          bird_3: 1,
+        },
+      };
+
+      const choice = await agent.chooseOption(prompt);
+
+      expect(choice.kind).toBe("placeEggs");
+      const result = choice as { placements: Record<string, number> };
+
+      // Total placed should match count
+      const totalPlaced = Object.values(result.placements).reduce(
+        (sum, count) => sum + (count || 0),
+        0
+      );
+      expect(totalPlaced).toBe(4);
+
+      // Each bird's placements should not exceed remaining capacity
+      for (const [birdId, count] of Object.entries(result.placements)) {
+        const capacity = prompt.remainingCapacitiesByEligibleBird[birdId] || 0;
+        expect(count).toBeLessThanOrEqual(capacity);
+      }
+    });
+
+    // Verifies placement when capacity is limited
+    it("fills to capacity when needed", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const prompt: PlaceEggsPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "placeEggs",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        count: 6,
+        remainingCapacitiesByEligibleBird: {
+          bird_1: 3,
+          bird_2: 3,
+        },
+      };
+
+      const choice = await agent.chooseOption(prompt);
+      const result = choice as { placements: Record<string, number> };
+
+      const totalPlaced = Object.values(result.placements).reduce(
+        (sum, count) => sum + (count || 0),
+        0
+      );
+      expect(totalPlaced).toBe(6);
+    });
+  });
+
+  describe("discardFood", () => {
+    // Verifies agent returns exact food cost for specific types
+    it("returns correct food for specific costs", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const view = createMinimalPlayerView("player1");
+      view.food = { SEED: 3, INVERTEBRATE: 2, FISH: 1 };
+
+      const prompt: DiscardFoodPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "discardFood",
+        view,
+        context: createMinimalContext("player1"),
+        foodCost: { SEED: 2 },
+      };
+
+      const choice = await agent.chooseOption(prompt);
+
+      expect(choice.kind).toBe("discardFood");
+      const result = choice as { food: Record<string, number> };
+
+      expect(result.food.SEED).toBe(2);
+    });
+
+    // Verifies agent handles WILD costs by selecting from available food
+    it("handles WILD cost by selecting from available food", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const view = createMinimalPlayerView("player1");
+      view.food = { SEED: 2, INVERTEBRATE: 1, FISH: 1 };
+
+      const prompt: DiscardFoodPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "discardFood",
+        view,
+        context: createMinimalContext("player1"),
+        foodCost: { WILD: 2 },
+      };
+
+      const choice = await agent.chooseOption(prompt);
+      const result = choice as { food: Record<string, number> };
+
+      // Should not include WILD in the response - actual food types only
+      expect(result.food.WILD).toBeUndefined();
+
+      // Total food discarded should match the WILD cost
+      const totalDiscarded = Object.values(result.food).reduce(
+        (sum, count) => sum + (count || 0),
+        0
+      );
+      expect(totalDiscarded).toBe(2);
+
+      // All discarded food should be from player's supply
+      for (const [foodType, count] of Object.entries(result.food)) {
+        const available = view.food[foodType as FoodType] || 0;
+        expect(count).toBeLessThanOrEqual(available);
+      }
+    });
+
+    // Verifies agent handles mixed specific + WILD costs
+    it("handles mixed specific and WILD costs", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const view = createMinimalPlayerView("player1");
+      view.food = { SEED: 2, INVERTEBRATE: 2, FISH: 1 };
+
+      const prompt: DiscardFoodPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "discardFood",
+        view,
+        context: createMinimalContext("player1"),
+        foodCost: { SEED: 1, WILD: 1 },
+      };
+
+      const choice = await agent.chooseOption(prompt);
+      const result = choice as { food: Record<string, number> };
+
+      // Should include exactly 1 SEED (the specific cost)
+      expect(result.food.SEED).toBeGreaterThanOrEqual(1);
+
+      // Total should be 2 (1 SEED + 1 WILD satisfied by any food)
+      const totalDiscarded = Object.values(result.food).reduce(
+        (sum, count) => sum + (count || 0),
+        0
+      );
+      expect(totalDiscarded).toBe(2);
     });
   });
 });

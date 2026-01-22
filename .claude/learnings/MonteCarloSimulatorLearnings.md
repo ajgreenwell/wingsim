@@ -53,3 +53,22 @@ With eligibility pre-filtering, the SmartRandomAgent can now:
 - Even stubbed handlers produce valid choices that satisfy prompt constraints.
 - The `chooseOption()` method uses a switch on `prompt.kind` to dispatch to appropriate handlers - this pattern is clearer than a handler registry for a single agent.
 - `Rng.pickMany()` is the workhorse method - it shuffles and takes the first N items, ensuring no duplicates when selecting from finite sets.
+
+## SmartRandomAgent Food & Egg Prompts (Task 4)
+
+### DiscardFood WILD Cost Handling
+
+- `DiscardFoodPrompt.foodCost` can include `WILD` (e.g., `{ WILD: 1 }`) when any food type is acceptable (used in habitat bonus trades).
+- The agent must resolve WILD to actual food types from the player's supply - returning `{ WILD: 1 }` in the choice is invalid.
+- Implementation: First satisfy specific food costs, then pick randomly from remaining supply for WILD costs.
+
+### Rng.pickManyWithReplacement()
+
+- Used for `selectFoodFromSupply` because the supply is unlimited (unlike the feeder which has finite dice).
+- Allows selecting the same food type multiple times.
+
+### selectFoodFromFeeder Reroll Logic
+
+- When all dice show the same face, the agent randomly decides whether to reroll or take.
+- Empty feeder always returns "reroll".
+- SEED_INVERTEBRATE dice require `asFoodType` to be specified.

@@ -449,14 +449,44 @@ export class SmartRandomAgent implements PlayerAgent {
   }
 
   private handleDiscardFood(prompt: DiscardFoodPrompt): DiscardFoodChoice {
-    // Task 4: Match foodCost exactly using available food
-    // For now, just return the exact food cost (assuming player has it)
+    // Handle WILD and specific food costs using player's available food
     const food: Record<string, number> = {};
-    for (const [foodType, count] of Object.entries(prompt.foodCost)) {
+    const playerFood = prompt.view.food;
+
+    // Build pool of available food for WILD costs
+    const availableForWild: string[] = [];
+    for (const [foodType, count] of Object.entries(playerFood)) {
       if (count && count > 0) {
-        food[foodType] = count;
+        for (let i = 0; i < count; i++) {
+          availableForWild.push(foodType);
+        }
       }
     }
+
+    // First, handle specific food types (non-WILD)
+    for (const [foodType, count] of Object.entries(prompt.foodCost)) {
+      if (foodType !== "WILD" && count && count > 0) {
+        food[foodType] = count;
+        // Remove from available pool
+        for (let i = 0; i < count; i++) {
+          const idx = availableForWild.indexOf(foodType);
+          if (idx !== -1) {
+            availableForWild.splice(idx, 1);
+          }
+        }
+      }
+    }
+
+    // Then, handle WILD costs by picking from remaining available food
+    const wildCount = prompt.foodCost.WILD || 0;
+    if (wildCount > 0) {
+      const shuffled = this.rng.shuffle(availableForWild);
+      const wildFood = shuffled.slice(0, wildCount);
+      for (const foodType of wildFood) {
+        food[foodType] = (food[foodType] || 0) + 1;
+      }
+    }
+
     return {
       promptId: prompt.promptId,
       kind: "discardFood",

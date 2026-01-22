@@ -353,3 +353,37 @@ Unlike other tuck handlers that check for empty hand, `discardFoodToTuckFromDeck
 
 ### placeEggs vs eggs Field Name
 The `PlaceEggsChoice` type uses `placements` field, not `eggs`. Using the wrong field name causes TypeScript errors.
+
+## Task 13: Brown Power - Discard-for-Reward Handlers
+
+### discardEggToGainFood vs discardEggToDrawCards Egg Source Restriction
+Critical distinction between these two handlers:
+- `discardEggToGainFood`: Eggs must come from OTHER birds (excluding the power bird itself). The handler excludes `bird.id !== ctx.birdInstanceId` when collecting eligible birds.
+- `discardEggToDrawCards`: Eggs can come from ANY bird (including the power bird itself). The handler allows all birds with eggs.
+
+This means if the only bird with eggs is the power bird itself, `discardEggToGainFood` will skip (RESOURCE_UNAVAILABLE) while `discardEggToDrawCards` will still be available.
+
+### discardEggToGainFood Birds
+All birds with this handler use `{foodType: "WILD", foodCount: 1 or 2, eggCount: 1}`:
+- `american_crow` (all habitats) - gains 1 WILD
+- `black_crowned_night_heron` (WETLAND) - gains 1 WILD
+- `chihuahuan_raven` (GRASSLAND) - gains 2 WILD
+- `common_raven` (all habitats) - gains 2 WILD
+- `fish_crow` (all habitats) - gains 1 WILD
+
+### discardEggToDrawCards Birds
+Both birds use `{drawCount: 2, eggCount: 1}`:
+- `franklins_gull` (GRASSLAND, WETLAND)
+- `killdeer` (GRASSLAND, WETLAND)
+
+### tradeFoodType is Unique to Green Heron
+Only one bird in the game has this power:
+- `green_heron` (WETLAND) - `{count: 1, fromType: "WILD", toType: "ANY"}`
+
+This trades 1 food of any type for 1 food of any other type from the supply.
+
+### DiscardEggsChoice Field Name
+The `DiscardEggsChoice` type uses `sources` field (not `eggs` or `placements`). It's a Record<BirdInstanceId, number> mapping bird IDs to egg counts.
+
+### DiscardFoodChoice Field Name
+The `DiscardFoodChoice` type uses `food` field with `FoodByType` structure.

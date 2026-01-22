@@ -220,16 +220,16 @@ Create scenario tests for tuck-related brown power handlers.
 
 ---
 
-### [ ] Task 13: Brown Power Scenarios - Discard-for-Reward Powers
+### [x] Task 13: Brown Power Scenarios - Discard-for-Reward Powers
 
 **File:** `src/engine/__integration__/scenarios/brownPowers/discardHandlers.test.ts`
 
 Create scenario tests for discard-based brown power handlers.
 
 **Scope:**
-- `discardEggToGainFood`: Test egg-to-food conversion
-- `discardEggToDrawCards`: Test egg-to-cards conversion
-- `tradeFoodType`: Test food type exchange
+- `discardEggToGainFood`: Test egg-to-food conversion ✓
+- `discardEggToDrawCards`: Test egg-to-cards conversion ✓
+- `tradeFoodType`: Test food type exchange ✓
 
 **Dependencies:** Task 4 (Assertion Helpers)
 

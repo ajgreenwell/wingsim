@@ -475,3 +475,38 @@ Most BOWL birds have powers (e.g., `chipping_sparrow` has `layEggsOnBird`), so u
 
 ### Song Sparrow Has a Power
 Despite being commonly used as a "simple bird", `song_sparrow` has the `tuckAndDraw` power. Use `hooded_warbler` or `blue_winged_warbler` instead for power-free BOWL birds.
+
+## Task 16: Brown Power - Power Repetition Handlers
+
+### FOREST Base Reward Food Selection Constraint
+When `buildLimitedAvailableDice(feeder, 1)` is called for each food selection, only the **first die** in the current feeder array is offered. This means:
+1. First selection: only die at index 0 is available
+2. After taking that die, the second selection only offers the new index 0 (previously index 1)
+
+If a script tries to select a die that isn't at index 0 in the current feeder state, validation fails and the engine reprompts. This consumes extra scripted choices and causes `ScriptMismatchError`. Always select the first available die type, not a specific die from later in the array.
+
+### Repeat Power Handler Birds
+- `repeatBrownPowerInHabitat`: Gray Catbird (all habitats), Northern Mockingbird (all habitats) - both WHEN_ACTIVATED
+- `repeatPredatorPowerInHabitat`: Hooded Merganser (WETLAND) - WHEN_ACTIVATED
+
+### Repeat Power Eligibility
+`repeatBrownPowerInHabitat` only considers other birds in the same habitat with:
+1. Non-null `power` field
+2. `trigger === "WHEN_ACTIVATED"` (brown powers only)
+
+Birds without powers or with WHEN_PLAYED/ONCE_BETWEEN_TURNS triggers are not eligible for repeat.
+
+### PREDATOR_POWER_RESOLVED Event Structure
+When testing predator repeat powers, the event includes `predatorType` field:
+- `"DICE_ROLL"` for `rollDiceAndCacheIfMatch` handlers
+- `"WINGSPAN_CHECK"` for `lookAtCardAndTuckIfWingspanUnder` handlers
+
+### playAdditionalBirdInHabitat is WHEN_PLAYED Only
+All birds with `playAdditionalBirdInHabitat` handler use WHEN_PLAYED trigger:
+- `downy_woodpecker`, `eastern_bluebird`, `great_blue_heron`, `great_egret`, `house_wren`, etc.
+
+Since WHEN_PLAYED powers are not auto-triggered by GameEngine, these cannot be tested via scenario tests. Task 17's scope should be adjusted accordingly.
+
+### moveToAnotherHabitatIfRightmost Birds
+These are WHEN_ACTIVATED and testable:
+- `bewicks_wren`, `blue_grosbeak`, `chimney_swift`, `common_nighthawk`, `lincolns_sparrow`, `song_sparrow`, `white_crowned_sparrow`, `yellow_breasted_chat`

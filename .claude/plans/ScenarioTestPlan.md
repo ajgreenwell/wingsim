@@ -271,16 +271,24 @@ Create scenario tests for powers that affect multiple players.
 
 ---
 
-### [ ] Task 16: Brown Power Scenarios - Power Repetition Powers
+### [x] Task 16: Brown Power Scenarios - Power Repetition Powers
 
 **File:** `src/engine/__integration__/scenarios/brownPowers/repeatPowerHandlers.test.ts`
 
 Create scenario tests for power repetition handlers.
 
 **Scope:**
-- `repeatBrownPowerInHabitat`: Test repeating another bird's brown power
-- `repeatPredatorPowerInHabitat`: Test repeating a predator power
-- Test choosing which bird's power to repeat
+- `repeatBrownPowerInHabitat`: Test repeating another bird's brown power ✓
+  - Gray Catbird and Northern Mockingbird (both WHEN_ACTIVATED)
+  - Test choosing which bird's power to repeat ✓
+  - Test decline and skip (no eligible birds) ✓
+  - Test only brown powers visible (not white/pink) ✓
+- `repeatPredatorPowerInHabitat`: Test repeating a predator power ✓
+  - Hooded Merganser (WETLAND, WHEN_ACTIVATED)
+  - Test dice roll predator (Anhinga) ✓
+  - Test wingspan check predator (Golden Eagle) ✓
+  - Test decline and skip (no predator birds) ✓
+  - Test choosing from multiple predators ✓
 
 **Dependencies:** Task 4 (Assertion Helpers)
 

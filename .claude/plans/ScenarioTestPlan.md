@@ -202,18 +202,19 @@ Create scenario tests for card-drawing brown power handlers.
 
 ---
 
-### [ ] Task 12: Brown Power Scenarios - Tuck Powers
+### [x] Task 12: Brown Power Scenarios - Tuck Powers
 
 **File:** `src/engine/__integration__/scenarios/brownPowers/tuckHandlers.test.ts`
 
 Create scenario tests for tuck-related brown power handlers.
 
 **Scope:**
-- `tuckAndDraw`: Test tuck from hand, draw from deck
-- `tuckFromHandAndLay`: Test tuck from hand, lay eggs
-- `tuckAndGainFood`: Test tuck from hand, gain specific food
-- `tuckAndGainFoodOfChoice`: Test tuck from hand, choose food type
-- `discardFoodToTuckFromDeck`: Test food payment for deck tucks
+- `tuckAndDraw`: Test tuck from hand, draw from deck ✓
+- `tuckFromHandAndLay`: Test tuck from hand, lay eggs (THIS_BIRD and ANY_BIRD variants) ✓
+- `tuckAndGainFood`: Test tuck from hand, gain specific food ✓
+- `tuckAndGainFoodOfChoice`: Test tuck from hand, choose food type ✓
+- `discardFoodToTuckFromDeck`: Test food payment for deck tucks ✓
+- Added `handlerWasSkipped()` assertion for testing resource-unavailable skips
 
 **Dependencies:** Task 4 (Assertion Helpers)
 

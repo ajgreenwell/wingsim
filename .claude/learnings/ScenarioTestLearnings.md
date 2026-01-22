@@ -326,3 +326,30 @@ The `selectCards` choice (used in delayed discard) has:
 - `cards: BirdCardId[]` - array of card IDs to discard
 
 This differs from `drawCards` choice which has `trayCards` and `numDeckCards` fields.
+
+## Task 12: Brown Power - Tuck Handlers
+
+### Tuck Handler Types
+Five tuck-related handlers exist:
+1. `tuckAndDraw` - Tuck from hand, draw cards (e.g., American Coot, Yellow-Rumped Warbler)
+2. `tuckFromHandAndLay` - Tuck from hand, lay eggs (e.g., Brewer's Blackbird, White-Throated Swift)
+3. `tuckAndGainFood` - Tuck from hand, gain specific food from supply (e.g., Cedar Waxwing for FRUIT, Dark-Eyed Junco for SEED)
+4. `tuckAndGainFoodOfChoice` - Tuck from hand, choose food type from options (e.g., Pygmy Nuthatch for INVERTEBRATE or SEED)
+5. `discardFoodToTuckFromDeck` - Pay food to tuck from deck (e.g., American White Pelican for FISH, Canada Goose for SEED)
+
+### handlerWasSkipped Assertion
+When a power is skipped due to resource unavailability (e.g., empty hand for tuck powers, no required food), the handler emits an `ACTIVATE_POWER` effect with `activated: false` and `skipReason: "RESOURCE_UNAVAILABLE"`. The new `handlerWasSkipped()` assertion checks for this specific pattern. Note that `handlerWasNotInvoked()` now only checks for `activated === true` effects, so it correctly returns true when a power was skipped.
+
+### tuckFromHandAndLay Always Prompts for Egg Placement
+Even with `eggTarget: "THIS_BIRD"`, the handler prompts the player with a `placeEggs` choice. The prompt limits eligible birds to just the power's bird, but the player still must respond with the `placeEggs` choice.
+
+### Tuck Powers Check Hand BEFORE Base Action Completes
+Tuck power handlers check `view.hand.length === 0` before the activation prompt. However, by the time a brown power runs, the base action has already completed. For DRAW_CARDS in WETLAND, the player will have drawn cards into their hand. To test "skips when hand empty", use a habitat action that doesn't add cards to hand:
+- FOREST with GAIN_FOOD action - Yellow-Rumped Warbler has `tuckAndDraw` in FOREST
+- GRASSLAND with LAY_EGGS action - Brewer's Blackbird has `tuckFromHandAndLay` in GRASSLAND
+
+### discardFoodToTuckFromDeck Skips on Missing Food
+Unlike other tuck handlers that check for empty hand, `discardFoodToTuckFromDeck` checks for the required food type. If the player has 0 of the required food (e.g., 0 FISH for American White Pelican), the power is skipped with `RESOURCE_UNAVAILABLE`.
+
+### placeEggs vs eggs Field Name
+The `PlaceEggsChoice` type uses `placements` field, not `eggs`. Using the wrong field name causes TypeScript errors.

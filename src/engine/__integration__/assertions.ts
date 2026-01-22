@@ -60,17 +60,41 @@ export function handlerInvokedTimes(
 }
 
 /**
- * Assert that a handler was NOT invoked during the scenario.
+ * Assert that a handler was NOT invoked (with activated=true) during the scenario.
+ * Note: A handler that was skipped (activated=false) is NOT considered "invoked".
  */
 export function handlerWasNotInvoked(handlerId: string): ScenarioAssertion {
   return (ctx: ScenarioContext) => {
     const activations = ctx.effects.filter(
       (e): e is ActivatePowerEffect =>
-        e.type === "ACTIVATE_POWER" && e.handlerId === handlerId
+        e.type === "ACTIVATE_POWER" &&
+        e.handlerId === handlerId &&
+        e.activated === true
     );
     if (activations.length > 0) {
       throw new Error(
         `Expected handler "${handlerId}" to NOT be invoked, but it was invoked ${activations.length} time(s)`
+      );
+    }
+  };
+}
+
+/**
+ * Assert that a handler was skipped due to resource unavailability.
+ * Checks for ACTIVATE_POWER effects with activated=false and skipReason="RESOURCE_UNAVAILABLE".
+ */
+export function handlerWasSkipped(handlerId: string): ScenarioAssertion {
+  return (ctx: ScenarioContext) => {
+    const skips = ctx.effects.filter(
+      (e): e is ActivatePowerEffect =>
+        e.type === "ACTIVATE_POWER" &&
+        e.handlerId === handlerId &&
+        e.activated === false &&
+        e.skipReason === "RESOURCE_UNAVAILABLE"
+    );
+    if (skips.length === 0) {
+      throw new Error(
+        `Expected handler "${handlerId}" to be skipped due to resource unavailability, but it was not`
       );
     }
   };

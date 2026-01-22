@@ -1,4 +1,4 @@
-Study the ScenarioTestSpec.md, ScenarioTestPlan.md, and ScenarioTestLearnings.md files.
+Study the .claude/specs/ScenarioTestSpec.md, .claude/plans/ScenarioTestPlan.md, and .claude/learnings/ScenarioTestLearnings.md files.
 
 Pick the SINGLE most important, open task to complete from the plan, and start by researching the codebase until you have all the context you need to complete that task accurately. 
 

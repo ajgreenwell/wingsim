@@ -1,4 +1,4 @@
-Study the MonteCarloSimulatorSpec.md, MonteCarloSimulatorPlan.md, and MonteCarloSimulatorLearnings.md files.
+Study the .claude/specs/MonteCarloSimulatorSpec.md, .claude/plans/MonteCarloSimulatorPlan.md, and .claude/learnings/MonteCarloSimulatorLearnings.md files.
 
 Pick the SINGLE most important, open task to complete from the plan, and start by researching the codebase until you have all the context you need to complete that task accurately. 
 

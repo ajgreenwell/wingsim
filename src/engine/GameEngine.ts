@@ -7,7 +7,9 @@ import {
   ActionProcessor,
   type TurnActionContext,
   type TurnActionExecutionContext,
+  type ActionProcessorOptions,
 } from "./ActionProcessor.js";
+import type { HandlerType } from "../sim/HandlerCoverageTracker.js";
 import { buildPlayerView } from "./ViewBuilder.js";
 import type { PlayerAgent } from "../agents/PlayerAgent.js";
 import { GameState, DeferredContinuationEntry } from "./GameState.js";
@@ -77,6 +79,11 @@ export interface GameEngineConfig {
   agents: PlayerAgent[];
   seed: number;
   registry: DataRegistry;
+  /**
+   * Optional callback invoked when a handler is successfully executed.
+   * Used by the Simulator for coverage tracking.
+   */
+  onHandlerInvoked?: (handlerId: string, type: HandlerType) => void;
 }
 
 /**
@@ -88,6 +95,11 @@ export interface GameEngineFromStateConfig {
   seed: number;
   registry: DataRegistry;
   gameState: GameState;
+  /**
+   * Optional callback invoked when a handler is successfully executed.
+   * Used by the Simulator for coverage tracking.
+   */
+  onHandlerInvoked?: (handlerId: string, type: HandlerType) => void;
 }
 
 /**
@@ -119,7 +131,9 @@ export class GameEngine {
     this.registry = config.registry;
     this.seed = config.seed;
     this.rng = new Rng(config.seed);
-    this.actionProcessor = new ActionProcessor();
+    this.actionProcessor = new ActionProcessor({
+      onHandlerInvoked: config.onHandlerInvoked,
+    });
     this.gameState = this.setupGame();
   }
 
@@ -138,7 +152,9 @@ export class GameEngine {
     engineRecord.registry = config.registry;
     engineRecord.seed = config.seed;
     engineRecord.rng = new Rng(config.seed);
-    engineRecord.actionProcessor = new ActionProcessor();
+    engineRecord.actionProcessor = new ActionProcessor({
+      onHandlerInvoked: config.onHandlerInvoked,
+    });
     engineRecord.gameState = config.gameState;
     engineRecord.promptCounter = 0;
     engineRecord.eventHistory = [];

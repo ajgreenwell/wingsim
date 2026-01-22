@@ -178,7 +178,7 @@ Update prompt generation so agents only see eligible options, eliminating the ne
 
 ---
 
-### [ ] 8. ActionProcessor/GameEngine Coverage Integration
+### [x] 8. ActionProcessor/GameEngine Coverage Integration
 
 **Files**: `src/engine/ActionProcessor.ts`, `src/engine/GameEngine.ts`
 

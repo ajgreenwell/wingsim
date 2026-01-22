@@ -33,6 +33,7 @@ import { isPromptRequest, isDeferredContinuation, isEventYield } from "../types/
 import type { TurnActionKind, OptionPrompt, OptionChoice } from "../types/prompts.js";
 import { validateChoice } from "./ChoiceValidators.js";
 import { AgentForfeitError } from "./errors.js";
+import type { HandlerType } from "../sim/HandlerCoverageTracker.js";
 import {
   // Power handlers
   gainFoodFromSupply,
@@ -114,11 +115,24 @@ export interface PinkPowerTrigger {
   triggeringEvent: PinkPowerTriggerEvent;
 }
 
+/**
+ * Options for configuring the ActionProcessor.
+ */
+export interface ActionProcessorOptions {
+  /**
+   * Optional callback invoked when a handler is successfully executed.
+   * Used by the Simulator for coverage tracking.
+   */
+  onHandlerInvoked?: (handlerId: string, type: HandlerType) => void;
+}
+
 export class ActionProcessor {
   private readonly handlers: PowerHandlerRegistry = new Map();
   private readonly turnActionHandlers: TurnActionHandlerRegistry = new Map();
+  private readonly onHandlerInvoked?: (handlerId: string, type: HandlerType) => void;
 
-  constructor() {
+  constructor(options?: ActionProcessorOptions) {
+    this.onHandlerInvoked = options?.onHandlerInvoked;
     // Register all power handlers
     this.handlers.set("gainFoodFromSupply", gainFoodFromSupply);
     this.handlers.set("cacheFoodFromSupply", cacheFoodFromSupply);
@@ -234,7 +248,30 @@ export class ActionProcessor {
 
     const handlerCtx = this.buildTurnActionHandlerContext(ctx, execCtx);
     const gen = handler(handlerCtx, { takeBonus });
-    return this.runGenerator(gen, ctx.playerId, execCtx);
+    const result = await this.runGenerator(gen, ctx.playerId, execCtx);
+
+    // Notify coverage tracker of successful handler invocation
+    // Turn action handler IDs are the action name in camelCase + "Handler"
+    const handlerId = this.getHandlerIdForAction(action);
+    if (this.onHandlerInvoked) {
+      this.onHandlerInvoked(handlerId, "turnAction");
+    }
+
+    return result;
+  }
+
+  /**
+   * Get the handler ID for a turn action.
+   * Maps action names to their corresponding handler IDs.
+   */
+  private getHandlerIdForAction(action: TurnActionKind): string {
+    const handlerMap: Record<TurnActionKind, string> = {
+      GAIN_FOOD: "gainFoodHandler",
+      LAY_EGGS: "layEggsHandler",
+      DRAW_CARDS: "drawCardsHandler",
+      PLAY_BIRD: "playBirdHandler",
+    };
+    return handlerMap[action];
   }
 
   /**
@@ -338,6 +375,12 @@ export class ActionProcessor {
       throw new Error(
         `No activate power effect found for power ${power.handlerId}`
       );
+    }
+
+    // Notify coverage tracker of successful handler invocation
+    // Only track if the power was actually activated (not skipped)
+    if (activateEffect.activated && this.onHandlerInvoked) {
+      this.onHandlerInvoked(power.handlerId, "power");
     }
 
     return {

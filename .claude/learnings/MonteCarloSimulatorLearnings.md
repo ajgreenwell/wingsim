@@ -126,3 +126,22 @@ With eligibility pre-filtering, the SmartRandomAgent can now:
 
 - The `generateReport()` method includes a progress bar, uncovered handler list (with type annotations), and top 10 most-invoked handlers.
 - Type annotations ("power" or "turnAction") help identify which category of handlers needs more coverage.
+
+## ActionProcessor/GameEngine Coverage Integration (Task 8)
+
+### Implementation Approach
+
+- **ActionProcessorOptions Interface**: Created a dedicated options interface to accept the callback, making the API clean and extensible for future options.
+- **Handler ID Mapping for Turn Actions**: Turn action handlers required a static mapping from `TurnActionKind` (e.g., `"GAIN_FOOD"`) to handler IDs (e.g., `"gainFoodHandler"`) because the handler registry uses `TurnActionKind` as keys, not handler ID strings.
+- **Power Handler Tracking**: Power handlers only trigger the callback when `activateEffect.activated` is true, avoiding false positives from skipped powers (e.g., when a player declines an optional power).
+
+### Integration Points
+
+- **GameEngine constructor**: Passes `onHandlerInvoked` callback from config to `ActionProcessor` constructor.
+- **GameEngine.fromState**: Also supports the callback for integration testing scenarios.
+- **HandlerType Import**: ActionProcessor imports `HandlerType` from `HandlerCoverageTracker` to ensure type consistency.
+
+### Testing Notes
+
+- Integration tests verify both turn action and power handler callbacks fire during actual gameplay.
+- Backwards compatibility test confirms engine works without callback (optional parameter).

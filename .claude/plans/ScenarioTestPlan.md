@@ -186,17 +186,17 @@ Create scenario tests for egg-laying brown power handlers.
 
 ---
 
-### [ ] Task 11: Brown Power Scenarios - Card Draw Powers
+### [x] Task 11: Brown Power Scenarios - Card Draw Powers
 
 **File:** `src/engine/__integration__/scenarios/brownPowers/drawCardHandlers.test.ts`
 
 Create scenario tests for card-drawing brown power handlers.
 
 **Scope:**
-- `drawCards`: Test simple card draw
-- `drawFaceUpCardsFromTray`: Test drawing from tray only
-- `drawCardsWithDelayedDiscard`: Test draw-now-discard-later mechanics
-- `drawBonusCardsAndKeep`: Test bonus card draw and selection
+- `drawCards`: Test simple card draw (Mallard - WHEN_ACTIVATED) ✓
+- `drawFaceUpCardsFromTray`: BLOCKED - All birds use WHEN_PLAYED trigger
+- `drawCardsWithDelayedDiscard`: Test draw-now-discard-later (Black Tern, Common Yellowthroat) ✓
+- `drawBonusCardsAndKeep`: BLOCKED - All birds use WHEN_PLAYED trigger
 
 **Dependencies:** Task 4 (Assertion Helpers)
 

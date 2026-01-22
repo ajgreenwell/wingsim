@@ -291,3 +291,38 @@ Since WHEN_PLAYED powers are not auto-triggered by GameEngine (see Task 8), thes
 
 ### Brown Power Chain Order
 Powers execute right-to-left in the habitat. With birds at columns 0, 1, 2, the column 1 power executes before column 0 (if column 2 has no power). The `getBirdsWithBrownPowers()` method returns bird IDs in right-to-left order.
+
+## Task 11: Brown Power - Card Draw Handlers
+
+### deckTopCards and birdTray Interaction
+When setting `deckTopCards` in a scenario config, you MUST also set `birdTray` explicitly. Otherwise, the tray auto-fills from the deck on initialization, consuming your stacked deck cards. This means if you specify `deckTopCards: ["a", "b", "c"]` without `birdTray`, the tray will contain `["a", "b", "c"]` and the deck will have none of those cards.
+
+### Card Draw Handlers by Trigger Type
+- `drawCards`: Mallard is the only WHEN_ACTIVATED bird (WETLAND, draws 1 card)
+- `drawFaceUpCardsFromTray`: ALL birds use WHEN_PLAYED (e.g., Brant) - BLOCKED for scenario tests
+- `drawCardsWithDelayedDiscard`: Multiple WHEN_ACTIVATED birds (Black Tern, Clark's Grebe, Common Yellowthroat, Forster's Tern, Pied-billed Grebe, Ruddy Duck, Red-breasted Merganser, Wood Duck)
+- `drawBonusCardsAndKeep`: ALL birds use WHEN_PLAYED (Atlantic Puffin, California Condor, etc.) - BLOCKED for scenario tests
+
+### drawCardsWithDelayedDiscard Mechanics
+This handler:
+1. Checks deck size BEFORE prompting (skips if empty)
+2. Draws cards immediately from deck only (not tray)
+3. Defers discard to end of turn using `deferToEndOfTurn()` wrapper
+4. The deferred discard reads live state, so the player discards from their updated hand
+
+The `selectCards` choice for the deferred discard must match the discard count (or fewer if hand is smaller).
+
+### Card Draw Birds for Testing
+Key WETLAND birds with WHEN_ACTIVATED card draw powers:
+- `mallard` - `drawCards`, draws 1 card (from deck or tray)
+- `black_tern` - `drawCardsWithDelayedDiscard`, draws 1, discards 1
+- `common_yellowthroat` - `drawCardsWithDelayedDiscard`, draws 2, discards 1
+- `clarks_grebe` - `drawCardsWithDelayedDiscard`, draws 1, discards 1
+- `forsters_tern` - `drawCardsWithDelayedDiscard`, draws 1, discards 1
+
+### selectCards Choice for Discard
+The `selectCards` choice (used in delayed discard) has:
+- `kind: "selectCards"`
+- `cards: BirdCardId[]` - array of card IDs to discard
+
+This differs from `drawCards` choice which has `trayCards` and `numDeckCards` fields.

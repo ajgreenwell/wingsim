@@ -46,6 +46,7 @@ import type {
   TurnActionPrompt,
   Resource,
 } from "../types/prompts.js";
+import type { GameObserver } from "./GameObserver.js";
 
 const HABITATS: Habitat[] = ["FOREST", "GRASSLAND", "WETLAND"];
 const HABITAT_SIZE = 5;
@@ -78,6 +79,17 @@ export interface GameEngineConfig {
 }
 
 /**
+ * Configuration for creating a GameEngine from a pre-built GameState.
+ * Used by the ScenarioRunner for integration testing.
+ */
+export interface GameEngineFromStateConfig {
+  agents: PlayerAgent[];
+  seed: number;
+  registry: DataRegistry;
+  gameState: GameState;
+}
+
+/**
  * The GameEngine is the authoritative owner of the game state.
  * It implements base-game rules, validates actions, and applies effects.
  */
@@ -96,6 +108,11 @@ export class GameEngine {
    */
   private readonly eventHistory: Event[] = [];
 
+  /**
+   * Registered observers that receive notifications about events and effects.
+   */
+  private readonly observers: GameObserver[] = [];
+
   constructor(config: GameEngineConfig) {
     this.agents = config.agents;
     this.registry = config.registry;
@@ -103,6 +120,30 @@ export class GameEngine {
     this.rng = new Rng(config.seed);
     this.actionProcessor = new ActionProcessor();
     this.gameState = this.setupGame();
+  }
+
+  /**
+   * Create a GameEngine from a pre-built GameState.
+   * Used by the ScenarioRunner for integration testing with controlled initial states.
+   */
+  static fromState(config: GameEngineFromStateConfig): GameEngine {
+    // Create an instance without calling setupGame()
+    // Use a record to bypass private field constraints
+    const engine = Object.create(GameEngine.prototype) as GameEngine;
+
+    // Use a record type to initialize private fields
+    const engineRecord = engine as unknown as Record<string, unknown>;
+    engineRecord.agents = config.agents;
+    engineRecord.registry = config.registry;
+    engineRecord.seed = config.seed;
+    engineRecord.rng = new Rng(config.seed);
+    engineRecord.actionProcessor = new ActionProcessor();
+    engineRecord.gameState = config.gameState;
+    engineRecord.promptCounter = 0;
+    engineRecord.eventHistory = [];
+    engineRecord.observers = [];
+
+    return engine;
   }
 
   getGameState(): GameState {
@@ -115,6 +156,41 @@ export class GameEngine {
    */
   getEventHistory(): readonly Event[] {
     return this.eventHistory;
+  }
+
+  /**
+   * Register an observer to receive event and effect notifications.
+   */
+  addObserver(observer: GameObserver): void {
+    this.observers.push(observer);
+  }
+
+  /**
+   * Remove a previously registered observer.
+   */
+  removeObserver(observer: GameObserver): void {
+    const index = this.observers.indexOf(observer);
+    if (index !== -1) {
+      this.observers.splice(index, 1);
+    }
+  }
+
+  /**
+   * Notify all observers of an event.
+   */
+  private notifyEventProcessing(event: Event): void {
+    for (const observer of this.observers) {
+      observer.onEventProcessing?.(event);
+    }
+  }
+
+  /**
+   * Notify all observers of an effect.
+   */
+  private notifyEffectApplied(effect: Effect): void {
+    for (const observer of this.observers) {
+      observer.onEffectApplied?.(effect);
+    }
   }
 
   /**
@@ -244,6 +320,25 @@ export class GameEngine {
       totalTurns: this.gameState.turn - 1,
       ...(forfeitedPlayers.length > 0 && { forfeitedPlayers }),
     };
+  }
+
+  /**
+   * Run a single turn for the active player.
+   * Used by the ScenarioRunner for controlled turn-by-turn execution.
+   *
+   * Unlike playGame(), this method:
+   * - Does NOT handle starting hand selection
+   * - Does NOT emit GAME_STARTED/GAME_ENDED events
+   * - Does NOT handle round transitions
+   *
+   * After the turn completes, activePlayerIndex is advanced to the next player.
+   * The caller is responsible for managing the game lifecycle.
+   */
+  async runSingleTurn(): Promise<void> {
+    await this.runTurn(this.gameState.activePlayerIndex);
+    // Advance to next player (round-robin)
+    this.gameState.activePlayerIndex =
+      (this.gameState.activePlayerIndex + 1) % this.gameState.players.length;
   }
 
   /**
@@ -533,7 +628,8 @@ export class GameEngine {
   private async processEvent(event: Event): Promise<void> {
     this.eventHistory.push(event);
 
-    // TODO: Notify observers of event
+    // Notify observers of event
+    this.notifyEventProcessing(event);
 
     if (event.type === "HABITAT_ACTIVATED") {
       // GameEngine owns the brown power loop for proper pink power interleaving
@@ -669,7 +765,8 @@ export class GameEngine {
    * require async execution to invoke other power handlers.
    */
   async applyEffect(effect: Effect): Promise<void> {
-    // TODO: Notify observers of effect application
+    // Notify observers of effect application
+    this.notifyEffectApplied(effect);
 
     switch (effect.type) {
       case "ACTIVATE_POWER":

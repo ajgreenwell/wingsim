@@ -61,3 +61,34 @@ The builder collects ALL cards that appear in:
 - Bonus deck top cards
 
 These are removed from the main decks to ensure no duplicates and deterministic state.
+
+## Task 3: ScenarioRunner Implementation
+
+### GameObserver Interface
+Created `src/engine/GameObserver.ts` with a simple interface:
+- `onEventProcessing?(event: Event): void` - called when an event is about to be processed
+- `onEffectApplied?(effect: Effect): void` - called when an effect is about to be applied
+
+Both methods are optional since observers may only care about one type.
+
+### GameEngine.fromState() Factory
+The `GameEngine.fromState()` static factory method creates an engine from a pre-built `GameState`. This uses `Object.create()` to bypass the constructor (which calls `setupGame()`) and then manually initializes all private fields via a `Record<string, unknown>` cast.
+
+### GameEngine.runSingleTurn()
+The `runSingleTurn()` method runs a single turn for the current active player and then advances `activePlayerIndex` to the next player (round-robin). This differs from the internal `runTurn()` which doesn't advance the player index.
+
+### Birdfeeder Dice Selection Limitation
+The `buildLimitedAvailableDice()` function in `ActionHandlers.ts` limits which dice are **offered** to the player based on array position, not just how many can be taken. For column 0 (empty FOREST), only 1 die is offered - the first die in the birdfeeder array. This affects scenario design: scripted choices must select from the offered dice, not from all dice in the feeder.
+
+### ScenarioRunner Architecture
+The `runScenario()` function:
+1. Creates a `DataRegistry` and `ScenarioBuilder`
+2. Builds the scenario to get `gameState` and `agents`
+3. Creates a `GameEngine` via `GameEngine.fromState()`
+4. Registers a `ScenarioObserver` to collect events/effects
+5. Runs the specified number of turns via `runSingleTurn()`
+6. Executes assertion callbacks with full `ScenarioContext`
+7. Optionally verifies all agent scripts were consumed
+
+### Validation Reprompt Behavior
+When the ActionProcessor's choice validation fails (e.g., selecting a die not in `availableDice`), it reprompts with the same prompt ID. The `ScriptedAgent` consumes a choice on each call to `chooseOption()`, so invalid choices in the script will exhaust it quickly. Ensure scripted choices only select from the dice/options that will actually be offered.

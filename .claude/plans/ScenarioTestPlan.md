@@ -45,7 +45,7 @@ Implement the `ScenarioBuilder` class that constructs a fully configured `GameSt
 
 ---
 
-### [ ] Task 3: Implement ScenarioRunner
+### [x] Task 3: Implement ScenarioRunner
 
 **File:** `src/engine/__integration__/ScenarioRunner.ts`
 

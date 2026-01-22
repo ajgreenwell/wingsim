@@ -63,7 +63,7 @@ Implement the `runScenario()` function that executes scenarios and provides hook
 
 ---
 
-### [ ] Task 4: Implement Assertion Helpers
+### [x] Task 4: Implement Assertion Helpers
 
 **File:** `src/engine/__integration__/assertions.ts`
 

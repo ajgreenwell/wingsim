@@ -92,3 +92,21 @@ The `runScenario()` function:
 
 ### Validation Reprompt Behavior
 When the ActionProcessor's choice validation fails (e.g., selecting a die not in `availableDice`), it reprompts with the same prompt ID. The `ScriptedAgent` consumes a choice on each call to `chooseOption()`, so invalid choices in the script will exhaust it quickly. Ensure scripted choices only select from the dice/options that will actually be offered.
+
+## Task 4: Assertion Helpers Implementation
+
+### Additional Assertions Beyond Spec
+Beyond the spec-required assertions, additional helpers were implemented for common use cases:
+- `handlerWasNotInvoked()` - negation of handlerWasInvoked
+- `playerHasTotalFood()` - check total food count across all types
+- `birdHasNoCachedFood()` - verify a bird has no cached food
+- `playerHasCardInHand()` - check for specific card in hand
+- `birdExistsOnBoard()` - verify bird placement
+- `totalBirdCount()` - count all birds across habitats
+- `eventWasNotEmitted()` - negation of eventWasEmitted
+- `eventEmittedTimes()` - count specific event occurrences
+- `playerBonusCardCount()` - count bonus cards
+- `custom()` - wrapper for inline custom assertions with nice error messages
+
+### Effect Filtering for Handler Assertions
+Handler assertions filter effects by checking `type === "ACTIVATE_POWER"` AND `activated === true`. The `activated` check is important because `ActivatePowerEffect` is also emitted when a player declines a power (with `activated: false`).

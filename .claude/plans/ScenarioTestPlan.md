@@ -118,7 +118,7 @@ Create scenario tests for the `layEggsHandler` turn action.
 
 ---
 
-### [ ] Task 7: Turn Action Scenarios - drawCardsHandler
+### [x] Task 7: Turn Action Scenarios - drawCardsHandler
 
 **File:** `src/engine/__integration__/scenarios/turnActions/drawCards.test.ts`
 

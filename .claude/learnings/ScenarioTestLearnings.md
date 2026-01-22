@@ -159,3 +159,33 @@ Per `player_board.json`, GRASSLAND base rewards by column:
 
 ### Prompt ID Numbering
 Prompt IDs start at `prompt_1` (not `prompt_0`) because `generatePromptId()` uses pre-increment `++this.promptCounter`. The first prompt (TurnActionPrompt from GameEngine.runTurn) gets `prompt_1`.
+
+## Task 7: drawCardsHandler Scenario Tests
+
+### WETLAND Base Rewards
+Per `player_board.json`, WETLAND base rewards by column:
+- Column 0: 1 card
+- Column 1: 1 card (has bonus slot)
+- Column 2: 2 cards
+- Column 3: 2 cards (has bonus slot)
+- Column 4: 3 cards
+- Column 5: 3 cards (has bonus slot)
+
+### WETLAND Bonus Cost
+The WETLAND bonus trades 1 egg for 1 extra card draw. Unlike FOREST (trade cards for food) or GRASSLAND (trade food for eggs), WETLAND requires eggs to activate the bonus. If no eggs are available on any bird, the bonus prompt is skipped.
+
+### DrawCardsChoice Structure
+The `DrawCardsChoice` has two fields:
+- `trayCards: BirdCardId[]` - IDs of cards to draw from the face-up tray
+- `numDeckCards: number` - count of blind draws from the deck
+
+Players can draw from both sources in a single choice, or across multiple choices within the same draw action.
+
+### Card Draw Iteration
+The `drawCardsHandler` loops while `remaining > 0`, issuing a `drawCards` prompt each iteration. The loop breaks if the player draws 0 cards in an iteration (e.g., empty tray and deck). This allows flexible scripting: draw all cards in one choice, or split across multiple choices.
+
+### WETLAND Brown Power Bird
+`american_coot` is a good WETLAND bird for testing brown power chains. It has the `tuckAndDraw` power (tuck 1 card from hand, draw 1 card), which tests both hand manipulation and draw mechanics.
+
+### Valid Bird Card IDs for Tray
+Always verify bird IDs exist before using them in `birdTray`. Some common birds that DO NOT exist: `house_sparrow`. Use `song_sparrow`, `chipping_sparrow`, or other verified IDs instead.

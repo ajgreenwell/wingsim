@@ -1,6 +1,6 @@
 Study the .claude/specs/MonteCarloSimulatorSpec.md, .claude/plans/MonteCarloSimulatorPlan.md, and .claude/learnings/MonteCarloSimulatorLearnings.md files.
 
-Pick the SINGLE most important, open task to complete from the plan, and start by researching the codebase until you have all the context you need to complete that task accurately. 
+Pick the SINGLE most important, open task to complete from the plan (not necessarily the first incomplete one), and start by researching the codebase until you have all the context you need to complete that task accurately. 
 
 Ultrathink on the best way to complete the task, adhering to the spec and the overarching goal of delivering a functioning Monte Carlo Simulator.
 

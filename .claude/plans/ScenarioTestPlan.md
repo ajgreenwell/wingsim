@@ -25,11 +25,11 @@ Implement the `ScriptedAgent` class that follows a predetermined script of choic
 
 ---
 
-### [ ] Task 2: Implement ScenarioBuilder
+### [x] Task 2: Implement ScenarioBuilder
 
 **File:** `src/engine/__integration__/ScenarioBuilder.ts`
 
-Implement the `ScenarioBuilder` class that constructs a fully configured `GameEngine` from a declarative scenario configuration.
+Implement the `ScenarioBuilder` class that constructs a fully configured `GameState` from a declarative scenario configuration.
 
 **Scope:**
 - Define configuration interfaces: `ScenarioPlayerConfig`, `ScenarioBoardConfig`, `ScenarioBirdPlacement`, `ScenarioTurn`, `ScenarioConfig`, `BuiltScenario`
@@ -37,10 +37,9 @@ Implement the `ScenarioBuilder` class that constructs a fully configured `GameEn
 - Implement turn block grouping: flatten turn blocks by player into per-player choice queues
 - Implement card removal logic: remove all dealt cards from decks (hands, boards, tray, deckTopCards)
 - Implement deck stacking: place `deckTopCards` and `bonusDeckTopCards` at top of respective decks
-- Implement birdfeeder setup with specific dice
-- Implement bird tray setup
-- Implement `GameEngine.fromState()` static factory method (add to GameEngine)
-- Add unit tests for builder configuration, card removal, and deck stacking
+- Implement birdfeeder setup with specific dice using duck-typed factory functions
+- Implement bird tray setup using duck-typed factory functions
+- Add unit tests for builder configuration, card removal, and deck stacking (24 tests)
 
 **Dependencies:** Task 1 (ScriptedAgent)
 

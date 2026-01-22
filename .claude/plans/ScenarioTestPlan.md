@@ -84,7 +84,7 @@ Implement reusable assertion factory functions for common scenario checks.
 
 ## Turn Action Handler Scenarios
 
-### [ ] Task 5: Turn Action Scenarios - gainFoodHandler
+### [x] Task 5: Turn Action Scenarios - gainFoodHandler
 
 **File:** `src/engine/__integration__/scenarios/turnActions/gainFood.test.ts`
 

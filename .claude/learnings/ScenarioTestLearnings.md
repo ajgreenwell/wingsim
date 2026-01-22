@@ -110,3 +110,26 @@ Beyond the spec-required assertions, additional helpers were implemented for com
 
 ### Effect Filtering for Handler Assertions
 Handler assertions filter effects by checking `type === "ACTIVATE_POWER"` AND `activated === true`. The `activated` check is important because `ActivatePowerEffect` is also emitted when a player declines a power (with `activated: false`).
+
+## Task 5: gainFoodHandler Scenario Tests
+
+### Habitat Bonus Availability
+The FOREST habitat bonus is only available at columns 1, 3, and 5 (see `player_board.json`). Column 0 has `null` for bonus. To test the bonus, place at least 1 bird in FOREST to reach column 1.
+
+### Birds Without Powers
+For testing basic mechanics without triggering brown powers, use birds with `power: null`:
+- `hooded_warbler` - FOREST only
+- `prothonotary_warbler` - FOREST, WETLAND
+- `blue_winged_warbler` - FOREST, GRASSLAND
+- `american_woodcock` - FOREST, GRASSLAND
+- `wild_turkey` - FOREST, GRASSLAND
+- `trumpeter_swan` - WETLAND only
+
+### Birdfeeder Reroll RNG
+The preset birdfeeder's `rerollAll()` uses the `rng` passed during creation in ScenarioBuilder. The RNG state is affected by earlier operations (shuffling decks, etc.), so the actual dice after a reroll with `seed: 12345` are `[FISH, RODENT, RODENT, RODENT, SEED_INVERTEBRATE]` in a minimal scenario.
+
+### REROLL_BIRDFEEDER is an Effect, Not an Event
+To check if a reroll happened, filter effects (`ctx.effects`) for `type === "REROLL_BIRDFEEDER"`, not events.
+
+### Food Selection Per Iteration
+The `gainFoodHandler` issues one `selectFoodFromFeeder` prompt per food to gain. With base reward 1 and bonus 1, there are 2 separate food selection prompts - each selects exactly 1 die.

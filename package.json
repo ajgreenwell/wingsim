@@ -11,6 +11,7 @@
     "dev": "yarn build && yarn start",
     "build": "tsc",
     "start": "node dist/index.js",
+    "sim": "node dist/sim/cli.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:scenario": "npx tsx scripts/test-scenario.ts",

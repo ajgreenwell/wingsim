@@ -184,3 +184,28 @@ With eligibility pre-filtering, the SmartRandomAgent can now:
 - Tests verify 2-5 player games all work correctly.
 - Replay capability verified by running same seed twice and comparing results.
 - All tests pass in ~50ms (games are fast with SmartRandomAgent).
+
+## CLI Entry Point Implementation (Task 10)
+
+### Explicit Seeds Behavior
+
+- When `--seeds` is provided, the number of games is automatically inferred from the number of seeds (ignores `--num-games`).
+- This follows the spec example: `yarn sim --seeds 111,222,333` runs exactly 3 games.
+- The seeds are validated during parsing, not in the Simulator (fail-fast for better UX).
+
+### SmartRandomAgent Side-Effect Import
+
+- The CLI imports SmartRandomAgent to ensure it's registered in AgentRegistry before any agent validation or simulation runs.
+- This is the same pattern used by Simulator.ts itself.
+
+### Output Format Decisions
+
+- Per-game scores are displayed in descending order (winner's score first) separated by dashes (e.g., `42-38` or `25-17-9-5-4` for 5 players).
+- Win distribution in summary is sorted alphabetically by player ID for consistent output across runs.
+- Coverage report uses the HandlerCoverageTracker's `generateReport()` method directly - no need to duplicate the formatting logic.
+
+### CLI Option Patterns
+
+- Used Commander.js (already a project dependency) for argument parsing.
+- Per-player agent options (`--player1` through `--player5`) default to `SmartRandomAgent` if not specified.
+- Invalid inputs (bad player count, unknown agent types, invalid seeds) produce clear error messages and exit with code 1.

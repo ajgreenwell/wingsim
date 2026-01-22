@@ -234,7 +234,7 @@ Update prompt generation so agents only see eligible options, eliminating the ne
 
 ---
 
-### [ ] 10. CLI Entry Point
+### [x] 10. CLI Entry Point
 
 **Files**: `src/sim/cli.ts`, `package.json`
 

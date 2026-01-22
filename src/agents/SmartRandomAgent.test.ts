@@ -14,6 +14,8 @@ import type {
   DiscardEggsPrompt,
   PlaceEggsPrompt,
   DiscardFoodPrompt,
+  DrawCardsPrompt,
+  TurnActionPrompt,
   PlayerView,
   PromptContext,
 } from "../types/prompts.js";
@@ -786,6 +788,265 @@ describe("SmartRandomAgent", () => {
         0
       );
       expect(totalDiscarded).toBe(2);
+    });
+  });
+
+  describe("drawCards", () => {
+    // Verifies agent draws random mix of tray and deck cards
+    it("returns valid mix of tray cards and deck cards up to remaining", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const trayCards = [
+        createMinimalBirdCard("tray_bird_1"),
+        createMinimalBirdCard("tray_bird_2"),
+        createMinimalBirdCard("tray_bird_3"),
+      ];
+
+      const prompt: DrawCardsPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "drawCards",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        remaining: 2,
+        trayCards,
+      };
+
+      const choice = await agent.chooseOption(prompt);
+
+      expect(choice.kind).toBe("drawCards");
+      const result = choice as { trayCards: string[]; numDeckCards: number };
+
+      // Total cards should equal remaining
+      expect(result.trayCards.length + result.numDeckCards).toBe(2);
+
+      // Tray cards should be from the prompt's tray
+      for (const cardId of result.trayCards) {
+        expect(trayCards.some((c) => c.id === cardId)).toBe(true);
+      }
+    });
+
+    // Verifies agent draws only from deck when tray is empty
+    it("draws only from deck when tray is empty", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const prompt: DrawCardsPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "drawCards",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        remaining: 3,
+        trayCards: [],
+      };
+
+      const choice = await agent.chooseOption(prompt);
+      const result = choice as { trayCards: string[]; numDeckCards: number };
+
+      expect(result.trayCards).toEqual([]);
+      expect(result.numDeckCards).toBe(3);
+    });
+
+    // Verifies agent may draw all from tray, all from deck, or mix
+    it("produces varied distributions across seeds", async () => {
+      const trayCards = [
+        createMinimalBirdCard("tray_1"),
+        createMinimalBirdCard("tray_2"),
+        createMinimalBirdCard("tray_3"),
+      ];
+
+      const prompt: DrawCardsPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "drawCards",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        remaining: 2,
+        trayCards,
+      };
+
+      const distributions = new Set<string>();
+
+      for (let seed = 0; seed < 30; seed++) {
+        const agent = new SmartRandomAgent("player1", seed);
+        const choice = await agent.chooseOption(prompt);
+        const result = choice as { trayCards: string[]; numDeckCards: number };
+        distributions.add(`tray:${result.trayCards.length},deck:${result.numDeckCards}`);
+      }
+
+      // With 30 seeds, we should see at least 2 different distributions
+      expect(distributions.size).toBeGreaterThanOrEqual(2);
+    });
+
+    // Verifies tray cards are unique (no duplicates when drawing multiple)
+    it("does not select duplicate tray cards", async () => {
+      const trayCards = [
+        createMinimalBirdCard("tray_1"),
+        createMinimalBirdCard("tray_2"),
+        createMinimalBirdCard("tray_3"),
+      ];
+
+      const prompt: DrawCardsPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "drawCards",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        remaining: 3,
+        trayCards,
+      };
+
+      for (let seed = 0; seed < 20; seed++) {
+        const agent = new SmartRandomAgent("player1", seed);
+        const choice = await agent.chooseOption(prompt);
+        const result = choice as { trayCards: string[]; numDeckCards: number };
+        const uniqueCards = new Set(result.trayCards);
+        expect(uniqueCards.size).toBe(result.trayCards.length);
+      }
+    });
+  });
+
+  describe("turnAction (chooseTurnAction)", () => {
+    // Verifies agent picks a valid action from eligible actions
+    it("returns a valid action from eligible actions", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const prompt: TurnActionPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "turnAction",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        eligibleActions: ["GAIN_FOOD", "LAY_EGGS", "DRAW_CARDS"],
+        rewardsByAction: {
+          GAIN_FOOD: { reward: { type: "FOOD", count: 1 } },
+          LAY_EGGS: { reward: { type: "EGGS", count: 2 } },
+          DRAW_CARDS: { reward: { type: "CARDS", count: 1 } },
+          PLAY_BIRD: { reward: { type: "FOOD", count: 0 } },
+        },
+      };
+
+      const choice = await agent.chooseTurnAction(prompt);
+
+      expect(choice.kind).toBe("turnAction");
+      expect(prompt.eligibleActions).toContain(choice.action);
+    });
+
+    // Verifies agent selects from limited eligible actions correctly
+    it("only selects from eligible actions when limited", async () => {
+      const prompt: TurnActionPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "turnAction",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        eligibleActions: ["GAIN_FOOD", "DRAW_CARDS"], // LAY_EGGS and PLAY_BIRD excluded
+        rewardsByAction: {
+          GAIN_FOOD: { reward: { type: "FOOD", count: 1 } },
+          DRAW_CARDS: { reward: { type: "CARDS", count: 1 } },
+          LAY_EGGS: { reward: { type: "EGGS", count: 2 } },
+          PLAY_BIRD: { reward: { type: "FOOD", count: 0 } },
+        },
+      };
+
+      // Run with multiple seeds to ensure we never pick ineligible actions
+      for (let seed = 0; seed < 30; seed++) {
+        const agent = new SmartRandomAgent("player1", seed);
+        const choice = await agent.chooseTurnAction(prompt);
+        expect(["GAIN_FOOD", "DRAW_CARDS"]).toContain(choice.action);
+        expect(choice.action).not.toBe("LAY_EGGS");
+        expect(choice.action).not.toBe("PLAY_BIRD");
+      }
+    });
+
+    // Verifies takeBonus is false when no bonus is available
+    it("returns takeBonus false when no bonus available", async () => {
+      const agent = new SmartRandomAgent("player1", 12345);
+
+      const prompt: TurnActionPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "turnAction",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        eligibleActions: ["GAIN_FOOD"],
+        rewardsByAction: {
+          GAIN_FOOD: { reward: { type: "FOOD", count: 1 } }, // No bonus
+          LAY_EGGS: { reward: { type: "EGGS", count: 2 } },
+          DRAW_CARDS: { reward: { type: "CARDS", count: 1 } },
+          PLAY_BIRD: { reward: { type: "FOOD", count: 0 } },
+        },
+      };
+
+      const choice = await agent.chooseTurnAction(prompt);
+
+      expect(choice.action).toBe("GAIN_FOOD");
+      expect(choice.takeBonus).toBe(false);
+    });
+
+    // Verifies takeBonus can be true or false when bonus is available
+    it("randomly decides takeBonus when bonus is available", async () => {
+      const prompt: TurnActionPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "turnAction",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        eligibleActions: ["GAIN_FOOD"],
+        rewardsByAction: {
+          GAIN_FOOD: {
+            reward: { type: "FOOD", count: 2 },
+            bonus: {
+              cost: { type: "CARDS", count: 1 },
+              reward: { type: "FOOD", count: 1 },
+            },
+          },
+          LAY_EGGS: { reward: { type: "EGGS", count: 2 } },
+          DRAW_CARDS: { reward: { type: "CARDS", count: 1 } },
+          PLAY_BIRD: { reward: { type: "FOOD", count: 0 } },
+        },
+      };
+
+      const results = { true: 0, false: 0 };
+
+      for (let seed = 0; seed < 50; seed++) {
+        const agent = new SmartRandomAgent("player1", seed);
+        const choice = await agent.chooseTurnAction(prompt);
+        results[choice.takeBonus ? "true" : "false"]++;
+      }
+
+      // Should see both true and false across seeds
+      expect(results.true).toBeGreaterThan(0);
+      expect(results.false).toBeGreaterThan(0);
+    });
+
+    // Verifies all eligible actions can be selected with varying seeds
+    it("selects varied actions across seeds", async () => {
+      const prompt: TurnActionPrompt = {
+        promptId: "test-1",
+        playerId: "player1",
+        kind: "turnAction",
+        view: createMinimalPlayerView("player1"),
+        context: createMinimalContext("player1"),
+        eligibleActions: ["GAIN_FOOD", "LAY_EGGS", "DRAW_CARDS", "PLAY_BIRD"],
+        rewardsByAction: {
+          GAIN_FOOD: { reward: { type: "FOOD", count: 1 } },
+          LAY_EGGS: { reward: { type: "EGGS", count: 2 } },
+          DRAW_CARDS: { reward: { type: "CARDS", count: 1 } },
+          PLAY_BIRD: { reward: { type: "FOOD", count: 0 } },
+        },
+      };
+
+      const selectedActions = new Set<string>();
+
+      for (let seed = 0; seed < 50; seed++) {
+        const agent = new SmartRandomAgent("player1", seed);
+        const choice = await agent.chooseTurnAction(prompt);
+        selectedActions.add(choice.action);
+      }
+
+      // With 50 seeds and 4 options, we should see at least 3 different actions
+      expect(selectedActions.size).toBeGreaterThanOrEqual(3);
     });
   });
 });

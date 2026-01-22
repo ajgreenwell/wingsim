@@ -108,7 +108,7 @@ Update prompt generation so agents only see eligible options, eliminating the ne
 
 ---
 
-### [ ] 5. SmartRandomAgent - Card & Turn Action Prompts
+### [x] 5. SmartRandomAgent - Card & Turn Action Prompts
 
 **File**: `src/agents/SmartRandomAgent.ts` (continued)
 

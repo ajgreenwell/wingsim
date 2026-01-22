@@ -72,3 +72,17 @@ With eligibility pre-filtering, the SmartRandomAgent can now:
 - When all dice show the same face, the agent randomly decides whether to reroll or take.
 - Empty feeder always returns "reroll".
 - SEED_INVERTEBRATE dice require `asFoodType` to be specified.
+
+## SmartRandomAgent Card & Turn Action Prompts (Task 5)
+
+### drawCards Handler
+
+- Agent randomly decides how many to draw from tray vs deck (0 to min(remaining, traySize)).
+- Uses `Rng.pickMany()` to select specific tray cards without duplicates.
+- Falls back to deck-only when tray is empty.
+
+### turnAction Handler
+
+- Simply picks from `eligibleActions` (pre-filtered by Task 2 work).
+- Bonus decision is random (50/50) when a bonus is available for the chosen action.
+- No affordability checking needed - the prompt guarantees all options are valid.

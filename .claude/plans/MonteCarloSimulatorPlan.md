@@ -268,31 +268,33 @@ Update prompt generation so agents only see eligible options, eliminating the ne
 
 ---
 
-### [ ] 11. Verification & Polish
+### [x] 11. Verification & Polish
 
 **Scope**:
 Run through the spec's verification checklist and fix any issues:
 
-1. [ ] `yarn sim` runs 10 games successfully with default settings
-2. [ ] `yarn sim -n 5 -p 3` runs 5 games with 3 players
-3. [ ] `yarn sim -s 12345` produces same results on repeated runs
-4. [ ] `yarn sim --seeds 111,222,333` runs exactly 3 games with those seeds
-5. [ ] `yarn sim --coverage` prints coverage report
-6. [ ] `yarn sim --list-agents` shows available agent types
-7. [ ] All 4 turn action handlers reach 100% coverage in 10-game run
-8. [ ] No validation errors from SmartRandomAgent choices
-9. [ ] Seeds are printed in output for replay capability
+1. [x] `yarn sim` runs 10 games successfully with default settings
+2. [x] `yarn sim -n 5 -p 3` runs 5 games with 3 players
+3. [x] `yarn sim -s 12345` produces same results on repeated runs
+4. [x] `yarn sim --seeds 111,222,333` runs exactly 3 games with those seeds
+5. [x] `yarn sim --coverage` prints coverage report
+6. [x] `yarn sim --list-agents` shows available agent types
+7. [x] All 4 turn action handlers reach 100% coverage in 10-game run
+8. [x] No validation errors from SmartRandomAgent choices
+9. [x] Seeds are printed in output for replay capability
 
 Additional polish:
-- Add error handling for edge cases
-- Ensure clean error messages for invalid inputs
-- Test with various player counts (2-5)
-- Verify determinism with seed replay
+- [x] Add error handling for edge cases
+- [x] Ensure clean error messages for invalid inputs
+- [x] Test with various player counts (2-5)
+- [x] Verify determinism with seed replay
 
 **Dependencies**: All previous tasks
 
 **Deliverables**:
 - All verification items passing
 - Any bug fixes discovered during verification
+
+**Verification completed**: All 9 checklist items pass. No bugs found during verification.
 
 ---

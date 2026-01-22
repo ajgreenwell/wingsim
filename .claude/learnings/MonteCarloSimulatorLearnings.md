@@ -209,3 +209,26 @@ With eligibility pre-filtering, the SmartRandomAgent can now:
 - Used Commander.js (already a project dependency) for argument parsing.
 - Per-player agent options (`--player1` through `--player5`) default to `SmartRandomAgent` if not specified.
 - Invalid inputs (bad player count, unknown agent types, invalid seeds) produce clear error messages and exit with code 1.
+
+## Verification & Polish (Task 11)
+
+### Test Results Summary
+
+All 9 verification checklist items passed without any code changes required:
+
+1. **Default runs**: 10 games complete successfully in ~26ms
+2. **Multi-player**: 3, 4, and 5 player games all work correctly
+3. **Determinism**: Same seed produces identical game results and derived seeds
+4. **Explicit seeds**: `--seeds` correctly overrides `--num-games`
+5. **Coverage**: Report shows handler invocation counts with progress bar
+6. **Agent listing**: Shows all registered agents with descriptions
+7. **Turn action coverage**: All 4 handlers invoked in every game
+8. **Validation**: 50+ games ran with no errors from SmartRandomAgent
+9. **Replay seeds**: Seeds printed in comma-separated format for easy copy-paste
+
+### Coverage Notes
+
+- 10-game run achieves ~31% power handler coverage (13/42 handlers)
+- 50-game run achieves ~64% power handler coverage (27/42 handlers)
+- Some pink power handlers (e.g., `whenOpponentPredatorSucceedsGainFood`) require specific game states that are rare with random play
+- All 4 turn action handlers achieve 100% coverage in every run

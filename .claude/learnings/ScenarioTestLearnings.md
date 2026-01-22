@@ -201,14 +201,12 @@ The `PlayerState.getEligibleBirdsToPlay()` method does NOT handle WILD food cost
 The GameEngine's `processEvent()` method handles `BIRD_PLAYED` events by triggering pink powers for OTHER players, but it does NOT automatically trigger WHEN_PLAYED powers for the bird itself. This is a missing feature in the current implementation. The handler mechanism exists (powers can be executed via `executeSinglePower`), but the GameEngine doesn't wire up WHEN_PLAYED power execution after bird placement.
 
 ### Egg Costs by Column
-Per `player_board.json`, the `playBirdCosts` array is `[1, 1, 2, 2, 3]`:
-- Column 0: 1 egg
-- Column 1: 1 egg
-- Column 2: 2 eggs
-- Column 3: 2 eggs
-- Column 4: 3 eggs
-
-This differs from standard Wingspan rules where columns 0-1 are free.
+Per `player_board.json`, the `playBirdCosts` array is `[0, 0, 1, 1, 2]` (aligned with standard Wingspan rules):
+- Column 0: 0 eggs (free)
+- Column 1: 0 eggs (free)
+- Column 2: 1 egg
+- Column 3: 1 egg
+- Column 4: 2 eggs
 
 ### PlayBirdChoice Structure
 The `PlayBirdChoice` has four key fields:

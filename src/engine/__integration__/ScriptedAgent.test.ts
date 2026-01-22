@@ -79,6 +79,7 @@ describe("ScriptedAgent", () => {
         kind: "turnAction",
         view: createMinimalView(playerId),
         context: createMinimalContext(playerId),
+        eligibleActions: ["PLAY_BIRD", "GAIN_FOOD", "LAY_EGGS", "DRAW_CARDS"],
         rewardsByAction: {
           PLAY_BIRD: { reward: { type: "CARDS", count: 0 } },
           GAIN_FOOD: { reward: { type: "FOOD", count: 1 } },
@@ -142,6 +143,7 @@ describe("ScriptedAgent", () => {
         kind: "turnAction",
         view: createMinimalView(playerId),
         context: createMinimalContext(playerId),
+        eligibleActions: ["PLAY_BIRD", "GAIN_FOOD", "LAY_EGGS", "DRAW_CARDS"],
         rewardsByAction: {
           PLAY_BIRD: { reward: { type: "CARDS", count: 0 } },
           GAIN_FOOD: { reward: { type: "FOOD", count: 1 } },
@@ -218,6 +220,7 @@ describe("ScriptedAgent", () => {
         kind: "turnAction",
         view: createMinimalView(playerId),
         context: createMinimalContext(playerId),
+        eligibleActions: ["PLAY_BIRD", "GAIN_FOOD", "LAY_EGGS", "DRAW_CARDS"],
         rewardsByAction: {
           PLAY_BIRD: { reward: { type: "CARDS", count: 0 } },
           GAIN_FOOD: { reward: { type: "FOOD", count: 1 } },
@@ -250,6 +253,7 @@ describe("ScriptedAgent", () => {
         kind: "turnAction",
         view: createMinimalView(playerId),
         context: createMinimalContext(playerId),
+        eligibleActions: ["PLAY_BIRD", "GAIN_FOOD", "LAY_EGGS", "DRAW_CARDS"],
         rewardsByAction: {
           PLAY_BIRD: { reward: { type: "CARDS", count: 0 } },
           GAIN_FOOD: { reward: { type: "FOOD", count: 1 } },
@@ -291,6 +295,7 @@ describe("ScriptedAgent", () => {
         kind: "turnAction",
         view: createMinimalView(playerId),
         context: createMinimalContext(playerId),
+        eligibleActions: ["PLAY_BIRD", "GAIN_FOOD", "LAY_EGGS", "DRAW_CARDS"],
         rewardsByAction: {
           PLAY_BIRD: { reward: { type: "CARDS", count: 0 } },
           GAIN_FOOD: { reward: { type: "FOOD", count: 1 } },
@@ -317,6 +322,7 @@ describe("ScriptedAgent", () => {
         kind: "turnAction",
         view: createMinimalView(playerId),
         context: createMinimalContext(playerId),
+        eligibleActions: ["PLAY_BIRD", "GAIN_FOOD", "LAY_EGGS", "DRAW_CARDS"],
         rewardsByAction: {
           PLAY_BIRD: { reward: { type: "CARDS", count: 0 } },
           GAIN_FOOD: { reward: { type: "FOOD", count: 1 } },
@@ -348,6 +354,7 @@ describe("ScriptedAgent", () => {
         kind: "turnAction",
         view: createMinimalView(playerId),
         context: createMinimalContext(playerId),
+        eligibleActions: ["PLAY_BIRD", "GAIN_FOOD", "LAY_EGGS", "DRAW_CARDS"],
         rewardsByAction: {
           PLAY_BIRD: { reward: { type: "CARDS", count: 0 } },
           GAIN_FOOD: { reward: { type: "FOOD", count: 1 } },
@@ -363,6 +370,7 @@ describe("ScriptedAgent", () => {
           kind: "turnAction",
           view: createMinimalView(playerId),
           context: createMinimalContext(playerId),
+          eligibleActions: ["PLAY_BIRD", "GAIN_FOOD", "LAY_EGGS", "DRAW_CARDS"],
           rewardsByAction: {
             PLAY_BIRD: { reward: { type: "CARDS", count: 0 } },
             GAIN_FOOD: { reward: { type: "FOOD", count: 1 } },
@@ -399,6 +407,7 @@ describe("ScriptedAgent", () => {
         kind: "turnAction",
         view: createMinimalView(playerId),
         context: createMinimalContext(playerId),
+        eligibleActions: ["PLAY_BIRD", "GAIN_FOOD", "LAY_EGGS", "DRAW_CARDS"],
         rewardsByAction: {
           PLAY_BIRD: { reward: { type: "CARDS", count: 0 } },
           GAIN_FOOD: { reward: { type: "FOOD", count: 1 } },
@@ -465,6 +474,7 @@ describe("ScriptedAgent", () => {
         kind: "turnAction",
         view: createMinimalView(playerId),
         context: createMinimalContext(playerId),
+        eligibleActions: ["PLAY_BIRD", "GAIN_FOOD", "LAY_EGGS", "DRAW_CARDS"],
         rewardsByAction: {
           PLAY_BIRD: { reward: { type: "CARDS", count: 0 } },
           GAIN_FOOD: { reward: { type: "FOOD", count: 1 } },
@@ -530,6 +540,7 @@ describe("ScriptedAgent", () => {
         kind: "turnAction",
         view: createMinimalView(playerId),
         context: createMinimalContext(playerId),
+        eligibleActions: ["PLAY_BIRD", "GAIN_FOOD", "LAY_EGGS", "DRAW_CARDS"],
         rewardsByAction: {
           PLAY_BIRD: { reward: { type: "CARDS", count: 0 } },
           GAIN_FOOD: { reward: { type: "FOOD", count: 1 } },

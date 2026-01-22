@@ -10,9 +10,13 @@ import type {
   BonusCard,
   FoodByType,
   FoodType,
+  Habitat,
   PlayerId,
+  PlayerBoardConfig,
 } from "../types/core.js";
 import { PlayerBoard } from "./PlayerBoard.js";
+
+const HABITATS: Habitat[] = ["FOREST", "GRASSLAND", "WETLAND"];
 
 /**
  * Configuration for creating a PlayerState instance.
@@ -78,46 +82,110 @@ export class PlayerState {
   /**
    * Get birds from hand that the player can afford to play.
    * Checks food costs based on the card's foodCostMode.
+   *
+   * NOTE: This method only checks food affordability, not habitat availability
+   * or egg costs. For full eligibility checking that includes those constraints,
+   * use getFullyEligibleBirdsToPlay() instead.
    */
   getEligibleBirdsToPlay(): BirdCard[] {
+    return this.hand.filter((card) => this.canAffordBirdFood(card));
+  }
+
+  /**
+   * Get birds from hand that the player can fully afford to play, considering:
+   * - Food cost affordability
+   * - At least one habitat with available space
+   * - Egg cost for placing in at least one available habitat
+   */
+  getFullyEligibleBirdsToPlay(boardConfig: PlayerBoardConfig): BirdCard[] {
+    // Get total eggs available on board
+    const eggsOnBirds = this.board.getEggsOnBirds();
+    const totalEggsOnBoard = Object.values(eggsOnBirds).reduce(
+      (sum, count) => sum + count,
+      0
+    );
+
+    // Get available habitats (those with at least one empty slot)
+    const availableHabitats: Array<{ habitat: Habitat; eggCost: number }> = [];
+    for (const habitat of HABITATS) {
+      const leftmostEmpty = this.board.getLeftmostEmptyColumn(habitat);
+      if (leftmostEmpty < 5) {
+        availableHabitats.push({
+          habitat,
+          eggCost: boardConfig.playBirdCosts[leftmostEmpty],
+        });
+      }
+    }
+
+    // No habitats available means no birds can be played
+    if (availableHabitats.length === 0) {
+      return [];
+    }
+
     return this.hand.filter((card) => {
-      // Check if player can afford the food cost
-      if (card.foodCostMode === "NONE") {
-        return true;
+      // Check food affordability
+      if (!this.canAffordBirdFood(card)) {
+        return false;
       }
 
-      if (card.foodCostMode === "AND") {
-        // Must have all food types
-        for (const [foodType, required] of Object.entries(card.foodCost)) {
-          if (required && required > 0) {
-            const available = this.food[foodType as FoodType] ?? 0;
-            if (available < required) {
-              return false;
-            }
-          }
+      // Check if bird can be placed in at least one available habitat
+      // that the player can afford the egg cost for
+      for (const { habitat, eggCost } of availableHabitats) {
+        if (card.habitats.includes(habitat) && totalEggsOnBoard >= eggCost) {
+          return true;
         }
-        return true;
       }
-
-      if (card.foodCostMode === "OR") {
-        // Must have at least one of the required food types
-        const totalRequired = Object.values(card.foodCost).reduce(
-          (sum, v) => sum + (v ?? 0),
-          0
-        );
-        if (totalRequired === 0) return true;
-
-        let totalAvailable = 0;
-        for (const [foodType, required] of Object.entries(card.foodCost)) {
-          if (required && required > 0) {
-            totalAvailable += this.food[foodType as FoodType] ?? 0;
-          }
-        }
-        return totalAvailable >= 1;
-      }
-
       return false;
     });
+  }
+
+  /**
+   * Check if the player can play any bird from their hand.
+   * This considers food costs, habitat availability, and egg costs.
+   */
+  canPlayAnyBird(boardConfig: PlayerBoardConfig): boolean {
+    return this.getFullyEligibleBirdsToPlay(boardConfig).length > 0;
+  }
+
+  /**
+   * Check if the player can afford a bird's food cost.
+   */
+  private canAffordBirdFood(card: BirdCard): boolean {
+    if (card.foodCostMode === "NONE") {
+      return true;
+    }
+
+    if (card.foodCostMode === "AND") {
+      // Must have all food types
+      for (const [foodType, required] of Object.entries(card.foodCost)) {
+        if (required && required > 0) {
+          const available = this.food[foodType as FoodType] ?? 0;
+          if (available < required) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    if (card.foodCostMode === "OR") {
+      // Must have at least one of the required food types
+      const totalRequired = Object.values(card.foodCost).reduce(
+        (sum, v) => sum + (v ?? 0),
+        0
+      );
+      if (totalRequired === 0) return true;
+
+      let totalAvailable = 0;
+      for (const [foodType, required] of Object.entries(card.foodCost)) {
+        if (required && required > 0) {
+          totalAvailable += this.food[foodType as FoodType] ?? 0;
+        }
+      }
+      return totalAvailable >= 1;
+    }
+
+    return false;
   }
 
   /**

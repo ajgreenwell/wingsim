@@ -43,6 +43,7 @@ import type {
   PromptId,
   RewardsByAction,
   StartingHandPrompt,
+  TurnActionKind,
   TurnActionPrompt,
   Resource,
 } from "../types/prompts.js";
@@ -534,9 +535,10 @@ export class GameEngine {
       turnNumber: this.gameState.turn,
     });
 
-    // Build turn action prompt
+    // Build turn action prompt with eligibility filtering
     const view = buildPlayerView(this.gameState, player.id);
-    const rewardsByAction = this.buildRewardsByAction(player);
+    const boardConfig = this.registry.getPlayerBoard();
+    const { eligibleActions, rewardsByAction } = this.buildEligibleActionsAndRewards(player, boardConfig);
 
     const prompt: TurnActionPrompt = {
       promptId: this.generatePromptId(),
@@ -544,6 +546,7 @@ export class GameEngine {
       kind: "turnAction",
       view,
       context: this.createPromptContext(),
+      eligibleActions,
       rewardsByAction,
     };
 
@@ -1521,43 +1524,65 @@ export class GameEngine {
     };
   }
 
-  private buildRewardsByAction(player: PlayerState): RewardsByAction {
-    const board = this.registry.getPlayerBoard();
+  /**
+   * Build eligible actions and rewards for a turn action prompt.
+   * Filters actions based on player's ability to take them:
+   * - PLAY_BIRD: Only if player can play at least one bird (food + egg + habitat)
+   * - LAY_EGGS: Only if player has at least one bird on their board
+   * - GAIN_FOOD and DRAW_CARDS: Always eligible
+   */
+  private buildEligibleActionsAndRewards(
+    player: PlayerState,
+    boardConfig: import("../types/core.js").PlayerBoardConfig
+  ): { eligibleActions: TurnActionKind[]; rewardsByAction: RewardsByAction } {
+    const eligibleActions: TurnActionKind[] = [];
+    const rewardsByAction: Partial<RewardsByAction> = {};
 
     const forestColumn = player.board.getLeftmostEmptyColumn("FOREST");
     const grasslandColumn = player.board.getLeftmostEmptyColumn("GRASSLAND");
     const wetlandColumn = player.board.getLeftmostEmptyColumn("WETLAND");
 
-    const forestBonus = board.forest.bonusRewards[forestColumn];
-    const grasslandBonus = board.grassland.bonusRewards[grasslandColumn];
-    const wetlandBonus = board.wetland.bonusRewards[wetlandColumn];
+    const forestBonus = boardConfig.forest.bonusRewards[forestColumn];
+    const grasslandBonus = boardConfig.grassland.bonusRewards[grasslandColumn];
+    const wetlandBonus = boardConfig.wetland.bonusRewards[wetlandColumn];
 
-    return {
-      PLAY_BIRD: {
+    // PLAY_BIRD: Only eligible if player can play at least one bird
+    if (player.canPlayAnyBird(boardConfig)) {
+      eligibleActions.push("PLAY_BIRD");
+      rewardsByAction.PLAY_BIRD = {
         reward: { type: "CARDS" as Resource, count: 0 },
+      };
+    }
+
+    // GAIN_FOOD: Always eligible (can take food action even if feeder empty - triggers reroll)
+    eligibleActions.push("GAIN_FOOD");
+    rewardsByAction.GAIN_FOOD = {
+      reward: {
+        type: "FOOD" as Resource,
+        count: boardConfig.forest.baseRewards[forestColumn],
       },
-      GAIN_FOOD: {
-        reward: {
-          type: "FOOD" as Resource,
-          count: board.forest.baseRewards[forestColumn],
-        },
-        ...(forestBonus && {
-          bonus: {
-            cost: {
-              type: forestBonus.tradeFrom as Resource,
-              count: forestBonus.tradeFromAmount,
-            },
-            reward: {
-              type: forestBonus.tradeTo as Resource,
-              count: forestBonus.tradeToAmount,
-            },
+      ...(forestBonus && {
+        bonus: {
+          cost: {
+            type: forestBonus.tradeFrom as Resource,
+            count: forestBonus.tradeFromAmount,
           },
-        }),
-      },
-      LAY_EGGS: {
+          reward: {
+            type: forestBonus.tradeTo as Resource,
+            count: forestBonus.tradeToAmount,
+          },
+        },
+      }),
+    };
+
+    // LAY_EGGS: Only eligible if player has at least one bird on their board
+    const hasBirdsOnBoard = player.board.getAllBirds().length > 0;
+    if (hasBirdsOnBoard) {
+      eligibleActions.push("LAY_EGGS");
+      rewardsByAction.LAY_EGGS = {
         reward: {
           type: "EGGS" as Resource,
-          count: board.grassland.baseRewards[grasslandColumn],
+          count: boardConfig.grassland.baseRewards[grasslandColumn],
         },
         ...(grasslandBonus && {
           bonus: {
@@ -1571,25 +1596,30 @@ export class GameEngine {
             },
           },
         }),
+      };
+    }
+
+    // DRAW_CARDS: Always eligible
+    eligibleActions.push("DRAW_CARDS");
+    rewardsByAction.DRAW_CARDS = {
+      reward: {
+        type: "CARDS" as Resource,
+        count: boardConfig.wetland.baseRewards[wetlandColumn],
       },
-      DRAW_CARDS: {
-        reward: {
-          type: "CARDS" as Resource,
-          count: board.wetland.baseRewards[wetlandColumn],
-        },
-        ...(wetlandBonus && {
-          bonus: {
-            cost: {
-              type: wetlandBonus.tradeFrom as Resource,
-              count: wetlandBonus.tradeFromAmount,
-            },
-            reward: {
-              type: wetlandBonus.tradeTo as Resource,
-              count: wetlandBonus.tradeToAmount,
-            },
+      ...(wetlandBonus && {
+        bonus: {
+          cost: {
+            type: wetlandBonus.tradeFrom as Resource,
+            count: wetlandBonus.tradeFromAmount,
           },
-        }),
-      },
+          reward: {
+            type: wetlandBonus.tradeTo as Resource,
+            count: wetlandBonus.tradeToAmount,
+          },
+        },
+      }),
     };
+
+    return { eligibleActions, rewardsByAction: rewardsByAction as RewardsByAction };
   }
 }

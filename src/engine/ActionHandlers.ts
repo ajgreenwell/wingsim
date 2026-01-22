@@ -3687,8 +3687,8 @@ export const playBirdHandler: TurnActionHandler = function* (ctx, _params) {
   const registry = ctx.getRegistry();
   const boardConfig = registry.getPlayerBoard();
 
-  // Find eligible birds (cards in hand player can afford)
-  const eligibleBirds = player.getEligibleBirdsToPlay();
+  // Find eligible birds (cards in hand player can afford, considering food, eggs, and habitat)
+  const eligibleBirds = player.getFullyEligibleBirdsToPlay(boardConfig);
 
   if (eligibleBirds.length === 0) {
     return; // No birds can be played

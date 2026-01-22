@@ -29,7 +29,7 @@ This document breaks down [MonteCarloSimulatorSpec.md](MonteCarloSimulatorSpec.m
 
 ---
 
-### [ ] 2. Prompt Eligibility Filtering
+### [x] 2. Prompt Eligibility Filtering
 
 **Files**: `src/engine/GameEngine.ts`, `src/types/prompts.ts`
 

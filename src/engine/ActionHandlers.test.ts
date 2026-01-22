@@ -7041,7 +7041,7 @@ describe("PowerHandlers", () => {
         "downy_woodpecker"
       );
       // Two birds already in FOREST - next bird goes in column 2
-      // First bird has 2 eggs to pay the egg cost (column 2 costs 2 eggs)
+      // First bird has 2 eggs to pay the egg cost (column 2 costs 1 egg)
       const player = PlayerState.from("player1", {
         board: PlayerBoard.from({
           FOREST: [

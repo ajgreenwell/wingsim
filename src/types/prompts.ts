@@ -144,8 +144,14 @@ export type RewardsByAction = Record<
 
 export interface TurnActionPrompt extends DecisionPromptBase {
   kind: "turnAction";
+  // Only actions the player can legally take are included.
+  // PLAY_BIRD is excluded if player has no playable birds (considering food cost, egg cost, and habitat availability).
+  // LAY_EGGS is excluded if player has no birds on their board.
+  // GAIN_FOOD and DRAW_CARDS are always eligible.
+  eligibleActions: TurnActionKind[];
   // bonuses will be left empty if not eligible for a given action
   // (i.e. because the left-most open column in that habitat doesn't have a bonus, or because the player doesn't have the resources available to take advantage of the bonus)
+  // Only includes entries for actions in eligibleActions.
   rewardsByAction: RewardsByAction;
 }
 

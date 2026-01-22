@@ -98,16 +98,17 @@ describe("playBirdHandler", () => {
 
   /**
    * Tests bird play with egg cost based on habitat column.
-   * First bird in column 0 requires egg cost from playBirdCosts[0] = 1 egg.
-   * Wait - actually looking at rules more carefully, column 0 should be free.
-   * Let's test playing a second bird where egg cost applies.
-   * With 1 bird already in FOREST (column 0 filled), playing into column 1
-   * requires playBirdCosts[1] = 1 egg.
+   * Per playBirdCosts = [0, 0, 1, 1, 2]:
+   * - Columns 0-1: Free (0 eggs)
+   * - Columns 2-3: 1 egg
+   * - Column 4: 2 eggs
+   * With 2 birds already in FOREST (columns 0-1 filled), playing into column 2
+   * requires playBirdCosts[2] = 1 egg.
    */
   it("plays bird with egg cost when habitat has birds", async () => {
     const scenario: ScenarioConfig = {
       name: "Bird play with egg cost",
-      description: "Player plays second bird into FOREST, requiring egg payment",
+      description: "Player plays third bird into FOREST, requiring egg payment",
       targetHandlers: ["playBirdHandler"],
 
       players: [
@@ -118,9 +119,12 @@ describe("playBirdHandler", () => {
           bonusCards: [],
           food: { INVERTEBRATE: 2 },
           board: {
-            // Already have 1 bird in FOREST (column 0 filled)
+            // Already have 2 birds in FOREST (columns 0-1 filled)
             // prothonotary_warbler has eggs for egg cost payment
-            FOREST: [{ cardId: "prothonotary_warbler", eggs: 2 }],
+            FOREST: [
+              { cardId: "prothonotary_warbler", eggs: 2 },
+              { cardId: "hooded_warbler", eggs: 0 },
+            ],
             GRASSLAND: [],
             WETLAND: [],
           },
@@ -145,7 +149,7 @@ describe("playBirdHandler", () => {
               bird: "blue_winged_warbler",
               habitat: "FOREST",
               foodToSpend: { INVERTEBRATE: 2 },
-              // Column 1 costs 1 egg (playBirdCosts[1] = 1)
+              // Column 2 costs 1 egg (playBirdCosts[2] = 1)
               eggsToSpend: { alice_prothonotary_warbler: 1 },
             },
           ],
@@ -164,8 +168,8 @@ describe("playBirdHandler", () => {
         // Alice's hand should be empty
         playerHandSize("alice", 0),
 
-        // Both birds should be in FOREST
-        habitatBirdCount("alice", "FOREST", 2),
+        // Three birds should be in FOREST
+        habitatBirdCount("alice", "FOREST", 3),
         birdExistsOnBoard("alice", "alice_blue_winged_warbler"),
         birdIsInHabitat("alice", "alice_blue_winged_warbler", "FOREST"),
 
@@ -184,7 +188,7 @@ describe("playBirdHandler", () => {
           e.type === "BIRD_PLAYED" &&
           e.playerId === "alice" &&
           e.birdCardId === "blue_winged_warbler" &&
-          e.position === 1 // Second column (index 1)
+          e.position === 2 // Third column (index 2)
         ),
       ],
     });
@@ -621,12 +625,13 @@ describe("playBirdHandler", () => {
 
   /**
    * Tests higher egg cost at later column.
-   * With 2 birds in habitat, playing into column 2 costs playBirdCosts[2] = 2 eggs.
+   * Per playBirdCosts = [0, 0, 1, 1, 2]:
+   * With 4 birds in habitat, playing into column 4 costs playBirdCosts[4] = 2 eggs.
    */
   it("pays higher egg cost for later columns", async () => {
     const scenario: ScenarioConfig = {
       name: "Higher column egg cost",
-      description: "Playing bird into column 2 costs 2 eggs",
+      description: "Playing bird into column 4 costs 2 eggs",
       targetHandlers: ["playBirdHandler"],
 
       players: [
@@ -636,10 +641,12 @@ describe("playBirdHandler", () => {
           bonusCards: [],
           food: { INVERTEBRATE: 2 },
           board: {
-            // 2 birds already in FOREST (columns 0 and 1 filled)
+            // 4 birds already in FOREST (columns 0-3 filled)
             FOREST: [
               { cardId: "hooded_warbler", eggs: 3 }, // Has eggs for payment
               { cardId: "prothonotary_warbler", eggs: 0 },
+              { cardId: "eastern_screech_owl", eggs: 0 },
+              { cardId: "barn_owl", eggs: 0 },
             ],
             GRASSLAND: [],
             WETLAND: [],
@@ -665,7 +672,7 @@ describe("playBirdHandler", () => {
               bird: "blue_winged_warbler",
               habitat: "FOREST",
               foodToSpend: { INVERTEBRATE: 2 },
-              // Column 2 costs 2 eggs (playBirdCosts[2] = 2)
+              // Column 4 costs 2 eggs (playBirdCosts[4] = 2)
               eggsToSpend: { alice_hooded_warbler: 2 },
             },
           ],
@@ -678,8 +685,8 @@ describe("playBirdHandler", () => {
 
     await runScenario(scenario, {
       assertions: [
-        // Now 3 birds in FOREST
-        habitatBirdCount("alice", "FOREST", 3),
+        // Now 5 birds in FOREST
+        habitatBirdCount("alice", "FOREST", 5),
         birdExistsOnBoard("alice", "alice_blue_winged_warbler"),
 
         // hooded_warbler should have 1 egg remaining (3 - 2 = 1)
@@ -696,7 +703,7 @@ describe("playBirdHandler", () => {
         eventWasEmitted("BIRD_PLAYED", (e) =>
           e.type === "BIRD_PLAYED" &&
           e.birdCardId === "blue_winged_warbler" &&
-          e.position === 2 // Third column (index 2)
+          e.position === 4 // Fifth column (index 4)
         ),
       ],
     });

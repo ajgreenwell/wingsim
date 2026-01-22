@@ -316,17 +316,20 @@ Create scenario tests for special/unique brown power handlers.
 
 ## Pink Power Handler Scenarios
 
-### [ ] Task 18: Pink Power Scenarios - Bird Played Triggers
+### [x] Task 18: Pink Power Scenarios - Bird Played Triggers
 
 **File:** `src/engine/__integration__/scenarios/pinkPowers/birdPlayedTriggers.test.ts`
 
 Create scenario tests for pink powers triggered by BIRD_PLAYED events.
 
 **Scope:**
-- `whenOpponentPlaysBirdInHabitatGainFood`: Test habitat-specific bird play trigger
-- `whenOpponentPlaysBirdInHabitatTuckCard`: Test tuck on opponent bird play
-- Test that pink power does NOT trigger for self-played birds
-- Test that pink power does NOT trigger for wrong habitat
+- `whenOpponentPlaysBirdInHabitatGainFood`: Test habitat-specific bird play trigger (Belted Kingfisher for WETLAND, Eastern Kingbird for FOREST) ✓
+- `whenOpponentPlaysBirdInHabitatTuckCard`: Test tuck on opponent bird play (Horned Lark for GRASSLAND) ✓
+- Test that pink power does NOT trigger for self-played birds ✓
+- Test that pink power does NOT trigger for wrong habitat ✓
+- Test player can decline activation ✓
+- Test power skips when player has no cards in hand (for tuck power) ✓
+- Test multiple players' pink powers trigger on same event ✓
 
 **Dependencies:** Task 4 (Assertion Helpers)
 

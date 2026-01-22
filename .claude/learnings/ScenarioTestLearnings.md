@@ -537,3 +537,35 @@ The `selectHabitat` choice has:
 - `habitat: Habitat` - must be one of the eligible habitats from the prompt
 
 The prompt's `eligibleHabitats` array is filtered to only include habitats where the bird can legally move.
+
+## Task 18: Pink Power - Bird Played Triggers
+
+### Turn Action Handlers Don't Emit ACTIVATE_POWER
+The `handlerWasInvoked()` assertion checks for `ACTIVATE_POWER` effects, but turn action handlers (like `playBirdHandler`) don't emit these effects. They emit effects like `PLAY_BIRD` and events like `BIRD_PLAYED` instead. For testing turn actions in pink power scenarios:
+- Don't use `handlerWasInvoked("playBirdHandler")`
+- Instead verify outcomes: `birdExistsOnBoard()`, `eventWasEmitted("BIRD_PLAYED", ...)`
+
+### Pink Power Turn Order for Multiple Players
+When multiple players have pink powers that trigger on the same event, they execute in clockwise order starting from the active player. If Bob (index 1) is active and Alice (index 0) and Carol (index 2) both have pink powers:
+- Carol triggers first (next clockwise from Bob)
+- Alice triggers second
+
+Turn blocks in the scenario `turns` array must match this order.
+
+### Pink Power Birds for BIRD_PLAYED Events
+Key birds with pink powers triggered by BIRD_PLAYED:
+- `belted_kingfisher` (WETLAND): `whenOpponentPlaysBirdInHabitatGainFood` - monitors WETLAND, gains FISH
+- `eastern_kingbird` (FOREST/GRASSLAND/WETLAND): `whenOpponentPlaysBirdInHabitatGainFood` - monitors FOREST, gains INVERTEBRATE
+- `horned_lark` (GRASSLAND): `whenOpponentPlaysBirdInHabitatTuckCard` - monitors GRASSLAND, tucks from hand
+
+### Pink Power Habitat Matching
+The `whenOpponentPlaysBirdInHabitat*` handlers check `triggeringEvent.habitat` against their `params.habitat`. If they don't match, the handler emits an `ACTIVATE_POWER` effect with `activated: false` (silently skipped) - no activation prompt is shown to the player.
+
+### Pink Powers Only Trigger for Opponents
+Pink powers (ONCE_BETWEEN_TURNS) only trigger when OTHER players perform the triggering action. When the owner plays a bird, their own pink powers don't trigger. The engine's `processPinkPowerTriggers()` method only checks non-active players' boards.
+
+### No-Power Birds for Testing Pink Powers
+Good birds for triggering BIRD_PLAYED events without adding extra power complexity:
+- `hooded_warbler` - FOREST only, costs INVERTEBRATE: 2, no power
+- `prothonotary_warbler` - FOREST/WETLAND, costs INVERTEBRATE: 2 + SEED: 1, no power
+- `blue_winged_warbler` - FOREST/GRASSLAND, costs INVERTEBRATE: 2, no power

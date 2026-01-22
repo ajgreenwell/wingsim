@@ -427,3 +427,51 @@ Cannot control dice roll outcomes in scenario tests since they depend on RNG. Te
 
 ### Golden Eagle Capacity Limitation
 Golden Eagle has egg capacity of 1. When testing with LAY_EGGS in GRASSLAND, add a second bird (like wild_turkey) to absorb the extra eggs from the base reward.
+
+## Task 15: Brown Power - Multi-Player Handlers
+
+### Multi-Player Handler Types
+Six WHEN_ACTIVATED multi-player handlers (testable via scenarios):
+1. `playersWithFewestInHabitatDrawCard` - American Bittern, Common Loon (compare bird counts, draw cards)
+2. `playersWithFewestInHabitatGainFood` - Hermit Thrush (compare bird counts, gain from feeder)
+3. `eachPlayerGainsFoodFromFeeder` - Anna's/Ruby-Throated Hummingbird (round-robin from selected start)
+4. `allPlayersGainFoodFromSupply` - Baltimore Oriole, Osprey, etc. (automatic, no prompts)
+5. `allPlayersDrawCardsFromDeck` - Canvasback, Purple Gallinule, etc. (automatic, no prompts)
+6. `allPlayersLayEggOnNestType` - Lazuli Bunting, Pileated Woodpecker, etc. (prompts each player, owner gets bonus)
+
+One WHEN_PLAYED handler (NOT testable):
+- `drawAndDistributeCards` - American Oystercatcher
+
+### Multi-Player Turn Block Ordering
+For `playersWithFewestInHabitat*` and `eachPlayerGainsFoodFromFeeder`, choices are prompted in turn order starting from the owner (or selected player). Script turn blocks must match this order. Example:
+```typescript
+turns: [
+  { player: "alice", choices: [..., { kind: "activatePower", activate: true }, ...] },
+  { player: "bob", choices: [{ kind: "selectFoodFromFeeder", ... }] },  // Bob's choice from power
+  { player: "alice", choices: [{ kind: "selectFoodFromFeeder", ... }] }, // Alice's choice (if applicable)
+]
+```
+
+### eachPlayerGainsFoodFromFeeder Requires selectPlayer Choice
+After activating the power, you must provide a `selectPlayer` choice to specify which player starts the round-robin. The owner then selects food in their turn in the order.
+
+### allPlayersGainFoodFromSupply/allPlayersDrawCardsFromDeck Are Automatic
+These handlers emit a single effect (`ALL_PLAYERS_GAIN_FOOD` or `ALL_PLAYERS_DRAW_CARDS`) without any player prompts after activation. No additional choices needed beyond the activation prompt.
+
+### allPlayersLayEggOnNestType Multi-Prompt Flow
+This handler prompts EACH player in clockwise order from owner:
+1. Owner places first egg(s)
+2. Other players place egg(s) in order
+3. Owner gets bonus egg prompt (must be on DIFFERENT bird than first placement)
+
+Players without matching nest type birds with capacity are silently skipped (no prompt).
+
+### No-Power BOWL Nest Birds for Testing
+Key BOWL nest birds with `power: null`:
+- `blue_winged_warbler` - BOWL, capacity 2, FOREST/GRASSLAND
+- `hooded_warbler` - BOWL, capacity 3, FOREST only
+
+Most BOWL birds have powers (e.g., `chipping_sparrow` has `layEggsOnBird`), so use the above for testing multi-player egg laying without additional power triggers.
+
+### Song Sparrow Has a Power
+Despite being commonly used as a "simple bird", `song_sparrow` has the `tuckAndDraw` power. Use `hooded_warbler` or `blue_winged_warbler` instead for power-free BOWL birds.

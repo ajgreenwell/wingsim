@@ -252,20 +252,20 @@ Create scenario tests for predator-type brown power handlers.
 
 ---
 
-### [ ] Task 15: Brown Power Scenarios - Multi-Player Powers
+### [x] Task 15: Brown Power Scenarios - Multi-Player Powers
 
 **File:** `src/engine/__integration__/scenarios/brownPowers/multiPlayerHandlers.test.ts`
 
 Create scenario tests for powers that affect multiple players.
 
 **Scope:**
-- `playersWithFewestInHabitatDrawCard`: Test comparison-based card draw
-- `playersWithFewestInHabitatGainFood`: Test comparison-based food gain
-- `eachPlayerGainsFoodFromFeeder`: Test round-robin food selection
-- `allPlayersGainFoodFromSupply`: Test simultaneous food gain
-- `allPlayersDrawCardsFromDeck`: Test simultaneous card draw
-- `allPlayersLayEggOnNestType`: Test simultaneous egg laying
-- `drawAndDistributeCards`: Test draw-and-distribute mechanics
+- `playersWithFewestInHabitatDrawCard`: Test comparison-based card draw ✓
+- `playersWithFewestInHabitatGainFood`: Test comparison-based food gain ✓
+- `eachPlayerGainsFoodFromFeeder`: Test round-robin food selection ✓
+- `allPlayersGainFoodFromSupply`: Test simultaneous food gain ✓
+- `allPlayersDrawCardsFromDeck`: Test simultaneous card draw ✓
+- `allPlayersLayEggOnNestType`: Test simultaneous egg laying ✓
+- `drawAndDistributeCards`: BLOCKED - All birds use WHEN_PLAYED trigger (American Oystercatcher)
 
 **Dependencies:** Task 4 (Assertion Helpers)
 

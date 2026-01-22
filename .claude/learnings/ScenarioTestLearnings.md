@@ -387,3 +387,43 @@ The `DiscardEggsChoice` type uses `sources` field (not `eggs` or `placements`). 
 
 ### DiscardFoodChoice Field Name
 The `DiscardFoodChoice` type uses `food` field with `FoodByType` structure.
+
+## Task 14: Brown Power - Predator Handlers
+
+### Two Types of Predator Powers
+1. **rollDiceAndCacheIfMatch**: Rolls dice not in the birdfeeder, caches food if any die matches the target food type. Birds include American Kestrel (RODENT), Anhinga (FISH), Barn Owl (RODENT), etc.
+2. **lookAtCardAndTuckIfWingspanUnder**: Reveals top card from deck, tucks if wingspan < threshold, discards otherwise. Birds include Barred Owl (75cm), Golden Eagle (100cm), Greater Roadrunner (50cm).
+
+### PREDATOR_POWER_RESOLVED Event
+Both predator handlers emit `PREDATOR_POWER_RESOLVED` events with:
+- `predatorType`: Either `"DICE_ROLL"` or `"WINGSPAN_CHECK"`
+- `success`: Boolean indicating if the predator caught prey
+- For dice roll: `diceRoll.targetFoodType`, `diceRoll.matchCount`, etc.
+- For wingspan check: `wingspanCheck.revealedCardId`, `wingspanCheck.wingspan`, `wingspanCheck.threshold`, `wingspanCheck.disposition`
+
+### DiscardCardsEffect fromRevealed Field
+The engine required a bug fix: when predator powers fail the wingspan check, the revealed card needs to be discarded directly (not from hand). The `DiscardCardsEffect` now has a `fromRevealed?: boolean` field. When true, cards are discarded directly to the discard pile without checking the player's hand.
+
+### Dice Roll Predator Testing Limitations
+Cannot control dice roll outcomes in scenario tests since they depend on RNG. Tests verify:
+- The handler was invoked
+- The PREDATOR_POWER_RESOLVED event was emitted with correct predatorType
+- The power can be declined
+
+### Wingspan Check Predator Birds for Testing
+- `barred_owl` - 75cm threshold (FOREST)
+- `golden_eagle` - 100cm threshold (GRASSLAND/WETLAND, capacity 1)
+- `greater_roadrunner` - 50cm threshold (GRASSLAND)
+- `red_tailed_hawk` - 75cm threshold (all habitats)
+
+### Bird Wingspans for Testing Wingspan Check Powers
+- `american_goldfinch` - 23cm (will succeed for all predators)
+- `trumpeter_swan` - 203cm (will fail for all predators)
+- `american_bittern` - 107cm (will fail for 75cm and 100cm threshold predators)
+
+### Predator Power Skip Condition
+- `rollDiceAndCacheIfMatch`: Skips when all 5 dice are in the birdfeeder (no dice to roll)
+- `lookAtCardAndTuckIfWingspanUnder`: Skips when the deck is empty (no card to reveal)
+
+### Golden Eagle Capacity Limitation
+Golden Eagle has egg capacity of 1. When testing with LAY_EGGS in GRASSLAND, add a second bird (like wild_turkey) to absorb the extra eggs from the base reward.

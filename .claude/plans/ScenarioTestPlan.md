@@ -235,17 +235,18 @@ Create scenario tests for discard-based brown power handlers.
 
 ---
 
-### [ ] Task 14: Brown Power Scenarios - Predator Powers
+### [x] Task 14: Brown Power Scenarios - Predator Powers
 
 **File:** `src/engine/__integration__/scenarios/brownPowers/predatorHandlers.test.ts`
 
 Create scenario tests for predator-type brown power handlers.
 
 **Scope:**
-- `rollDiceAndCacheIfMatch`: Test dice roll predator with matching wingspan
-- `lookAtCardAndTuckIfWingspanUnder`: Test reveal predator with wingspan check
-- Test predator failure case (no match)
-- Verify PREDATOR_POWER_RESOLVED event emission
+- `rollDiceAndCacheIfMatch`: Test dice roll predator with activation and PREDATOR_POWER_RESOLVED event ✓
+- `lookAtCardAndTuckIfWingspanUnder`: Test reveal predator with wingspan check (success and failure) ✓
+- Test predator decline and skip scenarios ✓
+- Verify PREDATOR_POWER_RESOLVED event emission ✓
+- Fixed engine bug: Added `fromRevealed` field to DiscardCardsEffect for discarding revealed cards
 
 **Dependencies:** Task 4 (Assertion Helpers)
 

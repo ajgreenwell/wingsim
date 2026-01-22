@@ -121,6 +121,12 @@ export interface DiscardCardsEffect extends EffectBase {
   type: "DISCARD_CARDS";
   playerId: PlayerId;
   cards: BirdCardId[];
+  /**
+   * If true, the cards are from revealed state (e.g., predator power reveal)
+   * and should be discarded directly without checking the player's hand.
+   * Default: false (cards are removed from player's hand)
+   */
+  fromRevealed?: boolean;
 }
 
 export interface TuckCardsEffect extends EffectBase {

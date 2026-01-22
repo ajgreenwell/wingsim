@@ -986,21 +986,31 @@ export class GameEngine {
   applyDiscardCards(effect: Effect & { type: "DISCARD_CARDS" }): void {
     const player = this.gameState.findPlayer(effect.playerId);
 
-    // Validate all cards are in hand
-    const handCardIds = new Set(player.hand.map((c) => c.id));
-    for (const cardId of effect.cards) {
-      if (!handCardIds.has(cardId)) {
-        throw new Error(
-          `Cannot discard card: card "${cardId}" not found in player "${effect.playerId}"'s hand`
-        );
+    if (effect.fromRevealed) {
+      // Cards from revealed state (e.g., predator power failure)
+      // Discard directly without checking player's hand
+      const cards = effect.cards.map((cardId) =>
+        this.registry.getBirdById(cardId)
+      );
+      this.gameState.birdCardSupply.discardCards(cards);
+    } else {
+      // Standard discard from hand
+      // Validate all cards are in hand
+      const handCardIds = new Set(player.hand.map((c) => c.id));
+      for (const cardId of effect.cards) {
+        if (!handCardIds.has(cardId)) {
+          throw new Error(
+            `Cannot discard card: card "${cardId}" not found in player "${effect.playerId}"'s hand`
+          );
+        }
       }
-    }
 
-    const discardedCards = player.hand.filter((c) =>
-      effect.cards.includes(c.id)
-    );
-    player.hand = player.hand.filter((c) => !effect.cards.includes(c.id));
-    this.gameState.birdCardSupply.discardCards(discardedCards);
+      const discardedCards = player.hand.filter((c) =>
+        effect.cards.includes(c.id)
+      );
+      player.hand = player.hand.filter((c) => !effect.cards.includes(c.id));
+      this.gameState.birdCardSupply.discardCards(discardedCards);
+    }
   }
 
   applyTuckCards(effect: Effect & { type: "TUCK_CARDS" }): void {

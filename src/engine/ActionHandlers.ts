@@ -1457,6 +1457,7 @@ export const lookAtCardAndTuckIfWingspanUnder: PowerHandler = function* (
       type: "DISCARD_CARDS",
       playerId: ctx.ownerId,
       cards: revealedCards,
+      fromRevealed: true,
     });
   }
 };

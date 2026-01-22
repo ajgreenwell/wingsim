@@ -372,16 +372,19 @@ Create scenario tests for pink powers triggered by PREDATOR_POWER_RESOLVED event
 
 ---
 
-### [ ] Task 21: Pink Power Scenarios - Food Gain Triggers
+### [x] Task 21: Pink Power Scenarios - Food Gain Triggers
 
 **File:** `src/engine/__integration__/scenarios/pinkPowers/foodGainTriggers.test.ts`
 
 Create scenario tests for pink powers triggered by FOOD_GAINED events.
 
 **Scope:**
-- `whenOpponentGainsFoodCacheIfMatch`: Test caching when opponent gains matching food
-- Test food type matching requirement
-- Test that pink power does NOT trigger for self food gain
+- `whenOpponentGainsFoodCacheIfMatch`: Test caching when opponent gains matching food (Loggerhead Shrike for RODENT) ✓
+- Test food type matching requirement ✓
+- Test that pink power does NOT trigger for self food gain ✓
+- Test player can decline activation ✓
+- Test multiple players' pink powers trigger on same event ✓
+- Test caches food from SUPPLY (not from opponent) ✓
 
 **Dependencies:** Task 4 (Assertion Helpers)
 

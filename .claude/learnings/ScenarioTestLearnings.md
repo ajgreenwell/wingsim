@@ -632,3 +632,20 @@ Pink powers (ONCE_BETWEEN_TURNS) only trigger when OTHER players perform the tri
 
 ### Pink Power Silent Skip on Predator Failure
 When the predator fails (success: false in PREDATOR_POWER_RESOLVED event), the handler emits an `ACTIVATE_POWER` effect with `activated: false` but no `skipReason`. This is a "silent skip" - no activation prompt is shown to the player.
+
+## Task 21: Pink Power - Food Gain Triggers
+
+### whenOpponentGainsFoodCacheIfMatch Handler Details
+- **Event**: `FOOD_GAINED_FROM_HABITAT_ACTIVATION` (emitted by `gainFoodHandler` after food is gained)
+- **Bird**: Loggerhead Shrike (GRASSLAND, WETLAND) - monitors for RODENT
+- **Params**: `{ foodType: "RODENT", count: 1 }`
+- **Behavior**: When opponent gains matching food type via GAIN_FOOD action, cache `count` food from supply
+
+### Food Type Matching
+The handler checks `triggeringEvent.food[foodType] ?? 0` to see if any matching food was gained. If the food object has `RODENT: 0` or no RODENT key at all, the power silently skips (no activation prompt).
+
+### CACHE_FOOD Effect Source
+The effect uses `source: "SUPPLY"` to indicate the cached food comes from the unlimited supply, not from the opponent who gained food. This is important for verifying the power doesn't "steal" from opponents.
+
+### Single Bird with This Power
+Loggerhead Shrike is the only bird in the base game with `whenOpponentGainsFoodCacheIfMatch`. It monitors for RODENT specifically.

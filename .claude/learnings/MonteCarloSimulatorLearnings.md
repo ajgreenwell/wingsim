@@ -107,3 +107,22 @@ With eligibility pre-filtering, the SmartRandomAgent can now:
 - Full game integration tests verify SmartRandomAgent can complete games without errors.
 - Determinism tests confirm same seed produces identical results.
 - Tests for 2-player, 3-player configurations all pass.
+
+## HandlerCoverageTracker Implementation (Task 7)
+
+### Reusing Existing Handler ID Lists
+
+- The codebase already had a complete list of handler IDs in `src/engine/__integration__/coverage.ts` (for test coverage scanning).
+- HandlerCoverageTracker imports and reuses `POWER_HANDLER_IDS`, `TURN_ACTION_HANDLER_IDS`, and `ALL_HANDLER_IDS` from that file to avoid duplication.
+- This ensures the runtime coverage tracker stays in sync with the test coverage scanner.
+
+### Design Decisions
+
+- **HANDLER_TYPE_MAP**: A static map built from the handler ID arrays to quickly look up whether a handler is "power" or "turnAction" type. Used for validation and report generation.
+- **Unknown Handler Tracking**: The tracker accepts invocations for unknown handler IDs (future-proofing) but they don't affect coverage percentage calculations since they're not in `ALL_HANDLER_IDS`.
+- **Initialization**: All known handlers start with count 0 in the constructor, so `getCoverage()` always returns entries for all 42 handlers even if not invoked.
+
+### Report Format
+
+- The `generateReport()` method includes a progress bar, uncovered handler list (with type annotations), and top 10 most-invoked handlers.
+- Type annotations ("power" or "turnAction") help identify which category of handlers needs more coverage.

@@ -12,7 +12,9 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:scenario": "npx tsx scripts/test-scenario.ts",
+    "test:scenario:coverage": "npx tsx scripts/test-scenario.ts --coverage"
   },
   "keywords": [
     "wingspan",

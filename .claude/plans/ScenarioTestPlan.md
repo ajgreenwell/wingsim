@@ -392,18 +392,18 @@ Create scenario tests for pink powers triggered by FOOD_GAINED events.
 
 ## Coverage and Verification
 
-### [ ] Task 22: Coverage Tracking Utility
+### [x] Task 22: Coverage Tracking Utility
 
 **File:** `src/engine/__integration__/coverage.ts`
 
 Create a utility for tracking handler coverage across scenario tests.
 
 **Scope:**
-- Export list of all handler IDs (38 power + 4 turn action)
-- Implement function to scan scenario files and extract `targetHandlers`
-- Implement function to compute coverage percentage
-- Create `yarn test:scenario` package.json script to run to verify 100% coverage. It should be able to accept test filepaths as args, and a `--coverage` arg for generating the coverage report and printing it to the console.
-
+- Export list of all handler IDs (38 power + 4 turn action) ✓
+- Implement function to scan scenario files and extract `targetHandlers` ✓
+- Implement function to compute coverage percentage ✓
+- Create `yarn test:scenario` package.json script to run to verify 100% coverage. It should be able to accept test filepaths as args, and a `--coverage` arg for generating the coverage report and printing it to the console. ✓
+- Added unit tests for coverage module (16 tests) ✓
 
 **Dependencies:** All scenario tasks (Tasks 5-21)
 

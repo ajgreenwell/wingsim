@@ -649,3 +649,30 @@ The effect uses `source: "SUPPLY"` to indicate the cached food comes from the un
 
 ### Single Bird with This Power
 Loggerhead Shrike is the only bird in the base game with `whenOpponentGainsFoodCacheIfMatch`. It monitors for RODENT specifically.
+
+## Task 22: Coverage Tracking Utility
+
+### Architecture
+The coverage utility consists of three files:
+- `coverage.ts` - Core module with handler lists and coverage computation
+- `coverage.test.ts` - Unit tests for the coverage module
+- `scripts/test-scenario.ts` - CLI script for running scenario tests with coverage
+
+### yarn test:scenario Usage
+- `yarn test:scenario` - Run all scenario tests
+- `yarn test:scenario --coverage` - Run tests + print coverage report
+- `yarn test:scenario path/to/test.ts` - Run specific test file(s)
+- `yarn test:scenario:coverage` - Shorthand for `--coverage`
+
+### Current Coverage Status
+As of Task 22 completion: 36/42 handlers covered (86%)
+
+Uncovered handlers (6 total, all require WHEN_PLAYED trigger support):
+- `drawAndDistributeCards` - American Oystercatcher uses WHEN_PLAYED
+- `drawBonusCardsAndKeep` - All birds use WHEN_PLAYED
+- `drawFaceUpCardsFromTray` - All birds use WHEN_PLAYED
+- `gainAllFoodTypeFromFeeder` - Bald Eagle, Northern Flicker use WHEN_PLAYED
+- `layEggOnBirdsWithNestType` - All birds use WHEN_PLAYED
+- `playAdditionalBirdInHabitat` - All birds use WHEN_PLAYED
+
+These handlers cannot be tested via scenario tests until the GameEngine auto-triggers WHEN_PLAYED powers after bird placement (see Task 8 learnings).

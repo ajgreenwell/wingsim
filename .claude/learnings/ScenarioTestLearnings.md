@@ -133,3 +133,29 @@ To check if a reroll happened, filter effects (`ctx.effects`) for `type === "RER
 
 ### Food Selection Per Iteration
 The `gainFoodHandler` issues one `selectFoodFromFeeder` prompt per food to gain. With base reward 1 and bonus 1, there are 2 separate food selection prompts - each selects exactly 1 die.
+
+## Task 6: layEggsHandler Scenario Tests
+
+### Bird Egg Capacities
+Always verify bird egg capacities before writing tests. Common no-power birds and their capacities:
+- `trumpeter_swan` - capacity 2 (WETLAND)
+- `prothonotary_warbler` - capacity 4 (FOREST, WETLAND)
+- `hooded_warbler` - capacity 2 (FOREST)
+- `blue_winged_warbler` - capacity 2 (FOREST, GRASSLAND)
+- `american_woodcock` - capacity 2 (FOREST, GRASSLAND)
+- `wild_turkey` - capacity 5 (FOREST, GRASSLAND) - **highest capacity no-power bird**
+
+### Choice Validation Reprompt Behavior
+When a `placeEggs` choice fails validation (e.g., exceeds capacity), the ActionProcessor reprompts with the SAME prompt ID but increments the internal attempt counter. The ScriptedAgent consumes a choice on EACH call, so if the first choice is invalid, the agent will consume subsequent choices for reprompts. This means invalid choices in the script will cause `ScriptExhaustedError` quickly.
+
+### GRASSLAND Base Rewards
+Per `player_board.json`, GRASSLAND base rewards by column:
+- Column 0: 2 eggs
+- Column 1: 2 eggs (has bonus slot)
+- Column 2: 3 eggs
+- Column 3: 3 eggs (has bonus slot)
+- Column 4: 4 eggs
+- Column 5: 4 eggs (has bonus slot)
+
+### Prompt ID Numbering
+Prompt IDs start at `prompt_1` (not `prompt_0`) because `generatePromptId()` uses pre-increment `++this.promptCounter`. The first prompt (TurnActionPrompt from GameEngine.runTurn) gets `prompt_1`.

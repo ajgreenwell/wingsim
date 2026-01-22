@@ -101,7 +101,7 @@ Create scenario tests for the `gainFoodHandler` turn action.
 
 ---
 
-### [ ] Task 6: Turn Action Scenarios - layEggsHandler
+### [x] Task 6: Turn Action Scenarios - layEggsHandler
 
 **File:** `src/engine/__integration__/scenarios/turnActions/layEggs.test.ts`
 

@@ -569,3 +569,28 @@ Good birds for triggering BIRD_PLAYED events without adding extra power complexi
 - `hooded_warbler` - FOREST only, costs INVERTEBRATE: 2, no power
 - `prothonotary_warbler` - FOREST/WETLAND, costs INVERTEBRATE: 2 + SEED: 1, no power
 - `blue_winged_warbler` - FOREST/GRASSLAND, costs INVERTEBRATE: 2, no power
+
+## Task 19: Pink Power - Egg Laid Triggers
+
+### Birds with whenOpponentLaysEggsLayEggOnNestType Power
+- `american_avocet` - WETLAND, requires GROUND nest for egg placement
+- `barrows_goldeneye` - WETLAND, requires CAVITY nest for egg placement
+- `bronzed_cowbird` - GRASSLAND, requires BOWL nest for egg placement
+- `brown_headed_cowbird` - GRASSLAND, requires BOWL nest for egg placement
+- `yellow_billed_cuckoo` - FOREST, requires BOWL nest for egg placement
+
+### No-Power Birds by Nest Type
+For testing nest type matching without triggering additional powers:
+- **GROUND**: `american_woodcock` (FOREST/GRASSLAND), `trumpeter_swan` (WETLAND), `wild_turkey` (FOREST/GRASSLAND)
+- **BOWL**: `hooded_warbler` (FOREST), `blue_winged_warbler` (FOREST/GRASSLAND)
+- **CAVITY**: `prothonotary_warbler` (FOREST/WETLAND)
+
+### Egg Laying Pink Power Skip Conditions
+The `whenOpponentLaysEggsLayEggOnNestType` handler skips (with `RESOURCE_UNAVAILABLE`) when:
+1. No other birds with matching nest type exist (excluding the power bird itself)
+2. All birds with matching nest type are at egg capacity
+
+The power text says "lay 1 egg on **another** bird with a [nest type] nest" - the power bird itself is explicitly excluded via `ctx.birdInstanceId` parameter to `getBirdsWithNestType()`.
+
+### trumpeter_swan Has GROUND Nest
+Despite being a water bird, `trumpeter_swan` has a GROUND nest type (not PLATFORM as one might assume). This is important when testing GROUND nest matching - trumpeter_swan counts as eligible.

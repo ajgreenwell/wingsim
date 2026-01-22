@@ -335,16 +335,20 @@ Create scenario tests for pink powers triggered by BIRD_PLAYED events.
 
 ---
 
-### [ ] Task 19: Pink Power Scenarios - Egg Laid Triggers
+### [x] Task 19: Pink Power Scenarios - Egg Laid Triggers
 
 **File:** `src/engine/__integration__/scenarios/pinkPowers/eggTriggers.test.ts`
 
 Create scenario tests for pink powers triggered by EGGS_LAID events.
 
 **Scope:**
-- `whenOpponentLaysEggsLayEggOnNestType`: Test egg-laying response to opponent eggs
-- Test nest type matching requirement
-- Test that pink power does NOT trigger for self-laid eggs
+- `whenOpponentLaysEggsLayEggOnNestType`: Test egg-laying response to opponent eggs ✓
+- Test nest type matching requirement (GROUND and CAVITY tested) ✓
+- Test that pink power does NOT trigger for self-laid eggs ✓
+- Test power skips when no eligible birds with matching nest type ✓
+- Test power skips when eligible birds are at capacity ✓
+- Test player can decline activation ✓
+- Test multiple players' pink powers trigger on same event ✓
 
 **Dependencies:** Task 4 (Assertion Helpers)
 

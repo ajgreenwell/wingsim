@@ -259,3 +259,35 @@ Tests that rely on specific dice rolls after reroll are fragile because the RNG 
 - Don't require specific RNG outcomes
 - Test the activation/decline flow rather than post-reroll state
 - Use deterministic setups where the required food is already available
+
+## Task 10: Brown Power - Egg Laying Handlers
+
+### leftmostEmpty Determines Base Reward
+The `layEggsHandler` uses `leftmostEmpty = player.board.getLeftmostEmptyColumn("GRASSLAND")` to determine the base reward. With N birds already placed, `leftmostEmpty = N`, so the base reward is `baseRewards[N]`. This is critical for scenario scripting:
+- 0 birds → leftmostEmpty = 0 → base reward = 2 eggs
+- 1 bird → leftmostEmpty = 1 → base reward = 2 eggs
+- 2 birds → leftmostEmpty = 2 → base reward = 3 eggs
+- 3 birds → leftmostEmpty = 3 → base reward = 3 eggs
+
+### placeEggs Validation Requires Exact Count
+The `validatePlaceEggsChoice` function requires that `totalEggs === prompt.count`. If your script places fewer eggs than the base reward, validation fails and the engine reprompts, consuming more scripted choices. Always place exactly the expected number of eggs.
+
+### layEggsOnBird Birds for Testing
+Key GRASSLAND birds with `layEggsOnBird` WHEN_ACTIVATED power:
+- `bairds_sparrow` - "Lay 1 egg on any bird", capacity 2
+- `grasshopper_sparrow` - "Lay 1 egg on any bird", capacity 2
+- `chipping_sparrow` - "Lay 1 egg on any bird", capacity 3 (FOREST/GRASSLAND)
+- `mourning_dove` - "Lay 1 egg on this bird", capacity 5 (all habitats)
+- `scaled_quail` - "Lay 1 egg on this bird", capacity 6
+
+### layEggOnBirdsWithNestType is WHEN_PLAYED Only
+All birds with `layEggOnBirdsWithNestType` use WHEN_PLAYED trigger:
+- `ash_throated_flycatcher` (CAVITY nest)
+- `bobolink` (GROUND nest)
+- `inca_dove` (PLATFORM nest)
+- `says_phoebe` (BOWL nest)
+
+Since WHEN_PLAYED powers are not auto-triggered by GameEngine (see Task 8), these handlers cannot be tested via scenario tests currently. Tests are marked as skipped.
+
+### Brown Power Chain Order
+Powers execute right-to-left in the habitat. With birds at columns 0, 1, 2, the column 1 power executes before column 0 (if column 2 has no power). The `getBirdsWithBrownPowers()` method returns bird IDs in right-to-left order.

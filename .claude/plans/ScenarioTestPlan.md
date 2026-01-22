@@ -172,7 +172,7 @@ Create scenario tests for food-gaining brown power handlers.
 
 ---
 
-### [ ] Task 10: Brown Power Scenarios - Egg Laying Powers
+### [x] Task 10: Brown Power Scenarios - Egg Laying Powers
 
 **File:** `src/engine/__integration__/scenarios/brownPowers/layEggHandlers.test.ts`
 

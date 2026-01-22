@@ -154,7 +154,7 @@ Create scenario tests for the `playBirdHandler` turn action.
 
 ## Brown Power Handler Scenarios
 
-### [ ] Task 9: Brown Power Scenarios - Food Gain Powers
+### [x] Task 9: Brown Power Scenarios - Food Gain Powers
 
 **File:** `src/engine/__integration__/scenarios/brownPowers/gainFoodHandlers.test.ts`
 

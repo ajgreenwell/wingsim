@@ -219,3 +219,43 @@ The `PlayBirdChoice` has four key fields:
 
 ### Bird Instance ID for Newly Played Birds
 When a bird is played, its instance ID follows the pattern `{playerId}_{cardId}`, e.g., `alice_hooded_warbler`. Use this pattern in assertions after playing a bird.
+
+## Task 9: Brown Power - Food Gain Handlers
+
+### Power Skip vs Power Decline
+When a power cannot activate due to missing resources, the handler calls `skipPowerDueToResourceUnavailable()` which emits an `ACTIVATE_POWER` effect with:
+- `activated: false`
+- `skipReason: "RESOURCE_UNAVAILABLE"`
+
+This differs from player decline, which also has `activated: false` but no `skipReason`. The `handlerWasNotInvoked()` assertion checks for ANY `ACTIVATE_POWER` effect with that handler, so it will match both skipped and declined powers. For precise testing of resource-unavailable skips, use a custom assertion that checks `skipReason`.
+
+### gainFoodFromFeederIfAvailable Reroll Logic
+This handler has special reroll behavior:
+1. If food not available AND reroll not possible → skip power (no activation prompt)
+2. If food not available BUT reroll possible → offer activation prompt, player can reroll
+3. After reroll, if still no food and no reroll possible → power ends without food gain
+4. If food appears after reroll → prompt for selection
+
+The handler counts `SEED_INVERTEBRATE` as matching when looking for `SEED` or `INVERTEBRATE`.
+
+### gainAllFoodTypeFromFeeder is WHEN_PLAYED Only
+All birds with `gainAllFoodTypeFromFeeder` (`bald_eagle`, `northern_flicker`) use `WHEN_PLAYED` trigger. Since WHEN_PLAYED powers are not auto-triggered by the GameEngine (see Task 8 learnings), these cannot be tested via scenario tests currently. Tests are marked as skipped with comments explaining the limitation.
+
+### Brown Power Birds for Testing
+Key birds with WHEN_ACTIVATED food gain powers:
+- `blue_gray_gnatcatcher` - `gainFoodFromSupply` (INVERTEBRATE)
+- `carolina_chickadee` - `cacheFoodFromSupply` (SEED)
+- `acorn_woodpecker` - `gainFoodFromFeederWithCache` (SEED)
+- `american_redstart` - `gainFoodFromFeeder` (WILD - any die)
+- `great_crested_flycatcher` - `gainFoodFromFeederIfAvailable` (INVERTEBRATE)
+
+### selectFoodDestination Choice
+When a power offers caching vs supply as a destination, the `selectFoodDestination` choice has:
+- `destination: "CACHE_ON_SOURCE_BIRD"` - cache on the bird that has the power
+- `destination: "PLAYER_SUPPLY"` - add to player's food supply
+
+### RNG-Dependent Tests Are Fragile
+Tests that rely on specific dice rolls after reroll are fragile because the RNG state is affected by earlier scenario operations (deck shuffling, etc.). Prefer tests that:
+- Don't require specific RNG outcomes
+- Test the activation/decline flow rather than post-reroll state
+- Use deterministic setups where the required food is already available

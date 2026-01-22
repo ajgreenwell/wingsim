@@ -38,3 +38,18 @@ Changed `playBirdHandler` to use `getFullyEligibleBirdsToPlay(boardConfig)` inst
 With eligibility pre-filtering, the SmartRandomAgent can now:
 - Simply pick any action from `eligibleActions` (no validation needed)
 - Pick any bird from PlayBirdPrompt.eligibleBirds (guaranteed affordable)
+
+## SmartRandomAgent Core Structure (Task 3)
+
+### Module Self-Registration Pattern
+
+- SmartRandomAgent self-registers in `AgentRegistry` at module load time via a `register()` call at the bottom of the file.
+- Testing this side effect is tricky: clearing the registry in `beforeEach` and re-importing doesn't work because ES module side effects only run once.
+- Solution: Don't clear the registry before testing registration - let the initial import's side effect be tested directly.
+
+### Implementation Notes
+
+- All prompt handlers are stubbed out in Task 3, with full implementations planned for Tasks 4-6.
+- Even stubbed handlers produce valid choices that satisfy prompt constraints.
+- The `chooseOption()` method uses a switch on `prompt.kind` to dispatch to appropriate handlers - this pattern is clearer than a handler registry for a single agent.
+- `Rng.pickMany()` is the workhorse method - it shuffles and takes the first N items, ensuring no duplicates when selecting from finite sets.

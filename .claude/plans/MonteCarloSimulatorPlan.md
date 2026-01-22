@@ -62,7 +62,7 @@ Update prompt generation so agents only see eligible options, eliminating the ne
 
 ---
 
-### [ ] 3. SmartRandomAgent - Core Structure & Simple Prompts
+### [x] 3. SmartRandomAgent - Core Structure & Simple Prompts
 
 **File**: `src/agents/SmartRandomAgent.ts`
 

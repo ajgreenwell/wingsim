@@ -294,15 +294,21 @@ Create scenario tests for power repetition handlers.
 
 ---
 
-### [ ] Task 17: Brown Power Scenarios - Special Powers
+### [x] Task 17: Brown Power Scenarios - Special Powers
 
 **File:** `src/engine/__integration__/scenarios/brownPowers/specialHandlers.test.ts`
 
 Create scenario tests for special/unique brown power handlers.
 
 **Scope:**
-- `playAdditionalBirdInHabitat`: Test playing a second bird during turn
-- `moveToAnotherHabitatIfRightmost`: Test bird movement power
+- `playAdditionalBirdInHabitat`: BLOCKED - All birds use WHEN_PLAYED trigger (not auto-triggered by GameEngine)
+- `moveToAnotherHabitatIfRightmost`: Test bird movement power ✓
+  - Test basic movement when rightmost ✓
+  - Test skip when not rightmost ✓
+  - Test decline power ✓
+  - Test skip when no eligible habitats ✓
+  - Test respects bird habitat eligibility ✓
+  - Test solo bird in habitat ✓
 
 **Dependencies:** Task 4 (Assertion Helpers)
 

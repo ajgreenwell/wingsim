@@ -510,3 +510,30 @@ Since WHEN_PLAYED powers are not auto-triggered by GameEngine, these cannot be t
 ### moveToAnotherHabitatIfRightmost Birds
 These are WHEN_ACTIVATED and testable:
 - `bewicks_wren`, `blue_grosbeak`, `chimney_swift`, `common_nighthawk`, `lincolns_sparrow`, `song_sparrow`, `white_crowned_sparrow`, `yellow_breasted_chat`
+
+## Task 17: Brown Power - Special Handlers
+
+### moveToAnotherHabitatIfRightmost Eligibility Checks
+The handler performs two eligibility checks before offering the activation prompt:
+1. **Rightmost check**: Bird must be the rightmost (last non-null) bird in its current habitat
+2. **Eligible habitats check**: At least one other habitat must have space (< 5 birds) AND the bird must be allowed to live there (per bird's `habitats` array)
+
+If either check fails, the power is skipped with `RESOURCE_UNAVAILABLE`.
+
+### Solo Bird is Rightmost
+A single bird in a habitat is considered rightmost by definition. The check looks for `birdsInHabitat[length - 1].id === ctx.birdInstanceId`, so a solo bird passes this check.
+
+### MOVE_BIRD Effect Structure
+The `MoveBirdEffect` has:
+- `type: "MOVE_BIRD"`
+- `playerId`, `birdInstanceId`
+- `fromHabitat`, `toHabitat`
+
+The engine applies this by removing the bird from the old habitat slot and placing it at the leftmost empty column in the new habitat.
+
+### SelectHabitatChoice for Movement
+The `selectHabitat` choice has:
+- `kind: "selectHabitat"`
+- `habitat: Habitat` - must be one of the eligible habitats from the prompt
+
+The prompt's `eligibleHabitats` array is filtered to only include habitats where the bird can legally move.

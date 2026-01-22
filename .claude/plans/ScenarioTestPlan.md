@@ -409,14 +409,20 @@ Create a utility for tracking handler coverage across scenario tests.
 
 ---
 
-### [ ] Task 23: Final Verification and Bug Fixing
+### [x] Task 23: Final Verification and Bug Fixing
 
 Ensure all scenario tests pass without issues.
 
 **Scope:**
-- Use `yarn test:scenario`, passing spec test file paths, to check that all the scenario tests pass
-- If `--coverage` is passed, verify that a coverage report gets generated and printed to the console after
-- If any issues are discovered, fix them now. If you are unable to fix them all, write your findings + remaining TODOs to the ScenarioTestLearnings.md file.
+- Use `yarn test:scenario`, passing spec test file paths, to check that all the scenario tests pass ✓
+- If `--coverage` is passed, verify that a coverage report gets generated and printed to the console after ✓
+- If any issues are discovered, fix them now. If you are unable to fix them all, write your findings + remaining TODOs to the ScenarioTestLearnings.md file. ✓
+
+**Results:**
+- All 182 scenario tests pass (15 skipped as expected for WHEN_PLAYED powers)
+- Coverage report correctly shows 36/42 handlers covered (86%)
+- `yarn test:scenario`, `yarn test:scenario --coverage`, `yarn test:scenario:coverage`, and file-specific runs all work correctly
+- The 6 uncovered handlers all require WHEN_PLAYED trigger support (documented in ScenarioTestLearnings.md Task 8 and 22)
 
 **Dependencies:** Task 22 (Coverage Tracking)
 

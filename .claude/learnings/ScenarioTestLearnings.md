@@ -676,3 +676,22 @@ Uncovered handlers (6 total, all require WHEN_PLAYED trigger support):
 - `playAdditionalBirdInHabitat` - All birds use WHEN_PLAYED
 
 These handlers cannot be tested via scenario tests until the GameEngine auto-triggers WHEN_PLAYED powers after bird placement (see Task 8 learnings).
+
+## Task 23: Final Verification and Bug Fixing
+
+### Final Test Results
+- All 182 scenario tests pass (17 test files)
+- 15 tests are skipped (expected, for WHEN_PLAYED power handlers)
+- Coverage: 36/42 handlers (86%)
+- All CLI commands work: `yarn test:scenario`, `yarn test:scenario --coverage`, `yarn test:scenario:coverage`, and file-specific runs
+
+### Future Work: WHEN_PLAYED Support
+To achieve 100% handler coverage, the GameEngine needs to auto-trigger WHEN_PLAYED powers after bird placement. The 6 uncovered handlers would then become testable via scenarios:
+1. `drawAndDistributeCards`
+2. `drawBonusCardsAndKeep`
+3. `drawFaceUpCardsFromTray`
+4. `gainAllFoodTypeFromFeeder`
+5. `layEggOnBirdsWithNestType`
+6. `playAdditionalBirdInHabitat`
+
+This would require modifying `GameEngine.processEvent()` to trigger WHEN_PLAYED powers for the active player's just-placed bird when handling `BIRD_PLAYED` events.

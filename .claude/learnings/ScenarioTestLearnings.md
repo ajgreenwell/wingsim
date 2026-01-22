@@ -189,3 +189,33 @@ The `drawCardsHandler` loops while `remaining > 0`, issuing a `drawCards` prompt
 
 ### Valid Bird Card IDs for Tray
 Always verify bird IDs exist before using them in `birdTray`. Some common birds that DO NOT exist: `house_sparrow`. Use `song_sparrow`, `chipping_sparrow`, or other verified IDs instead.
+
+## Task 8: playBirdHandler Scenario Tests
+
+### WILD Food Cost Eligibility Limitation
+The `PlayerState.getEligibleBirdsToPlay()` method does NOT handle WILD food costs specially. Birds with `WILD: n` in their foodCost require the player to have `n` WILD food tokens to be considered eligible. This is a known limitation - the method checks for exact food type matches rather than treating WILD as "any food type". For scenario tests, either:
+- Give the player WILD food tokens matching the cost
+- Use birds without WILD costs for basic mechanics testing
+
+### WHEN_PLAYED (White) Powers Not Auto-Triggered
+The GameEngine's `processEvent()` method handles `BIRD_PLAYED` events by triggering pink powers for OTHER players, but it does NOT automatically trigger WHEN_PLAYED powers for the bird itself. This is a missing feature in the current implementation. The handler mechanism exists (powers can be executed via `executeSinglePower`), but the GameEngine doesn't wire up WHEN_PLAYED power execution after bird placement.
+
+### Egg Costs by Column
+Per `player_board.json`, the `playBirdCosts` array is `[1, 1, 2, 2, 3]`:
+- Column 0: 1 egg
+- Column 1: 1 egg
+- Column 2: 2 eggs
+- Column 3: 2 eggs
+- Column 4: 3 eggs
+
+This differs from standard Wingspan rules where columns 0-1 are free.
+
+### PlayBirdChoice Structure
+The `PlayBirdChoice` has four key fields:
+- `bird: BirdCardId` - which bird from hand to play
+- `habitat: Habitat` - which habitat to place the bird in
+- `foodToSpend: FoodByType` - food tokens to pay
+- `eggsToSpend: EggsByBird` - eggs to remove from birds (keyed by BirdInstanceId)
+
+### Bird Instance ID for Newly Played Birds
+When a bird is played, its instance ID follows the pattern `{playerId}_{cardId}`, e.g., `alice_hooded_warbler`. Use this pattern in assertions after playing a bird.

@@ -135,7 +135,7 @@ Create scenario tests for the `drawCardsHandler` turn action.
 
 ---
 
-### [ ] Task 8: Turn Action Scenarios - playBirdHandler
+### [x] Task 8: Turn Action Scenarios - playBirdHandler
 
 **File:** `src/engine/__integration__/scenarios/turnActions/playBird.test.ts`
 

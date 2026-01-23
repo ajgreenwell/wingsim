@@ -505,18 +505,7 @@ describe("moveToAnotherHabitatIfRightmost handler", () => {
   });
 });
 
-describe("playAdditionalBirdInHabitat handler", () => {
-  /**
-   * NOTE: This handler uses WHEN_PLAYED trigger exclusively.
-   * All birds with this power (Downy Woodpecker, Eastern Bluebird, Great Blue Heron,
-   * Great Egret, House Wren, etc.) trigger when played, not when activated.
-   *
-   * Since WHEN_PLAYED powers are not automatically triggered by the GameEngine
-   * (see Task 8 learnings), these handlers CANNOT be tested via scenario tests.
-   */
-  it.skip("BLOCKED: playAdditionalBirdInHabitat uses WHEN_PLAYED trigger only", () => {
-    // All birds with this handler have trigger: "WHEN_PLAYED"
-    // The GameEngine does not auto-trigger WHEN_PLAYED powers after bird placement.
-    // This is a known limitation documented in ScenarioTestLearnings.md.
-  });
-});
+// NOTE: playAdditionalBirdInHabitat handler tests need to be implemented.
+// This handler is used by birds with WHEN_PLAYED triggers (Downy Woodpecker,
+// Eastern Bluebird, Great Blue Heron, Great Egret, House Wren, etc.).
+// White power triggering is now supported via GameEngine.processWhitePower().

@@ -2,8 +2,6 @@ import type { GameState } from "./GameEngine.js";
 import type { PlayerView } from "../types/prompts.js";
 import type { PlayerId, FoodType, DieFace } from "../types/core.js";
 
-const FOOD_TYPES: FoodType[] = ["INVERTEBRATE", "SEED", "FISH", "FRUIT", "RODENT", "WILD"];
-
 /**
  * Builds a PlayerView from GameState for a specific player.
  * Enforces hidden information - players cannot see other players' hands.
@@ -19,34 +17,29 @@ export function buildPlayerView(state: GameState, playerId: PlayerId): PlayerVie
   // Player's board uses BirdInstance directly
   const playerBoard = player.board.toRecord();
 
-  // Build complete food record
+  // Build food record (only concrete types - WILD is not a real food type)
   const food: Record<FoodType, number> = {
-    INVERTEBRATE: 0,
-    SEED: 0,
-    FISH: 0,
-    FRUIT: 0,
-    RODENT: 0,
-    WILD: 0,
+    INVERTEBRATE: player.food.INVERTEBRATE ?? 0,
+    SEED: player.food.SEED ?? 0,
+    FISH: player.food.FISH ?? 0,
+    FRUIT: player.food.FRUIT ?? 0,
+    RODENT: player.food.RODENT ?? 0,
+    WILD: 0, // Always 0 - players cannot have WILD food
   };
-  for (const foodType of FOOD_TYPES) {
-    food[foodType] = player.food[foodType] ?? 0;
-  }
 
   // Build opponent views (visible info only - not their hands)
   const opponents = state.players
     .filter(p => p.id !== playerId)
     .map(opponent => {
+      // Only concrete types - WILD is not a real food type
       const opponentFood: Record<FoodType, number> = {
-        INVERTEBRATE: 0,
-        SEED: 0,
-        FISH: 0,
-        FRUIT: 0,
-        RODENT: 0,
-        WILD: 0,
+        INVERTEBRATE: opponent.food.INVERTEBRATE ?? 0,
+        SEED: opponent.food.SEED ?? 0,
+        FISH: opponent.food.FISH ?? 0,
+        FRUIT: opponent.food.FRUIT ?? 0,
+        RODENT: opponent.food.RODENT ?? 0,
+        WILD: 0, // Always 0 - players cannot have WILD food
       };
-      for (const foodType of FOOD_TYPES) {
-        opponentFood[foodType] = opponent.food[foodType] ?? 0;
-      }
 
       return {
         playerId: opponent.id,

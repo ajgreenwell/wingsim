@@ -1467,7 +1467,7 @@ describe("GameEngine", () => {
         }
       });
 
-      it("skips WILD food type when source is BIRDFEEDER", () => {
+      it("ignores WILD food type - players cannot have WILD food", () => {
         const { engine, state } = createTestEngine();
         const player = state.players[0];
         player.food = {};
@@ -1481,9 +1481,9 @@ describe("GameEngine", () => {
           source: "BIRDFEEDER",
         });
 
-        // WILD should be added to player food
-        expect(player.food.WILD).toBe(1);
-        // But no dice should be removed
+        // WILD should NOT be added to player food (WILD is a wildcard, not real food)
+        expect(player.food.WILD ?? 0).toBe(0);
+        // No dice should be removed (there are no WILD dice)
         expect(state.birdfeeder.getDiceInFeeder().length).toBe(initialDice);
       });
 

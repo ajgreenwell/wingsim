@@ -530,30 +530,6 @@ describe("layEggsOnBird handler", () => {
   });
 });
 
-describe("layEggOnBirdsWithNestType handler", () => {
-  /**
-   * NOTE: All birds with the layEggOnBirdsWithNestType handler use WHEN_PLAYED trigger:
-   * - ash_throated_flycatcher (CAVITY nest, WHEN_PLAYED)
-   * - bobolink (GROUND nest, WHEN_PLAYED)
-   * - inca_dove (PLATFORM nest, WHEN_PLAYED)
-   * - says_phoebe (BOWL nest, WHEN_PLAYED)
-   *
-   * According to ScenarioTestLearnings.md (Task 8), WHEN_PLAYED powers are NOT
-   * auto-triggered by the GameEngine after bird placement. This is a known
-   * limitation of the current implementation.
-   *
-   * These tests are SKIPPED until WHEN_PLAYED power execution is wired up.
-   */
-
-  it.skip("lays eggs on all birds with matching nest type (BLOCKED: WHEN_PLAYED not auto-triggered)", async () => {
-    // Would test: Ash-Throated Flycatcher plays, lays 1 egg on each CAVITY nest bird
-  });
-
-  it.skip("includes WILD nest birds when matching nest type (BLOCKED: WHEN_PLAYED not auto-triggered)", async () => {
-    // Would test: WILD nest birds count as matching any nest type
-  });
-
-  it.skip("skips when no birds have matching nest type (BLOCKED: WHEN_PLAYED not auto-triggered)", async () => {
-    // Would test: power skipped when no birds match the nest type
-  });
-});
+// NOTE: layEggOnBirdsWithNestType handler tests have been moved to
+// whitePowers/layEggHandlers.test.ts since all birds using this handler
+// have WHEN_PLAYED triggers (white powers).

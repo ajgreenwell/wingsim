@@ -80,18 +80,6 @@ export class PlayerState {
   }
 
   /**
-   * Get birds from hand that the player can afford to play.
-   * Checks food costs based on the card's foodCostMode.
-   *
-   * NOTE: This method only checks food affordability, not habitat availability
-   * or egg costs. For full eligibility checking that includes those constraints,
-   * use getFullyEligibleBirdsToPlay() instead.
-   */
-  getEligibleBirdsToPlay(): BirdCard[] {
-    return this.hand.filter((card) => this.canAffordBirdFood(card));
-  }
-
-  /**
    * Get birds from hand that the player can fully afford to play, considering:
    * - Food cost affordability
    * - At least one habitat with available space
@@ -149,6 +137,7 @@ export class PlayerState {
 
   /**
    * Check if the player can afford a bird's food cost.
+   * WILD in food cost means "any food type" - not a real food type players can have.
    */
   private canAffordBirdFood(card: BirdCard): boolean {
     if (card.foodCostMode === "NONE") {
@@ -156,25 +145,36 @@ export class PlayerState {
     }
 
     if (card.foodCostMode === "AND") {
-      // Must have all food types
+      // Must have all food types (WILD can be paid with any food)
+      let wildRequired = card.foodCost.WILD ?? 0;
+      let totalAvailable = this.getTotalFood();
+
       for (const [foodType, required] of Object.entries(card.foodCost)) {
-        if (required && required > 0) {
+        if (required && required > 0 && foodType !== "WILD") {
           const available = this.food[foodType as FoodType] ?? 0;
           if (available < required) {
             return false;
           }
+          // Track food used for specific costs (not available for WILD)
+          totalAvailable -= Math.min(available, required);
         }
       }
-      return true;
+      // Check if we have enough remaining food for WILD costs
+      return totalAvailable >= wildRequired;
     }
 
     if (card.foodCostMode === "OR") {
-      // Must have at least one of the required food types
+      // Must have at least one of the required food types (or any food if WILD)
       const totalRequired = Object.values(card.foodCost).reduce(
         (sum, v) => sum + (v ?? 0),
         0
       );
       if (totalRequired === 0) return true;
+
+      // If WILD is in the cost, any food works
+      if (card.foodCost.WILD && card.foodCost.WILD > 0) {
+        return this.getTotalFood() >= 1;
+      }
 
       let totalAvailable = 0;
       for (const [foodType, required] of Object.entries(card.foodCost)) {

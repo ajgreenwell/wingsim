@@ -681,6 +681,204 @@ describe("layEggsHandler", () => {
   });
 
   /**
+   * Tests LAY_EGGS is eligible when all birds are at full capacity BUT there's a brown power
+   * in Grassland. The player should be able to activate Grassland just to trigger the brown power,
+   * even though they can't actually lay any eggs.
+   * Uses spotted_towhee which has gainFoodFromSupply power (works regardless of egg capacity).
+   */
+  it("allows LAY_EGGS when capacity is full but grassland has brown powers", async () => {
+    const scenario: ScenarioConfig = {
+      name: "LAY_EGGS with full capacity but brown power in grassland",
+      description: "Player can activate LAY_EGGS to trigger brown powers even at full egg capacity",
+      targetHandlers: ["layEggsHandler", "gainFoodFromSupply"],
+
+      players: [
+        {
+          id: "alice",
+          hand: [],
+          bonusCards: [],
+          food: { SEED: 0, INVERTEBRATE: 0, FISH: 0, FRUIT: 0, RODENT: 0 },
+          board: {
+            FOREST: [],
+            // spotted_towhee has brown power gainFoodFromSupply, capacity 4, full with 4 eggs
+            GRASSLAND: [{ cardId: "spotted_towhee", eggs: 4 }],
+            WETLAND: [],
+          },
+        },
+        {
+          id: "bob",
+          hand: [],
+          bonusCards: [],
+          food: { SEED: 1, INVERTEBRATE: 1, FISH: 1, FRUIT: 1, RODENT: 1 },
+          board: { FOREST: [], GRASSLAND: [], WETLAND: [] },
+        },
+      ],
+
+      turns: [
+        {
+          player: "alice",
+          label: "Alice activates grassland to trigger brown power despite full capacity",
+          choices: [
+            // LAY_EGGS is eligible because spotted_towhee has a brown power
+            { kind: "turnAction", action: "LAY_EGGS", takeBonus: false },
+            // No placeEggs prompt because capacity is full
+            // Brown power triggers: spotted_towhee's gainFoodFromSupply
+            { kind: "activatePower", activate: true },
+            // Choose food from supply (gainFoodFromSupply gives 1 food of choice)
+            { kind: "selectFoodFromSupply", food: { SEED: 1 } },
+          ],
+        },
+      ],
+
+      birdfeeder: ["SEED", "INVERTEBRATE", "FISH", "FRUIT", "RODENT"],
+      turnsToRun: 1,
+    };
+
+    await runScenario(scenario, {
+      assertions: [
+        // HABITAT_ACTIVATED should fire for GRASSLAND
+        eventWasEmitted("HABITAT_ACTIVATED", (e) =>
+          e.type === "HABITAT_ACTIVATED" &&
+          e.habitat === "GRASSLAND" &&
+          e.playerId === "alice"
+        ),
+
+        // Brown power handler should have been invoked
+        handlerWasInvoked("gainFoodFromSupply"),
+
+        // spotted_towhee still has 4 eggs (no change - was already full)
+        birdHasEggs("alice", "alice_spotted_towhee", 4),
+
+        // Alice should have gained 1 SEED from the brown power
+        playerHasTotalFood("alice", 1),
+      ],
+    });
+  });
+
+  /**
+   * Tests LAY_EGGS is NOT eligible when board is empty (no birds at all).
+   * This verifies the eligibility check excludes LAY_EGGS when there are no birds.
+   */
+  it("excludes LAY_EGGS from eligible actions when board is empty", async () => {
+    const scenario: ScenarioConfig = {
+      name: "LAY_EGGS not eligible with empty board",
+      description: "LAY_EGGS should not be an eligible action when player has no birds",
+      targetHandlers: ["gainFoodHandler"],
+
+      players: [
+        {
+          id: "alice",
+          hand: [],
+          bonusCards: [],
+          food: { SEED: 0, INVERTEBRATE: 0, FISH: 0, FRUIT: 0, RODENT: 0 },
+          board: {
+            FOREST: [],
+            GRASSLAND: [],
+            WETLAND: [],
+          },
+        },
+        {
+          id: "bob",
+          hand: [],
+          bonusCards: [],
+          food: { SEED: 1, INVERTEBRATE: 1, FISH: 1, FRUIT: 1, RODENT: 1 },
+          board: { FOREST: [], GRASSLAND: [], WETLAND: [] },
+        },
+      ],
+
+      turns: [
+        {
+          player: "alice",
+          label: "Alice cannot choose LAY_EGGS because board is empty",
+          choices: [
+            // GAIN_FOOD is eligible (always available), but LAY_EGGS should NOT be
+            { kind: "turnAction", action: "GAIN_FOOD", takeBonus: false },
+            // Take a die from the feeder
+            { kind: "selectFoodFromFeeder", diceOrReroll: [{ die: "SEED" }] },
+          ],
+        },
+      ],
+
+      birdfeeder: ["SEED", "INVERTEBRATE", "FISH", "FRUIT", "RODENT"],
+      turnsToRun: 1,
+    };
+
+    await runScenario(scenario, {
+      assertions: [
+        // HABITAT_ACTIVATED should fire for FOREST (from GAIN_FOOD)
+        eventWasEmitted("HABITAT_ACTIVATED", (e) =>
+          e.type === "HABITAT_ACTIVATED" &&
+          e.habitat === "FOREST" &&
+          e.playerId === "alice"
+        ),
+      ],
+    });
+  });
+
+  /**
+   * Tests LAY_EGGS is NOT eligible when all birds are at full capacity AND
+   * there are no brown powers in Grassland.
+   */
+  it("excludes LAY_EGGS when capacity is full and no grassland brown powers", async () => {
+    const scenario: ScenarioConfig = {
+      name: "LAY_EGGS not eligible with full capacity and no grassland powers",
+      description: "LAY_EGGS should not be eligible when eggs are full and no grassland brown powers",
+      targetHandlers: ["gainFoodHandler"],
+
+      players: [
+        {
+          id: "alice",
+          hand: [],
+          bonusCards: [],
+          food: { SEED: 0, INVERTEBRATE: 0, FISH: 0, FRUIT: 0, RODENT: 0 },
+          board: {
+            FOREST: [],
+            GRASSLAND: [],
+            // prothonotary_warbler has no power, capacity 4, full
+            WETLAND: [{ cardId: "prothonotary_warbler", eggs: 4 }],
+          },
+        },
+        {
+          id: "bob",
+          hand: [],
+          bonusCards: [],
+          food: { SEED: 1, INVERTEBRATE: 1, FISH: 1, FRUIT: 1, RODENT: 1 },
+          board: { FOREST: [], GRASSLAND: [], WETLAND: [] },
+        },
+      ],
+
+      turns: [
+        {
+          player: "alice",
+          label: "Alice cannot choose LAY_EGGS because capacity is full and no grassland powers",
+          choices: [
+            // GAIN_FOOD is eligible, but LAY_EGGS should NOT be
+            { kind: "turnAction", action: "GAIN_FOOD", takeBonus: false },
+            { kind: "selectFoodFromFeeder", diceOrReroll: [{ die: "SEED" }] },
+          ],
+        },
+      ],
+
+      birdfeeder: ["SEED", "INVERTEBRATE", "FISH", "FRUIT", "RODENT"],
+      turnsToRun: 1,
+    };
+
+    await runScenario(scenario, {
+      assertions: [
+        // HABITAT_ACTIVATED should fire for FOREST (from GAIN_FOOD)
+        eventWasEmitted("HABITAT_ACTIVATED", (e) =>
+          e.type === "HABITAT_ACTIVATED" &&
+          e.habitat === "FOREST" &&
+          e.playerId === "alice"
+        ),
+
+        // Bird should still have 4 eggs
+        birdHasEggs("alice", "alice_prothonotary_warbler", 4),
+      ],
+    });
+  });
+
+  /**
    * Tests the EGGS_LAID_FROM_HABITAT_ACTIVATION event is emitted.
    * This event is specifically for tracking eggs laid from the LAY_EGGS action.
    */

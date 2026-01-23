@@ -98,10 +98,10 @@ describe("playBirdHandler", () => {
 
   /**
    * Tests bird play with egg cost based on habitat column.
-   * Per playBirdCosts = [0, 0, 1, 1, 2]:
-   * - Columns 0-1: Free (0 eggs)
-   * - Columns 2-3: 1 egg
-   * - Column 4: 2 eggs
+   * Per playBirdCosts = [0, 1, 1, 2, 2]:
+   * - Column 0: Free (0 eggs)
+   * - Columns 1-2: 1 egg
+   * - Columns 3-4: 2 eggs
    * With 2 birds already in FOREST (columns 0-1 filled), playing into column 2
    * requires playBirdCosts[2] = 1 egg.
    */
@@ -197,25 +197,22 @@ describe("playBirdHandler", () => {
   /**
    * Tests wild food cost payment.
    * american_crow costs WILD: 1, meaning any food type can be used.
-   * Player pays with WILD: 1 in their supply (matching exactly).
-   *
-   * NOTE: The current getEligibleBirdsToPlay() implementation does not handle
-   * WILD food type specially - it checks if the player has food of type "WILD".
-   * This test verifies the behavior with exact WILD food matching.
+   * Player pays with any concrete food type (RODENT in this case).
+   * WILD is NOT an actual food type players can have - it's a wildcard.
    */
-  it("plays bird with wild food cost when player has WILD food", async () => {
+  it("plays bird with wild food cost using any concrete food type", async () => {
     const scenario: ScenarioConfig = {
-      name: "Wild food cost payment with WILD",
-      description: "Player plays american_crow with WILD cost, paying with WILD food",
+      name: "Wild food cost payment with concrete food",
+      description: "Player plays american_crow with WILD cost, paying with RODENT",
       targetHandlers: ["playBirdHandler"],
 
       players: [
         {
           id: "alice",
-          // american_crow costs WILD: 1 - player must have WILD food type
+          // american_crow costs WILD: 1 - player pays with any concrete food
           hand: ["american_crow"],
           bonusCards: [],
-          food: { WILD: 1, RODENT: 1 },
+          food: { RODENT: 1, SEED: 1 },
           board: { FOREST: [], GRASSLAND: [], WETLAND: [] },
         },
         {
@@ -237,8 +234,8 @@ describe("playBirdHandler", () => {
               kind: "playBird",
               bird: "american_crow",
               habitat: "WETLAND",
-              // Pay the WILD cost with WILD food
-              foodToSpend: { WILD: 1 },
+              // Pay the WILD cost with any concrete food type
+              foodToSpend: { RODENT: 1 },
               eggsToSpend: {},
             },
           ],
@@ -251,8 +248,8 @@ describe("playBirdHandler", () => {
 
     await runScenario(scenario, {
       assertions: [
-        // Alice should have spent the WILD, kept the RODENT
-        playerHasFood("alice", { WILD: 0, RODENT: 1 }),
+        // Alice should have spent the RODENT, kept the SEED
+        playerHasFood("alice", { RODENT: 0, SEED: 1 }),
 
         // Bird should be in WETLAND
         habitatBirdCount("alice", "WETLAND", 1),
@@ -379,7 +376,7 @@ describe("playBirdHandler", () => {
               bird: "wild_turkey",
               habitat: "FOREST",
               foodToSpend: { SEED: 2, FRUIT: 1 },
-              // Column 1 requires 1 egg
+              // Column 1 costs 1 egg (playBirdCosts[1] = 1)
               eggsToSpend: { alice_hooded_warbler: 1 },
             },
           ],
@@ -432,19 +429,18 @@ describe("playBirdHandler", () => {
   });
 
   /**
-   * Tests that a bird with WHEN_PLAYED power is placed correctly.
+   * Tests that a bird with WHEN_PLAYED power is placed correctly and its
+   * white power is automatically triggered.
    * american_goldfinch has WHEN_PLAYED power: gain 3 SEED from supply.
    *
-   * NOTE: WHEN_PLAYED (white) powers are not yet automatically triggered
-   * by the GameEngine after BIRD_PLAYED events. This test only verifies
-   * the bird is played correctly; the power trigger would require additional
-   * implementation in the GameEngine.processEvent() method.
+   * After bird placement, the GameEngine processes the BIRD_PLAYED event
+   * which triggers the white power (WHEN_PLAYED) before any pink powers.
    */
-  it("plays bird with WHEN_PLAYED power (power not yet auto-triggered)", async () => {
+  it("plays bird with WHEN_PLAYED power (power is auto-triggered)", async () => {
     const scenario: ScenarioConfig = {
       name: "Bird with WHEN_PLAYED power",
-      description: "american_goldfinch is played; WHEN_PLAYED power not auto-triggered yet",
-      targetHandlers: ["playBirdHandler"],
+      description: "american_goldfinch is played and WHEN_PLAYED power triggers",
+      targetHandlers: ["playBirdHandler", "gainFoodFromSupply"],
 
       players: [
         {
@@ -477,6 +473,10 @@ describe("playBirdHandler", () => {
               foodToSpend: { SEED: 2 },
               eggsToSpend: {},
             },
+            // WHEN_PLAYED power triggers automatically after bird is played
+            { kind: "activatePower", activate: true },
+            // Select the food to gain from supply (3 SEED)
+            { kind: "selectFoodFromSupply", food: { SEED: 3 } },
           ],
         },
       ],
@@ -491,8 +491,8 @@ describe("playBirdHandler", () => {
         birdExistsOnBoard("alice", "alice_american_goldfinch"),
         birdIsInHabitat("alice", "alice_american_goldfinch", "GRASSLAND"),
 
-        // Alice paid 2 SEED (power not triggered, so still 0)
-        playerHasFood("alice", { SEED: 0 }),
+        // Alice paid 2 SEED, then gained 3 SEED from power = net 3 SEED
+        playerHasFood("alice", { SEED: 3 }),
 
         // BIRD_PLAYED event should be emitted
         eventWasEmitted("BIRD_PLAYED", (e) =>
@@ -625,7 +625,7 @@ describe("playBirdHandler", () => {
 
   /**
    * Tests higher egg cost at later column.
-   * Per playBirdCosts = [0, 0, 1, 1, 2]:
+   * Per playBirdCosts = [0, 1, 1, 2, 2]:
    * With 4 birds in habitat, playing into column 4 costs playBirdCosts[4] = 2 eggs.
    */
   it("pays higher egg cost for later columns", async () => {

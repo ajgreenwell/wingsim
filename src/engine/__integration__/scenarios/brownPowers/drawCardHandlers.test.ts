@@ -3,9 +3,11 @@
  *
  * Handlers covered:
  * - drawCards: Draw cards from deck or tray (WHEN_ACTIVATED)
- * - drawFaceUpCardsFromTray: Draw all face-up cards from tray (WHEN_PLAYED only - blocked)
  * - drawCardsWithDelayedDiscard: Draw cards now, discard at end of turn (WHEN_ACTIVATED)
- * - drawBonusCardsAndKeep: Draw bonus cards and keep some (WHEN_PLAYED only - blocked)
+ *
+ * NOTE: WHEN_PLAYED (white power) handlers have been moved to whitePowers/:
+ * - drawFaceUpCardsFromTray: See whitePowers/drawCardHandlers.test.ts
+ * - drawBonusCardsAndKeep: See whitePowers/drawCardHandlers.test.ts
  */
 
 import { describe, it } from "vitest";
@@ -13,6 +15,7 @@ import { runScenario } from "../../ScenarioRunner.js";
 import type { ScenarioConfig } from "../../ScenarioBuilder.js";
 import {
   handlerWasInvoked,
+  handlerWasSkipped,
   playerHandSize,
   playerHasCardInHand,
   custom,
@@ -207,31 +210,6 @@ describe("drawCards handler", () => {
     });
   });
 
-});
-
-describe("drawFaceUpCardsFromTray handler", () => {
-  /**
-   * NOTE: All birds with drawFaceUpCardsFromTray use WHEN_PLAYED trigger:
-   * - brant (WETLAND, WHEN_PLAYED)
-   *
-   * According to ScenarioTestLearnings.md (Task 8), WHEN_PLAYED powers are NOT
-   * auto-triggered by the GameEngine after bird placement. This is a known
-   * limitation of the current implementation.
-   *
-   * These tests are SKIPPED until WHEN_PLAYED power execution is wired up.
-   */
-
-  it.skip("draws all face-up cards from tray when played (BLOCKED: WHEN_PLAYED not auto-triggered)", async () => {
-    // Would test: Brant plays, draws all 3 face-up cards from tray
-  });
-
-  it.skip("handles partial tray when some cards already taken (BLOCKED: WHEN_PLAYED not auto-triggered)", async () => {
-    // Would test: Brant plays when tray has fewer than 3 cards
-  });
-
-  it.skip("skips when tray is empty (BLOCKED: WHEN_PLAYED not auto-triggered)", async () => {
-    // Would test: Power skipped when no cards in tray
-  });
 });
 
 describe("drawCardsWithDelayedDiscard handler", () => {
@@ -437,16 +415,76 @@ describe("drawCardsWithDelayedDiscard handler", () => {
   });
 
   /**
-   * Tests that the power is skipped when deck is empty.
-   * The handler checks for cards before prompting.
-   *
-   * NOTE: This test is skipped because we can't easily empty the deck in a scenario.
-   * The deck is populated with all bird cards minus those dealt/placed.
-   * The handler implementation correctly checks `getDeckSize() === 0` before prompting.
+   * Tests that the power is skipped when both deck AND discard are empty.
+   * The engine gracefully handles attempts to draw from an empty deck by drawing 0 cards.
+   * The power handler checks for available cards before prompting, so it auto-skips.
    */
-  it.skip("skips power when deck is empty (requires empty deck setup)", async () => {
-    // Would test: Black Tern power skipped when deck is empty
-    // The handler has logic: if (state.birdCardSupply.getDeckSize() === 0) { skipPower... }
+  it("skips power when deck and discard are both empty", async () => {
+    const scenario: ScenarioConfig = {
+      name: "drawCardsWithDelayedDiscard - empty deck",
+      description: "Power is skipped when no cards available to draw",
+      targetHandlers: ["drawCardsWithDelayedDiscard"],
+
+      players: [
+        {
+          id: "alice",
+          hand: [],
+          bonusCards: [],
+          food: { SEED: 0, INVERTEBRATE: 0, FISH: 0, FRUIT: 0, RODENT: 0 },
+          board: {
+            FOREST: [],
+            GRASSLAND: [],
+            WETLAND: [{ cardId: "black_tern", eggs: 0 }],
+          },
+        },
+        {
+          id: "bob",
+          hand: [],
+          bonusCards: [],
+          food: { SEED: 1, INVERTEBRATE: 1, FISH: 1, FRUIT: 1, RODENT: 1 },
+          board: { FOREST: [], GRASSLAND: [], WETLAND: [] },
+        },
+      ],
+
+      birdfeeder: ["SEED", "INVERTEBRATE", "FISH", "FRUIT", "RODENT"],
+      // Use empty tray and empty deck for this test
+      birdTray: [null, null, null],
+      emptyBirdDeck: true,
+
+      turns: [
+        {
+          player: "alice",
+          label: "Activate wetland - power skipped due to empty deck",
+          choices: [
+            // DRAW_CARDS action activates wetland habitat
+            { kind: "turnAction", action: "DRAW_CARDS", takeBonus: false },
+            // Base action: request deck draw, but deck is empty - gracefully draws 0
+            { kind: "drawCards", trayCards: [], numDeckCards: 1 },
+            // Power is auto-skipped - no activation prompt needed since deck is empty
+          ],
+        },
+      ],
+    };
+
+    await runScenario(scenario, {
+      assertions: [
+        // Verify the deck and discard are empty
+        (ctx) => {
+          const state = ctx.engine.getGameState();
+          const deckSize = state.birdCardSupply.getDeckSize();
+          const discardSize = state.birdCardSupply.getDiscardSize();
+          if (deckSize !== 0 || discardSize !== 0) {
+            throw new Error(
+              `Expected empty deck and discard, got deck=${deckSize}, discard=${discardSize}`
+            );
+          }
+        },
+        // Handler was skipped due to empty deck (resource unavailable)
+        handlerWasSkipped("drawCardsWithDelayedDiscard"),
+        // Alice has no cards (deck was empty)
+        playerHandSize("alice", 0),
+      ],
+    });
   });
 
   /**
@@ -514,41 +552,3 @@ describe("drawCardsWithDelayedDiscard handler", () => {
   });
 });
 
-describe("drawBonusCardsAndKeep handler", () => {
-  /**
-   * NOTE: All birds with drawBonusCardsAndKeep use WHEN_PLAYED trigger:
-   * - atlantic_puffin (WETLAND, WHEN_PLAYED)
-   * - bells_vireo (FOREST/GRASSLAND, WHEN_PLAYED)
-   * - california_condor (all habitats, WHEN_PLAYED)
-   * - cassins_finch (FOREST, WHEN_PLAYED)
-   * - cerulean_warbler (FOREST, WHEN_PLAYED)
-   * - chestnut_collared_longspur (GRASSLAND, WHEN_PLAYED)
-   * - greater_prairie_chicken (GRASSLAND, WHEN_PLAYED)
-   * - king_rail (WETLAND, WHEN_PLAYED)
-   * - painted_bunting (GRASSLAND, WHEN_PLAYED)
-   * - red_cockaded_woodpecker (FOREST, WHEN_PLAYED)
-   * - roseate_spoonbill (WETLAND, WHEN_PLAYED)
-   * - spotted_owl (FOREST, WHEN_PLAYED)
-   * - spragues_pipit (GRASSLAND, WHEN_PLAYED)
-   * - whooping_crane (WETLAND, WHEN_PLAYED)
-   * - wood_stork (WETLAND, WHEN_PLAYED)
-   *
-   * According to ScenarioTestLearnings.md (Task 8), WHEN_PLAYED powers are NOT
-   * auto-triggered by the GameEngine after bird placement. This is a known
-   * limitation of the current implementation.
-   *
-   * These tests are SKIPPED until WHEN_PLAYED power execution is wired up.
-   */
-
-  it.skip("draws bonus cards and keeps selected ones (BLOCKED: WHEN_PLAYED not auto-triggered)", async () => {
-    // Would test: Atlantic Puffin plays, draws 2 bonus cards, keeps 1
-  });
-
-  it.skip("discards unchosen bonus cards (BLOCKED: WHEN_PLAYED not auto-triggered)", async () => {
-    // Would test: Discarded bonus cards go to bonus discard pile
-  });
-
-  it.skip("handles when bonus deck has fewer cards than draw count (BLOCKED: WHEN_PLAYED not auto-triggered)", async () => {
-    // Would test: Power draws available cards when deck is low
-  });
-});

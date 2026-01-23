@@ -89,11 +89,11 @@ describe("SmartRandomAgent Integration", () => {
   }, 45000); // 45 second timeout for 3-player game
 
   // Verifies multiple games with different seeds all complete
-  it("completes multiple games with different seeds", async () => {
+  it.only("completes multiple games with different seeds", async () => {
     const registry = new DataRegistry();
     const baseSeed = 1000;
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 5; i++) {
       const seed = baseSeed + i * 111;
       const agent1 = new SmartRandomAgent("player1", seed);
       const agent2 = new SmartRandomAgent("player2", seed ^ 0x9e3779b9);

@@ -184,6 +184,13 @@ export interface ScenarioConfig {
    * Default: 12345 (deterministic).
    */
   seed?: number;
+
+  /**
+   * If true, the bird deck and discard pile will be empty.
+   * Used for testing scenarios where no cards are available to draw.
+   * Note: birdTray can still contain cards if specified.
+   */
+  emptyBirdDeck?: boolean;
 }
 
 /**
@@ -250,7 +257,8 @@ export class ScenarioBuilder {
       dealtBirdCards,
       config.deckTopCards ?? [],
       config.birdTray,
-      rng
+      rng,
+      config.emptyBirdDeck ?? false
     );
 
     // 6. Create bonus card deck with dealt cards removed and deck stacked
@@ -429,13 +437,24 @@ export class ScenarioBuilder {
    * - Dealt cards removed from the deck
    * - Specific cards stacked on top of the deck
    * - Specific cards in the tray (or filled from deck)
+   * - Optional empty deck for testing "no cards available" scenarios
    */
   private createBirdCardSupply(
     dealtCards: Set<BirdCardId>,
     deckTopCards: BirdCardId[],
     trayConfig: (BirdCardId | null)[] | undefined,
-    rng: Rng
+    rng: Rng,
+    emptyDeck: boolean
   ): BirdCardSupply {
+    // If empty deck is requested, create supply with no cards
+    if (emptyDeck) {
+      return createPresetBirdCardSupply(
+        [], // empty deck
+        trayConfig ? this.resolveTrayConfig(trayConfig) : [null, null, null],
+        rng
+      );
+    }
+
     // Get all birds, filtering out dealt ones and deck top cards
     const allBirds = this.registry.getAllBirds();
     const excludedCards = new Set([...dealtCards, ...deckTopCards]);
@@ -555,7 +574,8 @@ function createPresetBirdCardSupply(
       for (let i = 0; i < count; i++) {
         if (deck.length === 0) {
           if (discard.length === 0) {
-            throw new Error("All cards are in use");
+            // Return what we have (possibly empty) instead of throwing
+            return drawn;
           }
           deck.push(...(rng ? rng.shuffle(discard) : discard));
           discard.length = 0;

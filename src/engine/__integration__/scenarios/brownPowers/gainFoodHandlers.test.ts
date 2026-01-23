@@ -590,32 +590,9 @@ describe("gainFoodFromFeeder handler", () => {
   });
 });
 
-describe("gainAllFoodTypeFromFeeder handler", () => {
-  /**
-   * NOTE: This handler is used by birds with WHEN_PLAYED trigger (bald_eagle, northern_flicker).
-   * According to ScenarioTestLearnings.md (Task 8), WHEN_PLAYED powers are NOT auto-triggered
-   * by the GameEngine after bird placement. This is a known limitation of the current
-   * implementation.
-   *
-   * These tests are SKIPPED until WHEN_PLAYED power execution is wired up in GameEngine.
-   * The handler implementation is correct - it's the trigger wiring that's missing.
-   */
-
-  it.skip("gains all matching food from feeder when played (BLOCKED: WHEN_PLAYED not auto-triggered)", async () => {
-    // Test would verify that Bald Eagle gains all FISH from feeder when played
-    // Currently blocked because WHEN_PLAYED powers are not executed by GameEngine
-  });
-
-  it.skip("collects dual dice when matching food type (BLOCKED: WHEN_PLAYED not auto-triggered)", async () => {
-    // Test would verify that Northern Flicker gains INVERTEBRATE + SEED_INVERTEBRATE
-    // Currently blocked because WHEN_PLAYED powers are not executed by GameEngine
-  });
-
-  it.skip("skips when no matching food in feeder (BLOCKED: WHEN_PLAYED not auto-triggered)", async () => {
-    // Test would verify that power is skipped when no matching food in feeder
-    // Currently blocked because WHEN_PLAYED powers are not executed by GameEngine
-  });
-});
+// NOTE: gainAllFoodTypeFromFeeder handler tests have been moved to
+// whitePowers/foodGainHandlers.test.ts since all birds using this handler
+// have WHEN_PLAYED triggers (white powers).
 
 describe("gainFoodFromFeederIfAvailable handler", () => {
   /**

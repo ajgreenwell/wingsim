@@ -1406,14 +1406,6 @@ describe("allPlayersLayEggOnNestType handler", () => {
   });
 });
 
-describe("drawAndDistributeCards handler", () => {
-  /**
-   * This handler is WHEN_PLAYED only (American Oystercatcher).
-   * Since WHEN_PLAYED powers are not auto-triggered by the GameEngine,
-   * this cannot be tested via scenario tests.
-   */
-  it.skip("is WHEN_PLAYED only - cannot test via scenarios", async () => {
-    // American Oystercatcher uses WHEN_PLAYED trigger
-    // The engine currently doesn't auto-trigger WHEN_PLAYED powers
-  });
-});
+// NOTE: drawAndDistributeCards handler tests need to be implemented.
+// The handler is triggered by American Oystercatcher's WHEN_PLAYED power.
+// White power triggering is now supported via GameEngine.processWhitePower().

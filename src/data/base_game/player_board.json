@@ -1,5 +1,5 @@
 {
-  "playBirdCosts": [0, 0, 1, 1, 2],
+  "playBirdCosts": [0, 1, 1, 2, 2],
   "forest": {
     "action": "GAIN_FOOD",
     "baseRewards": [1, 1, 2, 2, 3, 3],

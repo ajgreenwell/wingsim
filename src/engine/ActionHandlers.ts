@@ -259,16 +259,21 @@ export const whenOpponentLaysEggsLayEggOnNestType: PowerHandler = function* (
     return;
   }
 
+  // Cap eggs to lay to total available capacity
+  const totalCapacity = Object.values(remainingCapacities).reduce(
+    (sum, c) => sum + c,
+    0
+  );
+  const actualCount = Math.min(count, totalCapacity);
+
   const shouldActivate = yield* withActivationPrompt(ctx, power);
   if (!shouldActivate) return;
 
   const eggChoice = yield* prompt(ctx, {
     kind: "placeEggs",
-    count,
+    count: actualCount,
     remainingCapacitiesByEligibleBird: remainingCapacities,
   });
-
-  // Note: Validation is now done in ActionProcessor.runGenerator() before resuming the generator
 
   yield* effect({
     type: "LAY_EGGS",
@@ -1187,7 +1192,6 @@ export const drawBonusCardsAndKeep: PowerHandler = function* (
   const drawCount = (params.drawCount as number) || 2;
   const keepCount = (params.keepCount as number) || 1;
 
-  const bonusCardDeck = ctx.getState().bonusCardDeck;
   const shouldActivate = yield* withActivationPrompt(ctx, power);
   if (!shouldActivate) return;
 
@@ -1268,12 +1272,19 @@ export const layEggsOnBird: PowerHandler = function* (
     return;
   }
 
+  // Cap eggs to lay to total available capacity
+  const totalCapacity = Object.values(remainingCapacities).reduce(
+    (sum, c) => sum + c,
+    0
+  );
+  const actualCount = Math.min(count, totalCapacity);
+
   const shouldActivate = yield* withActivationPrompt(ctx, power);
   if (!shouldActivate) return;
 
   const eggChoice = yield* prompt(ctx, {
     kind: "placeEggs",
-    count,
+    count: actualCount,
     remainingCapacitiesByEligibleBird: remainingCapacities,
   });
 
@@ -1401,9 +1412,13 @@ export const lookAtCardAndTuckIfWingspanUnder: PowerHandler = function* (
   const power = birdCard.power!;
   const wingspanThreshold = (params.wingspanThreshold as number) || 75;
 
-  // Check invariant: must have cards in deck BEFORE prompting
+  // Check invariant: must have cards available to draw BEFORE prompting
+  // Only skip if both deck AND discard are empty (no cards available even after reshuffle)
   const state = ctx.getState();
-  if (state.birdCardSupply.getDeckSize() === 0) {
+  if (
+    state.birdCardSupply.getDeckSize() === 0 &&
+    state.birdCardSupply.getDiscardSize() === 0
+  ) {
     yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
@@ -1674,10 +1689,17 @@ export const tuckFromHandAndLay: PowerHandler = function* (
     return;
   }
 
+  // Cap eggs to lay to total available capacity
+  const totalCapacity = Object.values(remainingCapacities).reduce(
+    (sum, c) => sum + c,
+    0
+  );
+  const actualEggCount = Math.min(eggCount, totalCapacity);
+
   // Prompt for egg placement
   const eggChoice = yield* prompt(ctx, {
     kind: "placeEggs",
-    count: eggCount,
+    count: actualEggCount,
     remainingCapacitiesByEligibleBird: remainingCapacities,
   });
 
@@ -2092,9 +2114,13 @@ export const drawCardsWithDelayedDiscard: PowerHandler = function* (
   const drawCount = (params.drawCount as number) || 1;
   const discardCount = (params.discardCount as number) || 1;
 
-  // Check invariant: must have cards in deck BEFORE prompting
+  // Check invariant: must have cards available to draw BEFORE prompting
+  // Only skip if both deck AND discard are empty (no cards available even after reshuffle)
   const state = ctx.getState();
-  if (state.birdCardSupply.getDeckSize() === 0) {
+  if (
+    state.birdCardSupply.getDeckSize() === 0 &&
+    state.birdCardSupply.getDiscardSize() === 0
+  ) {
     yield* skipPowerDueToResourceUnavailable(ctx, power);
     return;
   }
@@ -2348,11 +2374,18 @@ export const allPlayersLayEggOnNestType: PowerHandler = function* (
       continue;
     }
 
+    // Cap eggs to lay to total available capacity
+    const totalCapacity = Object.values(remainingCapacities).reduce(
+      (sum, c) => sum + c,
+      0
+    );
+    const actualCount = Math.min(allPlayersCount, totalCapacity);
+
     // Prompt this player to place their egg(s)
     const eggChoice = yield* prompt(ctx, {
       kind: "placeEggs",
       playerId,
-      count: allPlayersCount,
+      count: actualCount,
       remainingCapacitiesByEligibleBird: remainingCapacities,
     });
 
@@ -2397,11 +2430,18 @@ export const allPlayersLayEggOnNestType: PowerHandler = function* (
     return;
   }
 
+  // Cap bonus eggs to total available capacity
+  const bonusTotalCapacity = Object.values(bonusCapacities).reduce(
+    (sum, c) => sum + c,
+    0
+  );
+  const actualBonusCount = Math.min(bonusCount, bonusTotalCapacity);
+
   // Prompt owner for bonus egg placement
   const bonusChoice = yield* prompt(ctx, {
     kind: "placeEggs",
     playerId: ctx.ownerId,
-    count: bonusCount,
+    count: actualBonusCount,
     remainingCapacitiesByEligibleBird: bonusCapacities,
   });
 
@@ -3500,16 +3540,23 @@ export const layEggsHandler: TurnActionHandler = function* (ctx, params) {
   // Find birds with remaining egg capacity
   const capacities = player.board.getRemainingEggCapacities();
 
+  // Cap eggs to lay to total available capacity
+  const totalCapacity = Object.values(capacities).reduce(
+    (sum, c) => sum + (c ?? 0),
+    0
+  );
+  const actualEggsToLay = Math.min(eggsToLay, totalCapacity);
+
   const placements: Array<{ birdInstanceId: string; count: number }> = [];
 
-  if (Object.keys(capacities).length > 0 && eggsToLay > 0) {
+  if (Object.keys(capacities).length > 0 && actualEggsToLay > 0) {
     const placeEggsPrompt: PlaceEggsPrompt = {
       promptId: ctx.generatePromptId(),
       playerId: ctx.playerId,
       kind: "placeEggs",
       view: ctx.buildPlayerView(),
       context: ctx.buildPromptContext(),
-      count: eggsToLay,
+      count: actualEggsToLay,
       remainingCapacitiesByEligibleBird: capacities,
     };
 
